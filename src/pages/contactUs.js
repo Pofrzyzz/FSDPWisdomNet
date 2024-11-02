@@ -30,8 +30,13 @@ function ContactUs() {
 
   const handleConfirm = () => {
     setShowModal(false);
-    navigate('/in-queue');
-  };
+    navigate('/InQueuePage', {
+    state: {
+      mobileNumber: mobileNumber,
+      selectedProblem: selectedProblem,
+    },
+  });
+};
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-100 relative">
