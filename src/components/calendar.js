@@ -1,54 +1,78 @@
 import React, { useState } from 'react';
 import { FaCalendarAlt } from 'react-icons/fa';
 
-function Calendar() {
+function Calendar({ selectedBranch }) {
     const [isDateTimePickerOpen, setIsDateTimePickerOpen] = useState(false);
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [selectedTime, setSelectedTime] = useState('');
 
-    // Available time slots
-    const timeSlots = ['0900', '1000', '1200', '1230', '1400', '1600'];
+    const timeSlots = ['0900', '1000', '1200', '1230', '1400', '1600', '1700', '1800', '1900', '2000'];
 
-    // Toggle date & time picker display
     const toggleDateTimePicker = () => {
-        setIsDateTimePickerOpen(!isDateTimePickerOpen);
+        if (selectedBranch) {
+            setIsDateTimePickerOpen(!isDateTimePickerOpen);
+        }
     };
 
-    // Function to handle date change
-    const handleDateChange = (event) => {
-        setSelectedDate(new Date(event.target.value));
+    const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+    const getDaysInMonth = (year, month) => {
+        return new Date(year, month + 1, 0).getDate();
+    };
+
+    const getFirstDayOfMonth = (year, month) => {
+        return new Date(year, month, 1).getDay();
+    };
+
+    const handlePrevMonth = () => {
+        setSelectedDate(new Date(selectedDate.getFullYear(), selectedDate.getMonth() - 1, 1));
+    };
+
+    const handleNextMonth = () => {
+        setSelectedDate(new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 1));
     };
 
     return (
-        <div className="mb-4">
+        <div className="relative mb-4">
             <label className="block text-gray-700 text-sm font-medium mb-2">Date & Time:</label>
             <div className="flex items-center space-x-2 mb-4">
-                {/* Input field to display selected date and time */}
                 <input
                     type="text"
-                    value={
-                        selectedDate
-                            ? `${selectedDate.toISOString().substring(0, 10)} ${selectedTime || ''}`
-                            : ''
-                    }
+                    value={selectedDate ? `${selectedDate.toISOString().substring(0, 10)} ${selectedTime || ''}` : ''}
                     readOnly
                     placeholder="Select a date and time"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+                    className={`w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 ${!selectedBranch && 'bg-gray-200'}`}
+                    disabled={!selectedBranch}
                 />
-                {/* Calendar icon to open date & time picker */}
-                <button onClick={toggleDateTimePicker} className="text-gray-600 focus:outline-none">
+                <button onClick={toggleDateTimePicker} className={`text-gray-600 focus:outline-none ${!selectedBranch && 'cursor-not-allowed'}`} disabled={!selectedBranch}>
                     <FaCalendarAlt size={24} />
                 </button>
             </div>
 
-            {/* Date & Time Picker Options */}
-            {isDateTimePickerOpen && (
-                <div className="mt-4 p-4 border border-gray-300 rounded-lg bg-white shadow-md flex space-x-4">
+            {isDateTimePickerOpen && selectedBranch && (
+                <div className="absolute z-20 top-full left-1/2 transform -translate-x-1/2 mt-2 w-96 p-4 border border-gray-300 rounded-lg bg-white shadow-lg flex space-x-4">
                     {/* Date Picker */}
                     <div className="flex-1">
                         <h3 className="text-gray-700 font-medium mb-2">Select a date:</h3>
+                        <div className="flex justify-between mb-2">
+                            <button onClick={handlePrevMonth} className="text-gray-600 hover:text-red-500">
+                                &lt;
+                            </button>
+                            <h4 className="font-bold">
+                                {selectedDate.toLocaleString('default', { month: 'long' })} {selectedDate.getFullYear()}
+                            </h4>
+                            <button onClick={handleNextMonth} className="text-gray-600 hover:text-red-500">
+                                &gt;
+                            </button>
+                        </div>
                         <div className="grid grid-cols-7 gap-2 text-center">
-                            {Array.from({ length: 31 }, (_, i) => (
+                            {daysOfWeek.map(day => (
+                                <div key={day} className="font-bold">{day}</div>
+                            ))}
+                            {Array.from({ length: getFirstDayOfMonth(selectedDate.getFullYear(), selectedDate.getMonth()) }, (_, i) => (
+                                <div key={`empty-${i}`}></div>
+                            ))}
+                            {Array.from({ length: getDaysInMonth(selectedDate.getFullYear(), selectedDate.getMonth()) }, (_, i) => (
                                 <button
                                     key={i}
                                     onClick={() => setSelectedDate(new Date(selectedDate.getFullYear(), selectedDate.getMonth(), i + 1))}
@@ -63,7 +87,7 @@ function Calendar() {
                     </div>
 
                     {/* Time Slot Selector */}
-                    <div className="flex-1">
+                    <div className="flex-none w-32 h-60 overflow-y-auto ">
                         <h3 className="text-gray-700 font-medium mb-2">Select a time:</h3>
                         <div className="flex flex-col space-y-2">
                             {timeSlots.map((time) => (
