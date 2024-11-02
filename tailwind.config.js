@@ -9,6 +9,7 @@ module.exports = {
       },
       fontFamily: {
         opensans: ['"Open Sans"', 'sans-serif'],
+        geomanist: ['"Geomanist"', 'sans-serif'],
       },
     },
   },
