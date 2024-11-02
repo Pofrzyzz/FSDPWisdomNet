@@ -5,16 +5,19 @@ import HomePage from './pages/help&support';
 import BookingPage from './pages/booking';
 import ContactUsPage from './pages/contactUs';
 import InQueuePage from './pages/InQueue';
+import CardsFaq from './pages/cards'
 
 
 function App() {
   return (
     <Router>
       <Routes>
+        <Route path="/" element={<HomePage />} />
         <Route path="/HomePage" element={<HomePage />} />
         <Route path="/BookingPage" element={<BookingPage />} />
         <Route path="/ContactUsPage" element={<ContactUsPage />} />
         <Route path="/InQueuePage" element={<InQueuePage />} />
+        <Route path="/CardsFaq" element={<CardsFaq />} />
       </Routes>
     </Router>
   );
