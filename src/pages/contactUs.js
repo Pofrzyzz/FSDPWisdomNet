@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NavBar from '../components/navbar';
 import ContactBanner from '../images/ContactBanner.svg';
+import Footer from '../components/footer'
 
 function ContactUs() {
   const [mobileNumber, setMobileNumber] = useState('');
@@ -41,6 +42,8 @@ function ContactUs() {
   return (
     <div className="flex flex-col min-h-screen bg-gray-100 relative">
       <NavBar />
+
+      <section className="flex flex-col min-h-screen">
       <div className="relative w-full h-80 md:h-96 overflow-hidden">
         <img
           src={ContactBanner}
@@ -130,7 +133,11 @@ function ContactUs() {
           </div>
         </div>
       )}
+       </section>
+       <section><Footer /> </section>
     </div>
+
+  
   );
 }
 

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Branch from '../components/branch';
 import Calendar from '../components/calendar';
 import NavBar from '../components/navbar';
+import Footer from '../components/footer'; 
 import BackGround from '../images/booking-bg.png';
 
 function BookingPage() {
@@ -22,7 +23,6 @@ function BookingPage() {
     });
 
     const handleConfirm = () => {
-        // Validate the form data before confirming
         if (formData.fullName && formData.email && formData.reason) {
             setIsConfirmed(true);
             setShowModal(true);
@@ -55,7 +55,6 @@ function BookingPage() {
         let hasErrors = false;
         const newErrors = { branch: '', dateTime: '', form: '' };
 
-        // Check for branch and datetime selection
         if (!selectedBranch) {
             newErrors.branch = "Please select a branch.";
             hasErrors = true;
@@ -73,8 +72,10 @@ function BookingPage() {
     };
 
     return (
-        <div className="flex flex-col min-h-screen relative bg-gray-100">
+        <div className="flex flex-col min-h-screen bg-gray-100">
             <NavBar />
+
+            <section className="flex flex-col min-h-screen">
             <div className="relative w-full h-80 md:h-96 overflow-hidden">
                 <img
                     src={BackGround}
@@ -205,6 +206,12 @@ function BookingPage() {
                     </div>
                 </div>
             )}
+            </section>
+
+            <section>
+            {/* Footer Component */}
+            <Footer /> 
+            </section>
         </div>
     );
 }
