@@ -1,11 +1,17 @@
--- Use the right database
-USE wisdomnet
+-- Use the correct database
+USE wisdomnet;
 
--- Drop existing tables
-DROP TABLE IF EXISTS Branch;
-DROP TABLE IF EXISTS ContactUs;
-DROP TABLE IF EXISTS Appointment;
+-- Drop existing tables if they already exist
+DROP TABLE IF EXISTS CallQueue;
+DROP TABLE IF EXISTS Messages;
+DROP TABLE IF EXISTS Chats;
+DROP TABLE IF EXISTS Operators;
+DROP TABLE IF EXISTS Users;
+DROP TABLE IF EXISTS Departments;
 DROP TABLE IF EXISTS AvailableSlots;
+DROP TABLE IF EXISTS Appointment;
+DROP TABLE IF EXISTS ContactUs;
+DROP TABLE IF EXISTS Branch;
 
 -- Create Branch table
 CREATE TABLE Branch (
@@ -37,7 +43,7 @@ CREATE TABLE Appointment (
     BookingDateTime DATETIME DEFAULT GETDATE()
 );
 
--- Create AvailableSlots table (Optional)
+-- Create AvailableSlots table
 CREATE TABLE AvailableSlots (
     SlotID INT PRIMARY KEY IDENTITY(1,1),
     BranchID INT FOREIGN KEY REFERENCES Branch(BranchID),
@@ -47,7 +53,71 @@ CREATE TABLE AvailableSlots (
     IsBooked BIT DEFAULT 0
 );
 
+-- Additional Tables for Live Chat
 
+-- Create Users table
+CREATE TABLE Users (
+    UserID INT PRIMARY KEY IDENTITY(1,1),
+    NRIC VARCHAR(20) UNIQUE NOT NULL,
+    PhoneNumber VARCHAR(20),
+    CreatedAt DATETIME DEFAULT GETDATE()
+);
+
+-- Create Departments table
+CREATE TABLE Departments (
+    DepartmentID INT PRIMARY KEY IDENTITY(1,1),
+    DepartmentName NVARCHAR(100) UNIQUE NOT NULL
+);
+
+-- Create Chats table
+CREATE TABLE Chats (
+    ChatID INT PRIMARY KEY IDENTITY(1,1),
+    UserID INT,
+    BranchID INT,
+    DepartmentID INT,
+    OperatorID INT,
+    StartedAt DATETIME DEFAULT GETDATE(),
+    EndedAt DATETIME,
+    TransferredToCall BIT DEFAULT 0,
+    FOREIGN KEY (UserID) REFERENCES Users(UserID),
+    FOREIGN KEY (BranchID) REFERENCES Branch(BranchID),
+    FOREIGN KEY (DepartmentID) REFERENCES Departments(DepartmentID),
+    FOREIGN KEY (OperatorID) REFERENCES Operators(OperatorID)
+);
+
+-- Create Messages table
+CREATE TABLE Messages (
+    MessageID INT PRIMARY KEY IDENTITY(1,1),
+    ChatID INT,
+    SenderType NVARCHAR(20) CHECK (SenderType IN ('user', 'operator')),
+    MessageText NVARCHAR(MAX) NOT NULL,
+    SentAt DATETIME DEFAULT GETDATE(),
+    FOREIGN KEY (ChatID) REFERENCES Chats(ChatID)
+);
+
+-- Create Operators table
+CREATE TABLE Operators (
+    OperatorID INT PRIMARY KEY IDENTITY(1,1),
+    OperatorName NVARCHAR(100),
+    BranchID INT,
+    AssignedDepartmentID INT,
+    FOREIGN KEY (BranchID) REFERENCES Branch(BranchID),
+    FOREIGN KEY (AssignedDepartmentID) REFERENCES Departments(DepartmentID)
+);
+
+-- Create CallQueue table
+CREATE TABLE CallQueue (
+    QueueID INT PRIMARY KEY IDENTITY(1,1),
+    ChatID INT,
+    UserID INT,
+    PhoneNumber VARCHAR(20) NOT NULL,
+    QueueNumber INT NOT NULL,
+    EstimatedWaitTime NVARCHAR(50),
+    Status NVARCHAR(20) CHECK (Status IN ('waiting', 'in_call', 'completed')) DEFAULT 'waiting',
+    RequestedAt DATETIME DEFAULT GETDATE(),
+    FOREIGN KEY (ChatID) REFERENCES Chats(ChatID),
+    FOREIGN KEY (UserID) REFERENCES Users(UserID)
+);
 
 -- Insert sample data into Branch table
 INSERT INTO Branch (BranchName, Location, ContactNumber, OpeningHours)
@@ -56,31 +126,87 @@ VALUES
 ('Marina Bay Financial Centre Branch', '10 Marina Boulevard #01-04, Marina Bay Financial Centre Tower 2, Singapore 018983', '6363 3333', 'Mon-Fri: 9.00am to 4.30pm; Sat: 9.00am to 11.30am'),
 ('Orchardgateway Branch', '277 Orchard Road, orchardgateway, #01-16, #B1-12 & #B2-12, Singapore 238858', '6363 3333', 'Mon-Sun: 11.00am to 7.00pm'),
 ('Tiong Bahru Plaza Branch', '302 Tiong Bahru Road #01-125/126 Tiong Bahru Plaza, Singapore 168732', '6363 3333', 'Mon-Sun: 11.00am to 7.00pm'),
-('ION Orchard Branch', '2 Orchard Turn #B2-57, Singapore 238801', '6363 3333', 'Mon-Sun: 11.00am to 7.00pm'),
-('Bedok Branch', '204 Bedok North St 1 #01-403/405/407, Singapore 460204', '6363 3333', 'Mon-Sun: 11.00am to 7.00pm'),
-('Hougang Mall Branch', '90 Hougang Ave 10 #01-01 to 05 Hougang Mall, Singapore 538766', '6363 3333', 'Mon-Sun: 11.00am to 7.00pm'),
-('Jurong East Branch', '50 Jurong Gateway Road #B1-18 Jem, Singapore 608549', '6363 3333', 'Mon-Sun: 11.00am to 7.00pm'),
-('Tampines Branch', '1 Tampines Central 5 #01-02 Tampines CPF Building, Singapore 529508', '6363 3333', 'Mon-Sun: 11.00am to 7.00pm'),
-('Bukit Batok Branch', '634 Bukit Batok Central #01-108, Singapore 650634', '6363 3333', 'Mon-Fri: 9.00am to 4.30pm; Sat: 9.00am to 11.30am');
+('ION Orchard Branch', '2 Orchard Turn #B2-57, Singapore 238801', '6363 3333', 'Mon-Sun: 11.00am to 7.00pm');
 
-DECLARE @BranchID INT
-DECLARE @StartDate DATE = '2024-11-06'  -- Start date
-DECLARE @EndDate DATE = DATEADD(MONTH, 1, @StartDate)  -- End date (one month later)
-DECLARE @CurrentDate DATE
-DECLARE @StartTime TIME
-DECLARE @EndTime TIME
-DECLARE @TimeGap INT = 30  -- 30-minute slots
+-- Insert departments into Departments table
+INSERT INTO Departments (DepartmentName)
+VALUES ('Account Services'), ('Fraud Department'), ('Loan Enquiries'), ('Card Services'), ('Miscellaneous');
 
--- Loop through each branch
+-- Insert sample operators into Operators table with unique, realistic names
+DECLARE @BranchID INT;
+DECLARE @DepartmentID INT;
+
 DECLARE BranchCursor CURSOR FOR
-SELECT BranchID FROM Branch
+SELECT BranchID FROM Branch;
 
-OPEN BranchCursor
-FETCH NEXT FROM BranchCursor INTO @BranchID
+OPEN BranchCursor;
+FETCH NEXT FROM BranchCursor INTO @BranchID;
 
 WHILE @@FETCH_STATUS = 0
 BEGIN
-    SET @CurrentDate = @StartDate
+    DECLARE DepartmentCursor CURSOR FOR
+    SELECT DepartmentID FROM Departments;
+
+    OPEN DepartmentCursor;
+    FETCH NEXT FROM DepartmentCursor INTO @DepartmentID;
+
+    WHILE @@FETCH_STATUS = 0
+    BEGIN
+        -- Insert 5 operators per department per branch with unique, realistic names
+        INSERT INTO Operators (OperatorName, BranchID, AssignedDepartmentID)
+        VALUES 
+            ('James Tan', @BranchID, @DepartmentID),
+            ('Rachel Lim', @BranchID, @DepartmentID),
+            ('David Ng', @BranchID, @DepartmentID),
+            ('Siti Rahman', @BranchID, @DepartmentID),
+            ('Liam Wong', @BranchID, @DepartmentID),
+            ('Amanda Lee', @BranchID, @DepartmentID),
+            ('John Koh', @BranchID, @DepartmentID),
+            ('Sarah Teo', @BranchID, @DepartmentID),
+            ('Benjamin Tan', @BranchID, @DepartmentID),
+            ('Nina Lim', @BranchID, @DepartmentID),
+            ('Arif Bin Salim', @BranchID, @DepartmentID),
+            ('Maya Chia', @BranchID, @DepartmentID),
+            ('Matthew Goh', @BranchID, @DepartmentID),
+            ('Karen Chan', @BranchID, @DepartmentID),
+            ('Wei Ming Chen', @BranchID, @DepartmentID),
+            ('Priya Menon', @BranchID, @DepartmentID),
+            ('Alex Ho', @BranchID, @DepartmentID),
+            ('Nurul Hassan', @BranchID, @DepartmentID),
+            ('Josephine Choo', @BranchID, @DepartmentID),
+            ('Marcus Lee', @BranchID, @DepartmentID);
+
+        FETCH NEXT FROM DepartmentCursor INTO @DepartmentID;
+    END;
+
+    CLOSE DepartmentCursor;
+    DEALLOCATE DepartmentCursor;
+
+    FETCH NEXT FROM BranchCursor INTO @BranchID;
+END;
+
+CLOSE BranchCursor;
+DEALLOCATE BranchCursor;
+
+
+-- Declare variables for time slot generation
+DECLARE @StartDate DATE = '2024-11-06';  -- Start date
+DECLARE @EndDate DATE = DATEADD(MONTH, 1, @StartDate);  -- End date (one month later)
+DECLARE @CurrentDate DATE;
+DECLARE @StartTime TIME;
+DECLARE @EndTime TIME;
+DECLARE @TimeGap INT = 30;  -- 30-minute slots
+
+-- Generate time slots for each branch
+DECLARE BranchSlotCursor CURSOR FOR
+SELECT BranchID FROM Branch;
+
+OPEN BranchSlotCursor;
+FETCH NEXT FROM BranchSlotCursor INTO @BranchID;
+
+WHILE @@FETCH_STATUS = 0
+BEGIN
+    SET @CurrentDate = @StartDate;
 
     -- Loop through each date within the one-month period
     WHILE @CurrentDate < @EndDate
@@ -89,33 +215,32 @@ BEGIN
         IF DATEPART(WEEKDAY, @CurrentDate) <> 1
         BEGIN
             -- Morning slots (10:00 AM to 12:00 PM)
-            SET @StartTime = '10:00'
+            SET @StartTime = '10:00';
             WHILE @StartTime < '12:00'
             BEGIN
-                SET @EndTime = DATEADD(MINUTE, @TimeGap, @StartTime)
+                SET @EndTime = DATEADD(MINUTE, @TimeGap, @StartTime);
                 INSERT INTO AvailableSlots (BranchID, AppointmentDate, StartTime, EndTime, IsBooked)
-                VALUES (@BranchID, @CurrentDate, @StartTime, @EndTime, 0)
-                SET @StartTime = @EndTime
+                VALUES (@BranchID, @CurrentDate, @StartTime, @EndTime, 0);
+                SET @StartTime = @EndTime;
             END
 
             -- Afternoon slots (3:00 PM to 6:00 PM)
-            SET @StartTime = '15:00'
+            SET @StartTime = '15:00';
             WHILE @StartTime < '18:00'
             BEGIN
-                SET @EndTime = DATEADD(MINUTE, @TimeGap, @StartTime)
+                SET @EndTime = DATEADD(MINUTE, @TimeGap, @StartTime);
                 INSERT INTO AvailableSlots (BranchID, AppointmentDate, StartTime, EndTime, IsBooked)
-                VALUES (@BranchID, @CurrentDate, @StartTime, @EndTime, 0)
-                SET @StartTime = @EndTime
+                VALUES (@BranchID, @CurrentDate, @StartTime, @EndTime, 0);
+                SET @StartTime = @EndTime;
             END
         END
 
         -- Move to the next day
-        SET @CurrentDate = DATEADD(DAY, 1, @CurrentDate)
+        SET @CurrentDate = DATEADD(DAY, 1, @CurrentDate);
     END
 
-    FETCH NEXT FROM BranchCursor INTO @BranchID
-END
+    FETCH NEXT FROM BranchSlotCursor INTO @BranchID;
+END;
 
-CLOSE BranchCursor
-DEALLOCATE BranchCursor
-
+CLOSE BranchSlotCursor;
+DEALLOCATE BranchSlotCursor;
