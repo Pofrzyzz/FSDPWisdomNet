@@ -56,7 +56,6 @@ function NavBar() {
                     <a href="CardsFaq" className="text-gray-500 hover:text-gray-900">FAQ</a>
                     <a href="ContactUsPage" className="text-gray-500 hover:text-gray-900">Contact Us</a>
                     <a href="BookingPage" className="text-gray-500 hover:text-gray-900">Book an Appointment</a>
-                    <a href="LiveChat" className="text-gray-500 hover:text-gray-900">Live Chat</a>
                 </div>
             </div>
         </div>

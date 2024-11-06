@@ -22,6 +22,70 @@ CREATE TABLE Branch (
     OpeningHours NVARCHAR(50)
 );
 
+-- Create Departments table
+CREATE TABLE Departments (
+    DepartmentID INT PRIMARY KEY IDENTITY(1,1),
+    DepartmentName NVARCHAR(100) UNIQUE NOT NULL
+);
+
+-- Create Operators table
+CREATE TABLE Operators (
+    OperatorID INT PRIMARY KEY IDENTITY(1,1),
+    OperatorName NVARCHAR(100),
+    BranchID INT,
+    AssignedDepartmentID INT,
+    FOREIGN KEY (BranchID) REFERENCES Branch(BranchID),
+    FOREIGN KEY (AssignedDepartmentID) REFERENCES Departments(DepartmentID)
+);
+
+-- Create Users table
+CREATE TABLE Users (
+    UserID INT PRIMARY KEY IDENTITY(1,1),
+    NRIC VARCHAR(20) UNIQUE NOT NULL,
+    PhoneNumber VARCHAR(20),
+    CreatedAt DATETIME DEFAULT GETDATE()
+);
+
+-- Create Chats table
+CREATE TABLE Chats (
+    ChatID INT PRIMARY KEY IDENTITY(1,1),
+    UserID INT,
+    BranchID INT,
+    DepartmentID INT,
+    OperatorID INT,
+    StartedAt DATETIME DEFAULT GETDATE(),
+    EndedAt DATETIME,
+    TransferredToCall BIT DEFAULT 0,
+    FOREIGN KEY (UserID) REFERENCES Users(UserID),
+    FOREIGN KEY (BranchID) REFERENCES Branch(BranchID),
+    FOREIGN KEY (DepartmentID) REFERENCES Departments(DepartmentID),
+    FOREIGN KEY (OperatorID) REFERENCES Operators(OperatorID)
+);
+
+-- Create Messages table
+CREATE TABLE Messages (
+    MessageID INT PRIMARY KEY IDENTITY(1,1),
+    ChatID INT,
+    SenderType NVARCHAR(20) CHECK (SenderType IN ('user', 'operator')),
+    MessageText NVARCHAR(MAX) NOT NULL,
+    SentAt DATETIME DEFAULT GETDATE(),
+    FOREIGN KEY (ChatID) REFERENCES Chats(ChatID)
+);
+
+-- Create CallQueue table
+CREATE TABLE CallQueue (
+    QueueID INT PRIMARY KEY IDENTITY(1,1),
+    ChatID INT,
+    UserID INT,
+    PhoneNumber VARCHAR(20) NOT NULL,
+    QueueNumber INT NOT NULL,
+    EstimatedWaitTime NVARCHAR(50),
+    Status NVARCHAR(20) CHECK (Status IN ('waiting', 'in_call', 'completed')) DEFAULT 'waiting',
+    RequestedAt DATETIME DEFAULT GETDATE(),
+    FOREIGN KEY (ChatID) REFERENCES Chats(ChatID),
+    FOREIGN KEY (UserID) REFERENCES Users(UserID)
+);
+
 -- Create ContactUs table
 CREATE TABLE ContactUs (
     ContactID INT PRIMARY KEY IDENTITY(1,1),
@@ -51,72 +115,6 @@ CREATE TABLE AvailableSlots (
     StartTime TIME NOT NULL,
     EndTime TIME NOT NULL,
     IsBooked BIT DEFAULT 0
-);
-
--- Additional Tables for Live Chat
-
--- Create Users table
-CREATE TABLE Users (
-    UserID INT PRIMARY KEY IDENTITY(1,1),
-    NRIC VARCHAR(20) UNIQUE NOT NULL,
-    PhoneNumber VARCHAR(20),
-    CreatedAt DATETIME DEFAULT GETDATE()
-);
-
--- Create Departments table
-CREATE TABLE Departments (
-    DepartmentID INT PRIMARY KEY IDENTITY(1,1),
-    DepartmentName NVARCHAR(100) UNIQUE NOT NULL
-);
-
--- Create Chats table
-CREATE TABLE Chats (
-    ChatID INT PRIMARY KEY IDENTITY(1,1),
-    UserID INT,
-    BranchID INT,
-    DepartmentID INT,
-    OperatorID INT,
-    StartedAt DATETIME DEFAULT GETDATE(),
-    EndedAt DATETIME,
-    TransferredToCall BIT DEFAULT 0,
-    FOREIGN KEY (UserID) REFERENCES Users(UserID),
-    FOREIGN KEY (BranchID) REFERENCES Branch(BranchID),
-    FOREIGN KEY (DepartmentID) REFERENCES Departments(DepartmentID),
-    FOREIGN KEY (OperatorID) REFERENCES Operators(OperatorID)
-);
-
--- Create Messages table
-CREATE TABLE Messages (
-    MessageID INT PRIMARY KEY IDENTITY(1,1),
-    ChatID INT,
-    SenderType NVARCHAR(20) CHECK (SenderType IN ('user', 'operator')),
-    MessageText NVARCHAR(MAX) NOT NULL,
-    SentAt DATETIME DEFAULT GETDATE(),
-    FOREIGN KEY (ChatID) REFERENCES Chats(ChatID)
-);
-
--- Create Operators table
-CREATE TABLE Operators (
-    OperatorID INT PRIMARY KEY IDENTITY(1,1),
-    OperatorName NVARCHAR(100),
-    BranchID INT,
-    AssignedDepartmentID INT,
-    FOREIGN KEY (BranchID) REFERENCES Branch(BranchID),
-    FOREIGN KEY (AssignedDepartmentID) REFERENCES Departments(DepartmentID)
-);
-
--- Create CallQueue table
-CREATE TABLE CallQueue (
-    QueueID INT PRIMARY KEY IDENTITY(1,1),
-    ChatID INT,
-    UserID INT,
-    PhoneNumber VARCHAR(20) NOT NULL,
-    QueueNumber INT NOT NULL,
-    EstimatedWaitTime NVARCHAR(50),
-    Status NVARCHAR(20) CHECK (Status IN ('waiting', 'in_call', 'completed')) DEFAULT 'waiting',
-    RequestedAt DATETIME DEFAULT GETDATE(),
-    FOREIGN KEY (ChatID) REFERENCES Chats(ChatID),
-    FOREIGN KEY (UserID) REFERENCES Users(UserID)
 );
 
 -- Insert sample data into Branch table
@@ -187,7 +185,6 @@ END;
 
 CLOSE BranchCursor;
 DEALLOCATE BranchCursor;
-
 
 -- Declare variables for time slot generation
 DECLARE @StartDate DATE = '2024-11-06';  -- Start date
