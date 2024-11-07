@@ -4,6 +4,7 @@ import Calendar from '../components/calendar';
 import NavBar from '../components/navbar';
 import Footer from '../components/footer'; 
 import BackGround from '../images/booking-bg.png';
+import Chatbot from '../components/chatbot';
 
 function BookingPage() {
     const [selectedBranch, setSelectedBranch] = useState(null);
@@ -212,6 +213,9 @@ function BookingPage() {
             {/* Footer Component */}
             <Footer /> 
             </section>
+
+            {/* Chatbot Button and Interface */}
+            <Chatbot />
         </div>
     );
 }
