@@ -5,6 +5,7 @@ import NavBar from '../components/navbar';
 import Footer from '../components/footer'; 
 import BackGround from '../images/booking-bg.png';
 import Chatbot from '../components/chatbot';
+import { Link } from 'react-router-dom';
 
 function BookingPage() {
     const [selectedBranch, setSelectedBranch] = useState(null);
@@ -83,6 +84,15 @@ function BookingPage() {
                     alt="Appointment Banner"
                     className="w-full h-full object-cover object-[center_10%]" 
                 />
+
+                {/* Back button */}
+                <Link to="/HomePage">
+                    <div className="absolute top-40 left-16 text-lg font-semibold cursor-pointer z-10 flex items-center hover:underline hover:decoration-white">
+                        <img src={require('../images/arrow-left-red.svg').default} alt="Back" className="w-5 h-5 mr-2" />
+                        <span className="text-white">Back to Help & Support</span>
+                    </div>
+                </Link>
+
                 <div className="absolute inset-0 flex flex-col items-center justify-center text-white bg-black bg-opacity-60">
                     <h1 className="text-3xl md:text-5xl font-bold mt-32 md:mt-40">Book an Appointment</h1>
                     <p className="text-center mt-3 max-w-2xl text-base md:text-lg leading-tight px-4">

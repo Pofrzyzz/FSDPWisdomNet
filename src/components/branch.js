@@ -34,7 +34,7 @@ function Branch({ onBranchSelect }) {
                     </svg>
                 </button>
                 {isOpen && (
-                    <div className="absolute z-20 left-1/2 transform -translate-x-1/2 w-72 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg overflow-y-auto h-40   ">
+                    <div className="absolute z-20 left-1/2 transform -translate-x-1/2 w-72 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg overflow-y-auto h-50 w-96">
                         {branches.map((branch) => (
                             <div
                                 key={branch.id}
