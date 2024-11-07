@@ -54,7 +54,7 @@ function CardsFaq() {
 
                 {/* Centered title */}
                 <div className="font-geomanist text-7xl font-bold absolute inset-0 flex items-center justify-center text-white font-bold transform -translate-y-[-18%]">
-                    Cards
+                    Accounts
                 </div>
                 {/* Bottom border */}
                 <div className="w-full h-[2px] bg-red-500 absolute bottom-0"></div>
