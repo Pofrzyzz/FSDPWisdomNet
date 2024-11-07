@@ -9,6 +9,7 @@ import Help from "../components/needhelp";
 import Footer from "../components/footer"
 import Modal from "../components/popup";
 
+
 function CardsFaq() {
 
     const [isExpanded, setIsExpanded] = useState(false);
