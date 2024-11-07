@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import NavBar from '../components/navbar';
 import ContactBanner from '../images/ContactBanner.svg';
 import Footer from '../components/footer'
+import Chatbot from '../components/chatbot';
 
 function ContactUs() {
   const [mobileNumber, setMobileNumber] = useState('');
@@ -135,6 +136,8 @@ function ContactUs() {
       )}
        </section>
        <section><Footer /> </section>
+       {/* Chatbot Button and Interface */}
+       <Chatbot />
     </div>
 
   

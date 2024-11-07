@@ -3,6 +3,7 @@ import NavBar from '../components/navbar';
 import { useLocation, useNavigate } from 'react-router-dom';
 import QueueIcon from '../images/QueueIcon.svg';
 import InfoIcon from '../images/InfoIcon.svg';
+import Chatbot from '../components/chatbot';
 
 function InQueue() {
   const navigate = useNavigate();
@@ -76,6 +77,10 @@ function InQueue() {
           Thank you for your patience. We will call you as soon as it is your turn.
         </p>
       </div>
+
+      {/* Chatbot Button and Interface */}
+      <Chatbot />
+      
     </div>
   );
 }

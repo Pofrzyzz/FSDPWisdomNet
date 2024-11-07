@@ -3,7 +3,7 @@ import Navbar from '../components/navbar';
 import CommonFaqs from '../components/commonfaqs';
 import ContactBooking from '../components/contactbooking';
 import Footer from '../components/footer';
-import Help from '../components/help';
+import Help from '../components/needhelp';
 import search from '../images/search.svg';
 import Chatbot from '../components/chatbot';
 
