@@ -5,10 +5,9 @@ import NavBar from "../components/navbar";
 import CommonFaqs from "../components/commonfaqs";
 import CardBanner from '../images/CardBanner.png';
 import ChevronRight from '../images/chevron-right.svg';
-import Help from "../components/needhelp";
+import Help from "../components/help";
 import Footer from "../components/footer"
 import Modal from "../components/popup";
-import Chatbot from '../components/chatbot';
 
 function CardsFaq() {
 
@@ -55,7 +54,7 @@ function CardsFaq() {
 
                 {/* Centered title */}
                 <div className="font-geomanist text-7xl font-bold absolute inset-0 flex items-center justify-center text-white font-bold transform -translate-y-[-18%]">
-                    Cards
+                    Investments
                 </div>
                 {/* Bottom border */}
                 <div className="w-full h-[2px] bg-red-500 absolute bottom-0"></div>
@@ -476,9 +475,6 @@ function CardsFaq() {
             {/* Footer Component */}
             <Footer /> 
             </section>
-
-            {/* Chatbot Button and Interface */}
-            <Chatbot />
         </div>
     );
 }
