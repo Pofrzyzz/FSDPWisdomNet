@@ -5,9 +5,10 @@ import NavBar from "../components/navbar";
 import CommonFaqs from "../components/commonfaqs";
 import CardBanner from '../images/CardBanner.png';
 import ChevronRight from '../images/chevron-right.svg';
-import Help from "../components/help";
+import Help from "../components/needhelp";
 import Footer from "../components/footer"
 import Modal from "../components/popup";
+
 
 function CardsFaq() {
 
