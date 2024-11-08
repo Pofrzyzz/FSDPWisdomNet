@@ -43,7 +43,7 @@ function NavBar() {
                             <a href="#" className="text-gray-500 hover:text-gray-900">Investments</a>
                             <a href="#" className="text-gray-500 hover:text-gray-900">Advisory</a>
                             <a href="#" className="text-gray-500 hover:text-gray-900">More</a>
-                            <a href="#" className="text-red-500 font-bold hover:text-red-800">Login</a>
+                            <a href="LoginPage" className="text-red-500 font-bold hover:text-red-800">Login</a>
                         </div>
                     </div>
                 </div>

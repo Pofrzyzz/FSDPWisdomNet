@@ -10,6 +10,8 @@ import CardsFaq from './pages/cards'
 import AccountsFaq from './pages/accounts'
 import GeneralFaq from './pages/generalfaq'
 import LoansFaq from './pages/loans'
+import LoginPage from './pages/login';
+import SignUpPage from './pages/signup';
 
 
 function App() {
@@ -17,7 +19,7 @@ function App() {
     <Router>
       <ScrollToTop />
       <Routes>
-        <Route path="/" element={<HomePage />} />
+        <Route path="/" element={<LoginPage />} />
         <Route path="/HomePage" element={<HomePage />} />
         <Route path="/BookingPage" element={<BookingPage />} />
         <Route path="/ContactUsPage" element={<ContactUsPage />} />
@@ -26,6 +28,8 @@ function App() {
         <Route path="/AccountsFaq" element={<AccountsFaq />} />
         <Route path="/LoansFaq" element={<LoansFaq />} />
         <Route path="/GeneralFaq" element={<GeneralFaq />} />
+        <Route path="/LoginPage" element={<LoginPage/>}/>
+        <Route path="/SignUpPage" element={<SignUpPage/>}/>
       </Routes>
     </Router>
   );
