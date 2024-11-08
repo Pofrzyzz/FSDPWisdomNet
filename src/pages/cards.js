@@ -1,5 +1,6 @@
 import React from "react";
 import { useState } from "react";
+import { useEffect } from "react";
 import { Link } from 'react-router-dom';
 import NavBar from "../components/navbar";
 import CommonFaqs from "../components/commonfaqs";
@@ -11,6 +12,10 @@ import Modal from "../components/popup";
 import Chatbot from '../components/chatbot';
 
 function CardsFaq() {
+
+    useEffect(() => {
+        document.title = "Cards | Help & Support | OCBC Singapore";
+    }, []);
 
     const [isExpanded, setIsExpanded] = useState(false);
 

@@ -1,15 +1,21 @@
 import React from "react";
+import { useEffect } from "react";
 import { useState } from "react";
 import { Link } from 'react-router-dom';
 import NavBar from "../components/navbar";
 import CommonFaqs from "../components/commonfaqs";
-import CardBanner from '../images/CardBanner.png';
+import LoanBanner from '../images/loan.png';
 import ChevronRight from '../images/chevron-right.svg';
 import Help from "../components/needhelp";
 import Footer from "../components/footer"
 import Modal from "../components/popup";
+import Chatbot from '../components/chatbot';
 
-function CardsFaq() {
+function LoansFaq() {
+
+    useEffect(() => {
+        document.title = "Loans | Help & Support | OCBC Singapore";
+    }, []);
 
     const [isExpanded, setIsExpanded] = useState(false);
 
@@ -40,8 +46,8 @@ function CardsFaq() {
             <section className="flex flex-col min-h-screen">
             <div className="relative w-full h-80 md:h-96 overflow-hidden">
                 <img
-                    src={CardBanner}
-                    alt="Card Banner"
+                    src={LoanBanner}
+                    alt="Loan Banner"
                     className="w-full h-full object-cover"
                 />
                 {/* Back button */}
@@ -65,48 +71,45 @@ function CardsFaq() {
 
             {/* Top 4 square buttons */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-8 mx-auto max-w-[1280px]">
-                {/* Card Activation Button */}
+                {/* Full Loan Repayment */}
                 <div 
                     onClick={() => openModal(
                         <div>
-                            <p className="text-lg font-semibold">Credit and Debit Card Activation</p>
-                            <p>You can activate your credit or debit card via OCBC using one of the following channels:</p>
+                            <ul>
+                            <p className="font-bold">Full Redemption of Loans for Mortgaged Property: </p>
+                                <ul>
+                                <li>Submit an application with the Home Loan Service Form <strong>2 months</strong> before the intended prepayment date for local properties.</li>
+                                <li>For overseas properties, submit an application with the Home Loan Service Form <strong>3 months</strong> before the intended prepayment date.</li>
+                                <li>If your loan is tagged to Singapore Inter-Bank Offer Rate (SIBOR), Singapore Overnight Rate (SOR), or Cost of Funds, the prepayment date will be the first Rate Review Date (RRD) after the notice period.</li>
+                                <li>You will need to pay interest in lieu if insufficient notice is given.</li>
+                                </ul>
 
-                            {/* OCBC App Steps */}
-                            <p className="mt-4 font-semibold">Via OCBC App</p>
-                            <ul className="list-disc pl-6">
-                                <li>Log in to the OCBC app.</li>
-                                <li>Tap on the “More” icon in the bottom navigation bar.</li>
-                                <li>Tap on “Card services”.</li>
-                                <li>Select "Activate card".</li>
-                                <li>Select “Activate credit/debit card”.</li>
-                                <li>Select your card and enter the expiry date to activate.</li>
-                                <li>Tap on “Next”.</li>
-                                <li>Tap on “Agree” after reviewing the Terms and Conditions.</li>
-                                <li>Tap on “Submit” after reviewing the activation details.</li>
+                            <p className="mt-4 font-bold">Clawback of Cash Reward and Prepayment Penalty: </p>
+                                <ul>
+                                <li>Any cash reward you received may be clawed back.</li>
+                                <li>Clawback of cash reward and any prepayment penalty will be indicated in the Letter of Offer (LO) or the latest Supplementary Letter of Offer (SLO).</li>
+                                </ul>
+
+                            <p className="mt-4 font-bold">Redemption Payment Options: </p>
+                                <ul>
+                                <li>Deduct the full redemption amount from the OCBC account used for monthly instalments.</li>
+                                <li>Alternatively, arrange with your appointed law firm to write to the Bank to facilitate your request.</li>
+                                <li>If you appoint a law firm that is not on the OCBC panel, OCBC Bank has the right to appoint a panel firm to act for the Bank, and you will be charged legal fees by both firms.</li>
+                                </ul>
+
+                            <p className="mt-4 font-bold">Processing Issues: </p>
+                                <ul>
+                                <li>If there are issues processing your request, you will receive an email with more details.</li>
+                                </ul>
                             </ul>
-
-                            {/* OCBC Internet Banking Steps */}
-                            <p className="mt-4 font-semibold">Via OCBC Internet Banking</p>
-                            <ul className="list-disc pl-6">
-                                <li>Log in to OCBC Internet Banking with your access code and PIN.</li>
-                                <li>Navigate to “Customer Service” → “Card services” → “Activate credit/debit card”.</li>
-                                <li>Select your card and enter the expiry date.</li>
-                                <li>Review and check the Terms and Conditions.</li>
-                                <li>Tap on “Next”.</li>
-                                <li>Tap on “Submit” after reviewing the activation details.</li>
-                            </ul>
-
-                            {/* Alternative Option */}
-                            <p className="mt-4">Alternatively, you can use the <a href="your-link-here" className="text-blue-500 underline">card activation form</a> here.</p>
                         </div>, 
-                        "Card Activation"
+                        "Full Loan Repayment"
                     )} 
                     className="cursor-pointer bg-[#F2F2F2] border-2 border-gray-600 p-4 text-left shadow-md rounded-md hover:shadow-lg hover:bg-[#E0E0E0] w-[300px] h-[150px] relative"
                 >
                     <div className="flex justify-between items-start">
-                        <h3 className="font-bold text-xl max-w-[10rem]">Card Activation</h3>
-                        <img src={require('../images/CardActivation.webp')} alt="Card Activation" className="w-10 h-10" />
+                        <h3 className="font-bold text-xl max-w-[10rem]">Full Loan Repayment</h3>
+                        <img src={require('../images/loan-repayment.svg').default} alt="Card Activation" className="w-10 h-10" />
                     </div>
                     <div className="absolute bottom-4 right-4 flex items-center">
                         <p className="text-lg mr-1">Learn more</p>
@@ -114,38 +117,59 @@ function CardsFaq() {
                     </div>
                 </div>
 
-                {/* Overseas Card Activation Button */}
+                {/* Partial Loan Repayment} */}
                 <div 
                     onClick={() => openModal(
                         <div>
-                            <p className="text-lg font-semibold">OCBC Internet Banking</p>
-                            <ul className="list-disc pl-6">
-                                <li>Log in to OCBC Online Banking with your access code and PIN or Singpass.</li>
-                                <li>Scroll over “Customer Service” → “Cards” and select “Overseas card usage”.</li>
-                                <li>Select the card to link/delink to an account for ATM transactions.</li>
-                                <li>Select the account to link and tap on the "Next" button to confirm.</li>
-                            </ul>
-                            <p className="mt-4">Note: OCBC Business Debit Card customers without OCBC Online Banking access will not be able to activate the overseas ATM cash withdrawal on their card via Online Banking. To activate overseas cash withdrawal, please submit the <a href="your-link-here" className="text-blue-500 underline">OCBC Business Debit Card Maintenance form</a>.</p>
+                            <ul>
+                            <p className="font-bold">Ad-Hoc Payment to Reduce Outstanding Loan Balance: </p>
+                                <ul>
+                                <li>You can make an ad-hoc payment via cash, CPF, or a combination of both for your Private Home Loan or HDB Home Loan by submitting a request with the Home Loan Service Form.</li>
+                                <li>Submit an application with the Home Loan Service Form <strong>1 month</strong> before the intended prepayment date.</li>
+                                <li>If your loan is tagged to Singapore Inter-Bank Offer Rate (SIBOR), Singapore Overnight Rate (SOR), or Cost of Funds, the prepayment date will be the first Rate Review Date (RRD) after the required 1-month notice period.</li>
+                                <li>You will need to pay interest in lieu if insufficient notice is given.</li>
+                                </ul>
 
-                            <p className="text-lg font-semibold mt-8">OCBC Digital App</p>
-                            <ul className="list-disc pl-6">
-                                <li>Log in to the OCBC Digital app.</li>
-                                <li>Tap on the menu bar on the top left of the screen.</li>
-                                <li>Tap on “Card services”.</li>
-                                <li>Select “Manage overseas usage”.</li>
-                                <li>Select the card to enable/disable overseas cash withdrawal.</li>
-                                <li>Indicate the period for overseas usage.</li>
-                                <li>Tap on the “Next” and “Agree” buttons.</li>
-                                <li>Tap on the “Submit” button after reviewing the changes.</li>
+                            <p class="mt-4 font-bold">Prepayment Requirements and Penalties: </p>
+                                <ul>
+                                <li>Your intended prepayment amount should be a minimum of S$5,000 and in multiples of S$1,000.</li>
+                                <li>Prepayment penalty (if any) will depend on your interest rate package and whether your loan is still within the lock-in period.</li>
+                                <li>Any prepayment penalty will be indicated in the Letter of Offer (LO) or the latest Supplementary Letter of Offer (SLO).</li>
+                                </ul>
+
+                            <p className="mt-4 font-bold">Options After Full Loan Disbursement: </p>
+                                <ul>
+                                <li>You can choose to keep the instalment amount unchanged or revise it accordingly.</li>
+                                <li>If using CPF funds for monthly instalments, inform CPF Board to adjust the monthly deduction from your CPF account to the Bank.</li>
+                                </ul>
+
+                            <p className="mt-4 font-bold">System-Generated Advice from the Bank: </p>
+                                <ul>
+                                <li>Confirmation of receipt of notice</li>
+                                <li>Amount of prepayment</li>
+                                <li>Effective date of prepayment</li>
+                                </ul>
+
+                            <p className="mt-4 font-bold">Instructing CPF Board for Funds Remittance or Cash Credit: </p>
+                                <ul>
+                                <li>Complete CPF Form 4B (for Private Home Loan) or CPF Form HBL4 (for HDB Loan) at <a href="https://www.cpf.gov.sg" target="_blank">www.cpf.gov.sg</a> (log in with your Singpass).</li>
+                                <li>You will receive a system-generated advice with the effective date and revised instalment amount after the prepayment is processed.</li>
+                                </ul>
+
+                            <p className="mt-4 font-bold">Processing Issues: </p>
+                                <ul>
+                                <li>If there are issues processing your request, you will receive an email with more details.</li>
+                                </ul>
                             </ul>
+
                         </div>, 
-                        "Overseas Card Activation"
+                        "Partial Loan Repayment"
                     )} 
                     className="cursor-pointer bg-[#F2F2F2] border-2 border-gray-600 p-4 text-left shadow-md rounded-md hover:shadow-lg hover:bg-[#E0E0E0] w-[300px] h-[150px] relative"
                 >
                     <div className="flex justify-between items-start">
-                        <h3 className="font-bold text-xl max-w-[10rem]">Overseas Card Activation</h3>
-                        <img src={require('../images/globe.svg').default} alt="Overseas Card Usage" className="w-10 h-10" />
+                        <h3 className="font-bold text-xl max-w-[10rem]">Partial Loan Repayment</h3>
+                        <img src={require('../images/loan-repayment.svg').default} alt="Partial Loan Repayment" className="w-10 h-10" />
                     </div>
                     <div className="absolute bottom-4 right-4 flex items-center">
                         <p className="text-lg mr-1">Learn more</p>
@@ -153,75 +177,49 @@ function CardsFaq() {
                     </div>
                 </div>
 
-                {/* Apply for Card Button */}
+                {/* Cancel Partial Prepayment */}
                 <div 
                     onClick={() => openModal(
                         <div>
-                            <p className="text-lg font-semibold">Why should I use Myinfo to complete my application?</p>
-                            <ul className="list-disc pl-6">
-                                <li>Myinfo contains Singapore government-verified information on you, which you can allow banks to use to support your application.</li>
-                                <li>Using Myinfo will auto-populate the majority of the fields in the application form, shortening the process and providing an almost immediate application outcome.</li>
+                            <ul>
+                        <li class="font-bold mt-4">Notice Requirement:
+                            <ul>
+                            <li>We need to receive your notice at least 1 week before the proposed deduction date.</li>
                             </ul>
+                        </li>
 
-                            <p className="text-lg font-semibold mt-8">If I use Myinfo to make my application, is it possible to edit fields pre-filled by Myinfo? If so, what are the editable fields?</p>
-                            <ul className="list-disc pl-6">
-                                <li>As Myinfo contains verified information, only some fields are editable, including:
-                                    <ul className="list-disc pl-6">
-                                        <li>Mobile number</li>
-                                        <li>Email address</li>
-                                        <li>Name of employer (if you are a Singaporean or PR)</li>
-                                        <li>Education level</li>
-                                    </ul>
-                                </li>
-                                <li>To update non-editable fields, contact the relevant agencies as indicated in Myinfo.</li>
-                                <li>If you are using a different mailing address from what is in Myinfo, please complete the other form instead.</li>
+                        <li class="font-bold mt-4">Please Include in Your Notice:
+                            <ul>
+                            <li>Date of the letter from the Bank confirming your partial repayment instruction</li>
+                            <li>Loan account number and mortgage property details</li>
+                            <li>Instructions to cancel the repayment (indicate the amount)</li>
+                            <li>Your signature on the letter</li>
                             </ul>
+                        </li>
 
-                            <p className="text-lg font-semibold mt-8">I am an existing OCBC credit card holder. Can I apply for a 2nd credit card via this channel?</p>
-                            <ul className="list-disc pl-6">
-                                <li>If you wish to apply for a 2nd credit card and are satisfied with your current credit limit, apply via Internet Banking for instant approval.</li>
-                                <li>You will receive your card details instantly through a link sent via SMS and email.</li>
+                        <li class="font-bold mt-4">Submit Your Notice:
+                            <ul>
+                            <li>Bring the signed letter to any OCBC Bank branch</li>
+                            <li>Or mail it to:
+                                <div className="mt-2">
+                                <li>Loan Operations (Secured Loan)</li>
+                                <li>Bras Basah Post Office</li>
+                                <li>Locked Bag Service No. 8</li>
+                                Singapore 911886
+                                </div>
+                            </li>
                             </ul>
+                        </li>
+                        </ul>
 
-                            <p className="text-lg font-semibold mt-8">I am currently receiving the bank's one-time passwords through a mobile number that is different from the one I used in my application. Will this change with my application?</p>
-                            <ul className="list-disc pl-6">
-                                <li>No, your one-time passwords will continue to be sent to the original mobile number.</li>
-                            </ul>
-
-                            <p className="text-lg font-semibold mt-8">I completed my application at a roadshow. Is this different from applying through the bank's website?</p>
-                            <ul className="list-disc pl-6">
-                                <li>Your application is not processed immediately at a roadshow. After one hour, you will receive an SMS and email with a link to trigger instant processing.</li>
-                            </ul>
-
-                            <p className="text-lg font-semibold mt-8">When will I be required to use the hardcopy application form?</p>
-                            <ul className="list-disc pl-6">
-                                <li>You will need a hardcopy form if:
-                                    <ul className="list-disc pl-6">
-                                        <li>Applying for a supplementary card.</li>
-                                        <li>Your mailing address is outside of Singapore.</li>
-                                    </ul>
-                                </li>
-                                <li>Visit any OCBC branch for a hardcopy form.</li>
-                            </ul>
-
-                            <p className="text-lg font-semibold mt-8">What are the system downtimes and how will I be impacted by it?</p>
-                            <ul className="list-disc pl-6">
-                                <li>From 9:30 pm to 6 am daily, and on Sundays and Public Holidays (for ExtraCash Loans), you may receive an approval status but won’t receive SMS and email notifications with the link to product details.</li>
-                                <li>From 12 am to 8 am daily, due to Credit Bureau maintenance, your unsecured credit card or loan/line application will not receive an instantaneous outcome.</li>
-                            </ul>
-
-                            <p className="text-lg font-semibold mt-8">How will I be contacted if my application requires pending documents or has been rejected?</p>
-                            <ul className="list-disc pl-6">
-                                <li>You will receive an email and a physical letter for each product applied for, informing you of any required documents or if your application has been rejected.</li>
-                            </ul>
                         </div>, 
-                        "Apply for Card"
+                        "Cancel Partial Prepayment"
                     )}
                     className="cursor-pointer bg-[#F2F2F2] border-2 border-gray-600 p-4 text-left shadow-md rounded-md hover:shadow-lg hover:bg-[#E0E0E0] w-[300px] h-[150px] relative"
                 >
                     <div className="flex justify-between items-start">
-                        <h3 className="font-bold text-xl max-w-[10rem]">Apply for Card</h3>
-                        <img src={require('../images/form.svg').default} alt="Apply for Card" className="w-10 h-10" />
+                        <h3 className="font-bold text-xl max-w-[10rem]">Cancel Partial Prepayment</h3>
+                        <img src={require('../images/form.svg').default} alt="Cancel Partial Prepayment" className="w-10 h-10" />
                     </div>
                     <div className="absolute bottom-4 right-4 flex items-center">
                         <p className="text-lg mr-1">Learn more</p>
@@ -229,60 +227,30 @@ function CardsFaq() {
                     </div>
                 </div>
 
-                {/* Credit Limit Button */}
+                {/* Change Loan Interest Rate Package*/}
                 <div 
                     onClick={() => openModal(
                         <div>
-                            <p className="text-lg font-semibold">Why has my credit limit gone down when I cannot see the transaction in my Internet Banking?</p>
-                            <ul className="list-disc pl-6">
-                                <li>When you perform a transaction, the amount is earmarked from your credit limit first.</li>
-                                <li>The transaction may not appear in Internet Banking immediately because it hasn’t been posted yet.</li>
-                                <li>Once the merchant records and posts the transaction to your card, it will appear in Internet Banking, and the amount will be deducted from your credit limit.</li>
-                            </ul>
+                            <ul>
+                            <p className="font-bold">Learn More About Repricing: </p>
+                                <ul>
+                                <li>To learn more about repricing your home loan, visit our <a href="URL_Here" target="_blank">Home Loan Repricing page</a>.</li>
+                                </ul>
 
-                            <p className="text-lg font-semibold mt-8">Why doesn't the total available credit limit on my statement match with the spending on my cards?</p>
-                            <ul className="list-disc pl-6">
-                                <li>The total available credit limit on your statement considers the outstanding and earmarked amounts on all your cards.</li>
-                                <li>Example breakdown:
-                                    <table className="table-auto border-collapse border border-gray-300 mt-4">
-                                        <thead>
-                                            <tr>
-                                                <th className="border border-gray-300 px-4 py-2">Card 1</th>
-                                                <th className="border border-gray-300 px-4 py-2">Card 2</th>
-                                                <th className="border border-gray-300 px-4 py-2">Card 3</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td className="border border-gray-300 px-4 py-2">Outstanding amount: S$500</td>
-                                                <td className="border border-gray-300 px-4 py-2">Outstanding amount: S$500</td>
-                                                <td className="border border-gray-300 px-4 py-2">Outstanding amount: S$500</td>
-                                            </tr>
-                                            <tr>
-                                                <td className="border border-gray-300 px-4 py-2">Earmarked amount: S$700</td>
-                                                <td className="border border-gray-300 px-4 py-2">Earmarked amount: -</td>
-                                                <td className="border border-gray-300 px-4 py-2">Earmarked amount: S$250</td>
-                                            </tr>
-                                            <tr>
-                                                <td colSpan="3" className="border border-gray-300 px-4 py-2 text-center font-semibold">Total credit limit: S$10,000</td>
-                                            </tr>
-                                            <tr>
-                                                <td colSpan="3" className="border border-gray-300 px-4 py-2 text-center font-semibold">Total available credit limit: S$7,550</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </li>
-                                <li>The total available credit limit is based on the point in time your statement was generated, so it won’t include any transactions made afterward.</li>
-                                <li>For a more accurate total available credit limit, log in to OCBC Internet Banking or the OCBC Digital app.</li>
+                            <p className="font-bold mt-4">Request to Reprice Your Home Loan: </p>
+                                <ul>
+                                <li>Use the <a href="URL_Here" target="_blank">application form</a> to submit a request to reprice your home loan.</li>
+                                <li>We will inform you of the outcome or request more information within two weeks of your application date.</li>
+                                </ul>
                             </ul>
                         </div>, 
-                        "Credit Limit"
+                        "Change Loan Interest Rate Package"
                     )}
                     className="cursor-pointer bg-[#F2F2F2] border-2 border-gray-600 p-4 text-left shadow-md rounded-md hover:shadow-lg hover:bg-[#E0E0E0] w-[300px] h-[150px] relative"
                 >
                     <div className="flex justify-between items-start">
-                        <h3 className="font-bold text-xl max-w-[10rem]">Credit Limit</h3>
-                        <img src={require('../images/CardCancel.png')} alt="Credit Limit" className="w-10 h-8" />
+                        <h3 className="font-bold text-xl max-w-[12rem]">Change Loan Interest Rate Package</h3>
+                        <img src={require('../images/loan-change.svg').default} alt="Change Loan Interest Rate Package" className="w-10 h-10" />
                     </div>
                     <div className="absolute bottom-4 right-4 flex items-center">
                         <p className="text-lg mr-1">Learn more</p>
@@ -293,46 +261,46 @@ function CardsFaq() {
 
             {/* Bottom 4 Squares */}
             <div id="extraButtons" className={isExpanded ? "grid grid-cols-2 md:grid-cols-4 gap-8 mt-8 mx-auto max-w-[1280px]" : "hidden"}>
-            {/* Check Balance */}
+            {/* Change Insurance Tenure Length */}
             <div 
                 onClick={() => openModal(
                     <div>
-                        <p className="text-lg font-semibold">Internet Banking</p>
-                        <ul className="list-disc pl-6">
-                            <li>Log in to OCBC Online Banking.</li>
-                            <li>Click on “Your Accounts”.</li>
-                            <li>From the drop-down, click “Overview”.</li>
-                            <li>Scroll down to view “What you owe (Liabilities)” under Credit Cards.</li>
-                            <li>Look for “Amount Due” for the specific card type.</li>
+                        <ul>
+                        <p className="font-bold">Submitting a Request:</p>
+                        <ul>
+                            <li>Submit an application with the Home Loan Service Form.</li>
+                            <li>There will be a processing fee of S$500 for your request.</li>
                         </ul>
 
-                        <p className="text-lg font-semibold mt-8">OCBC Digital</p>
-                        <ul className="list-disc pl-6">
-                            <li>Log in to the OCBC Digital app.</li>
-                            <li>Select "What you owe".</li>
-                            <li>Select the relevant Credit Card to view your Credit Card balance.</li>
+                        <p className="font-bold mt-4">Review and Processing:</p>
+                        <ul>
+                            <li>Your request is subject to review by the Bank.</li>
+                            <li>The request can only be processed if there are sufficient funds in your account for the deduction of relevant fees (if any).</li>
+                            <li>Your monthly instalment amount will be revised thereafter.</li>
+                            <li>You will receive a system-generated advice once your request is processed.</li>
                         </ul>
 
-                        <p className="text-lg font-semibold mt-8">Phone Banking</p>
-                        <ul className="list-disc pl-6">
-                            <li>Dial 1800 363 3333 (local) or +65 6363 3333 (overseas).</li>
-                            <li>Select your Language Preference.</li>
-                            <li>Press *3 and enter your phone banking access code and PIN, followed by #.</li>
-                            <li>Select 1 for Balance and transaction.</li>
-                            <li>Select 1 for Balance.</li>
-                            <li>Select 1 for Credit Card.</li>
+                        <p className="font-bold mt-4">Loan Tenure Adjustment Requests:</p>
+                        <ul>
+                            <li><strong>Lengthening Loan Tenure:</strong> The Bank will contact you within 2 working days after your application is submitted.</li>
+                            <li><strong>Shortening Loan Tenure:</strong> You will receive a system-generated advice once the request is processed.</li>
                         </ul>
-                        <p className="mt-4">Note: Your credit card balance does not include any payments or transactions made today.</p>
+
+                        <p className="font-bold mt-4">Processing Issues:</p>
+                        <ul>
+                            <li>If there are issues processing your request, you will receive an email with more details.</li>
+                        </ul>
+                        </ul>
                     </div>, 
-                    "Check Balance"
+                    "Change Loan Tenure Length"
                 )} 
                 className="cursor-pointer bg-[#F2F2F2] border-2 border-gray-600 p-4 text-left shadow-md rounded-md hover:shadow-lg hover:bg-[#E0E0E0] w-[300px] h-[150px] relative"
             >
                 <div className="flex justify-between items-start">
                     <h3 className="font-bold text-xl max-w-[10rem]">
-                        Check Balance
+                        Change Loan Tenure Length
                     </h3>
-                    <img src={require('../images/dollar.svg').default} alt="Check Balance" className="w-10 h-10" />
+                    <img src={require('../images/loan-changelength.svg').default} alt="Change Loan Tenure Length" className="w-10 h-10" />
                 </div>
                 <div className="absolute bottom-4 right-4 flex items-center">
                     <p className="text-lg mr-1">Learn more</p>
@@ -340,29 +308,48 @@ function CardsFaq() {
                 </div>
             </div>
             
-            {/* Check Transaction */}
+            {/* Change Debiting Account */}
             <div 
                 onClick={() => openModal(
                     <div>
-                        <p className="text-lg font-semibold">View Credit Card Details on Online Banking</p>
-                        <ul className="list-disc pl-6">
-                            <li>Log in to OCBC Online Banking.</li>
-                            <li>Click on “Your Accounts”.</li>
-                            <li>From the drop-down menu, click “Overview”.</li>
-                            <li>Scroll down to view “What you owe (Liabilities)” under Credit Cards.</li>
-                            <li>Click on the specific card type.</li>
-                            <li>From the popout tooltip, select "Details / Transactions".</li>
+                    <p className="font-bold">Changing the Debiting Account for Your Home Loan:</p>
+                    <ul>
+                        <li>You can submit a Home Loan Service Form application to change the debiting account of your loan.</li>
+                        <li>If you intend to change the debiting account to:
+                        <ul>
+                            <li>A joint account operated with joint signing authority</li>
+                            <li>A third-party account</li>
                         </ul>
+                        You may submit the appropriate consent form:
+                        <ul>
+                            <li>Consent Form for Direct Debit Authorisation (First Party)</li>
+                            <li>Consent Form for Direct Debit Authorisation (Third-Party)</li>
+                        </ul>
+                        Submit the form at any OCBC Bank branch or mail it to:
+                        <div className="mt-2 font-bold">
+                                <li>Loan Operations (Secured Loan)</li>
+                                <li>Bras Basah Post Office</li>
+                                <li>Locked Bag Service No. 8</li>
+                                Singapore 911886
+                                </div>
+                        </li>
+                    </ul>
+
+                    <p className="font-bold mt-4">After Processing:</p>
+                    <ul>
+                        <li>Once the request is processed, your monthly instalment and any fees relating to your home loan will be deducted from the new direct debiting account.</li>
+                    </ul>
+
                     </div>, 
-                    "Check Transaction"
+                    "Change Debiting Account"
                 )} 
                 className="cursor-pointer bg-[#F2F2F2] border-2 border-gray-600 p-4 text-left shadow-md rounded-md hover:shadow-lg hover:bg-[#E0E0E0] w-[300px] h-[150px] relative"
             >
                 <div className="flex justify-between items-start">
                     <h3 className="font-bold text-xl max-w-[10rem]">
-                        Check Transaction
+                        Change Debiting Account
                     </h3>
-                    <img src={require('../images/transaction.svg').default} alt="Check Transaction" className="w-10 h-10" />
+                    <img src={require('../images/loan-changeaccount.svg').default} alt="Change Debiting Account" className="w-10 h-10" />
                 </div>
                 <div className="absolute bottom-4 right-4 flex items-center">
                     <p className="text-lg mr-1">Learn more</p>
@@ -374,28 +361,27 @@ function CardsFaq() {
             <div 
                 onClick={() => openModal(
                     <div>
-                        <p className="text-lg font-semibold">Request a Replacement Card via OCBC Online Banking</p>
-                        <p>You can request a replacement card through OCBC Online Banking.</p>
-
-                        <p className="text-lg font-semibold mt-8">Request a Replacement Card via OCBC Digital</p>
-                        <ul className="list-disc pl-6">
-                            <li>Log in to the OCBC Digital app.</li>
-                            <li>Tap on the menu bar on the top left of the screen.</li>
-                            <li>Tap on "Card services".</li>
-                            <li>Select “Replace Card”.</li>
-                            <li>Select the card you wish to replace.</li>
-                            <li>Select the reason for replacing your card.</li>
+                        <ul>
+                    <p className="font-bold">Automatic Cancellation of Fire Insurance Upon Full Redemption of Housing Loan:</p>
+                    <ul>
+                        <li>The fire insurance will be automatically cancelled if:
+                        <ul>
+                            <li>An early full redemption is performed, and a lawyer was engaged to complete the redemption and discharging of the title deed; or</li>
+                            <li>The fire insurance was arranged by the Bank (e.g., through Great Eastern General).</li>
                         </ul>
+                        </li>
+                    </ul>
+                    </ul>
                     </div>, 
-                    "Card Replacement"
+                    "Cancel Fire Insurance Policy"
                 )}  
                 className="cursor-pointer bg-[#F2F2F2] border-2 border-gray-600 p-4 text-left shadow-md rounded-md hover:shadow-lg hover:bg-[#E0E0E0] w-[300px] h-[150px] relative"
             >
                 <div className="flex justify-between items-start">
-                    <h3 className="font-bold text-xl max-w-[10rem]">
-                        Card Replacement
+                    <h3 className="font-bold text-xl max-w-[12rem]">
+                    Cancel Fire Insurance Policy
                     </h3>
-                    <img src={require('../images/CardReplacement.png')} alt="Card Replacement" className="w-10 h-10" />
+                    <img src={require('../images/loan-delete.svg').default} alt="Cancel Fire Insurance Policy" className="w-10 h-10" />
                 </div>
                 <div className="absolute bottom-4 right-4 flex items-center">
                     <p className="text-lg mr-1">Learn more</p>
@@ -407,33 +393,32 @@ function CardsFaq() {
             <div 
                 onClick={() => openModal(
                     <div>
-                        <p className="text-lg font-semibold">OCBC Internet Banking</p>
-                        <ul className="list-disc pl-6">
-                            <li>Log in to OCBC Internet Banking.</li>
-                            <li>Click on “View accounts”.</li>
-                            <li>From the drop-down menu, click “Overview”.</li>
-                            <li>Scroll down to view “What you owe (Liabilities)” under Credit Cards.</li>
-                            <li>Click on the specific card type.</li>
-                            <li>From the drop-down menu, click “Documents”.</li>
+                        <ul>
+                        <p className="font-bold">Annual Home Loan Account Statement:</p>
+                        <ul>
+                            <li>You will receive a home loan account statement every year, dated 31 December.</li>
+                            <li>If your property is in Australia, you will receive an additional statement dated 30 June.</li>
+                            <li>If your property is in the United Kingdom, you will receive an additional statement dated 30 April.</li>
                         </ul>
 
-                        <p className="text-lg font-semibold mt-8">OCBC App</p>
-                        <ul className="list-disc pl-6">
-                            <li>Log in to the OCBC app.</li>
-                            <li>Tap on the “More” icon in the bottom navigation bar.</li>
-                            <li>Select “Documents – Statements & Letters”.</li>
-                            <li>Select “View documents”.</li>
+                        <p className="font-bold mt-4">Requesting Home Loan Account Statements:</p>
+                        <ul>
+                            <li>You can request home loan account statements by submitting the Account Information Update/Request form.</li>
+                            <li>This form is available in the Accounts section at <strong>OCBC Help and Support → Banking forms</strong>.</li>
+                            <li>There is no charge for retrieving your loan statement for the current year.</li>
+                            <li>A fee of S$50 plus Goods & Services Tax (GST) per statement applies for retrieving previous years’ statements.</li>
+                        </ul>
                         </ul>
                     </div>, 
-                    "Retrieve Statements"
+                    "Request Home Loan Statements"
                 )} 
                 className="cursor-pointer bg-[#F2F2F2] border-2 border-gray-600 p-4 text-left shadow-md rounded-md hover:shadow-lg hover:bg-[#E0E0E0] w-[300px] h-[150px] relative"
             >
                 <div className="flex justify-between items-start">
                     <h3 className="font-bold text-xl max-w-[10rem]">
-                        Retrieve Statements
+                    Request Home Loan Statements
                     </h3>
-                    <img src={require('../images/BankStatement.png')} alt="Retrieve Statements" className="w-10 h-10" />
+                    <img src={require('../images/BankStatement.png')} alt="Request Home Loan Statements" className="w-10 h-10" />
                 </div>
                 <div className="absolute bottom-4 right-4 flex items-center">
                     <p className="text-lg mr-1">Learn more</p>
@@ -475,8 +460,11 @@ function CardsFaq() {
             {/* Footer Component */}
             <Footer /> 
             </section>
+
+            {/* Chatbot Button and Interface */}
+            <Chatbot />
         </div>
     );
 }
 
-export default CardsFaq;
+export default LoansFaq;
