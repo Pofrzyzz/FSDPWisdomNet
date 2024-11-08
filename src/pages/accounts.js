@@ -1,16 +1,22 @@
 import React from "react";
 import { useState } from "react";
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import NavBar from "../components/navbar";
 import CommonFaqs from "../components/commonfaqs";
-import CardBanner from '../images/CardBanner.png';
+import AccountBanner from '../images/account.png';
 import ChevronRight from '../images/chevron-right.svg';
 import Help from "../components/needhelp";
 import Footer from "../components/footer"
 import Modal from "../components/popup";
+import Chatbot from '../components/chatbot';
 
 
-function CardsFaq() {
+function AccountFaq() {
+
+    useEffect(() => {
+        document.title = "Accounts | Help & Support | OCBC Singapore";
+    }, []);
 
     const [isExpanded, setIsExpanded] = useState(false);
 
@@ -41,8 +47,8 @@ function CardsFaq() {
             <section className="flex flex-col min-h-screen">
             <div className="relative w-full h-80 md:h-96 overflow-hidden">
                 <img
-                    src={CardBanner}
-                    alt="Card Banner"
+                    src={AccountBanner}
+                    alt="Account Banner"
                     className="w-full h-full object-cover"
                 />
                 {/* Back button */}
@@ -66,48 +72,56 @@ function CardsFaq() {
 
             {/* Top 4 square buttons */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-8 mx-auto max-w-[1280px]">
-                {/* Card Activation Button */}
+                {/* Apply for Cheque Book */}
                 <div 
                     onClick={() => openModal(
                         <div>
-                            <p className="text-lg font-semibold">Credit and Debit Card Activation</p>
-                            <p>You can activate your credit or debit card via OCBC using one of the following channels:</p>
+                            <ul>
+                                <p className="font-bold">How to Apply for a Cheque Book via OCBC Internet Banking or OCBC App</p>
 
-                            {/* OCBC App Steps */}
-                            <p className="mt-4 font-semibold">Via OCBC App</p>
-                            <ul className="list-disc pl-6">
-                                <li>Log in to the OCBC app.</li>
-                                <li>Tap on the “More” icon in the bottom navigation bar.</li>
-                                <li>Tap on “Card services”.</li>
-                                <li>Select "Activate card".</li>
-                                <li>Select “Activate credit/debit card”.</li>
-                                <li>Select your card and enter the expiry date to activate.</li>
-                                <li>Tap on “Next”.</li>
-                                <li>Tap on “Agree” after reviewing the Terms and Conditions.</li>
-                                <li>Tap on “Submit” after reviewing the activation details.</li>
-                            </ul>
+                                <p className="mt-4 font-semibold">Processing Times:</p>
+                                    <ul>
+                                    <li>Requests submitted <strong>before 7pm (Monday to Friday)</strong> and <strong>5pm (Saturday)</strong> will take immediate effect.</li>
+                                    <li>Requests submitted <strong>after these timings</strong> will be processed on the <strong>next working day</strong>.</li>
+                                    </ul>
 
-                            {/* OCBC Internet Banking Steps */}
-                            <p className="mt-4 font-semibold">Via OCBC Internet Banking</p>
-                            <ul className="list-disc pl-6">
-                                <li>Log in to OCBC Internet Banking with your access code and PIN.</li>
-                                <li>Navigate to “Customer Service” → “Card services” → “Activate credit/debit card”.</li>
-                                <li>Select your card and enter the expiry date.</li>
-                                <li>Review and check the Terms and Conditions.</li>
-                                <li>Tap on “Next”.</li>
-                                <li>Tap on “Submit” after reviewing the activation details.</li>
-                            </ul>
+                                <p className="mt-4 font-bold">Via OCBC Internet Banking:</p>
+                                    <ul>
+                                    <li>Log in to Internet banking with your <strong>Access Code and PIN</strong>.</li>
+                                    <li>At the top menu, click on <strong>Customer service → Cheque services → Request cheque book</strong>.</li>
+                                    </ul>
 
-                            {/* Alternative Option */}
-                            <p className="mt-4">Alternatively, you can use the <a href="your-link-here" className="text-blue-500 underline">card activation form</a> here.</p>
+                                <p className="mt-4 font-bold">Via OCBC App:</p>
+                                    <ul>
+                                    <li>Log in to the <strong>OCBC app</strong>.</li>
+                                    <li>Tap on the <strong>"More" icon</strong> on the bottom navigation bar.</li>
+                                    <li>Tap on <strong>Deposit account settings → View cheque services → Request for cheque book</strong>.</li>
+                                    <li>Follow the on-screen instructions.</li>
+                                    </ul>
+
+                                <p className="mt-4 font-bold">Important Notes:</p>
+                                    <ul>
+                                    <li><strong>Fee:</strong> S$10 per cheque book for SGD accounts.</li>
+                                    <li><strong>Waiver:</strong> Fee is waived for all <strong>Premier and Private Bank EasiSave accounts</strong>.</li>
+                                    <li><strong>Delivery:</strong> Cheque books will be delivered to your account's mailing address via normal mail in <strong>5 working days</strong>.</li>
+                                    </ul>
+
+                                <p className="mt-4 font-bold">For Urgent Requests:</p>
+                                    <ul>
+                                    <li><strong>Same-day delivery:</strong> Call <strong>1800 363 3333</strong> before <strong>10am</strong> for delivery between <strong>2:30pm and 6pm</strong>.</li>
+                                    <li><strong>Next-day delivery:</strong> Call before <strong>3:30pm</strong> for delivery between <strong>9am and 6pm</strong> the following day.</li>
+                                    <li><strong>Available:</strong> Mondays to Fridays, excluding public holidays.</li>
+                                    </ul>
+                                <p className="mt-4 font-bold">Additional Option:</p> You can also apply for an <strong>OCBC Deposit Account</strong> by completing the <strong>cheque book request form</strong>.
+                                </ul>
                         </div>, 
-                        "Card Activation"
+                        "Apply for Cheque Book"
                     )} 
                     className="cursor-pointer bg-[#F2F2F2] border-2 border-gray-600 p-4 text-left shadow-md rounded-md hover:shadow-lg hover:bg-[#E0E0E0] w-[300px] h-[150px] relative"
                 >
                     <div className="flex justify-between items-start">
-                        <h3 className="font-bold text-xl max-w-[10rem]">Card Activation</h3>
-                        <img src={require('../images/CardActivation.webp')} alt="Card Activation" className="w-10 h-10" />
+                        <h3 className="font-bold text-xl max-w-[10rem]">Apply for Cheque Book</h3>
+                        <img src={require('../images/cheque-application.svg').default} alt="Apply for Cheque Book" className="w-12 h-10" />
                     </div>
                     <div className="absolute bottom-4 right-4 flex items-center">
                         <p className="text-lg mr-1">Learn more</p>
@@ -115,38 +129,68 @@ function CardsFaq() {
                     </div>
                 </div>
 
-                {/* Overseas Card Activation Button */}
+                {/* Lost Cheque */}
                 <div 
                     onClick={() => openModal(
                         <div>
-                            <p className="text-lg font-semibold">OCBC Internet Banking</p>
-                            <ul className="list-disc pl-6">
-                                <li>Log in to OCBC Online Banking with your access code and PIN or Singpass.</li>
-                                <li>Scroll over “Customer Service” → “Cards” and select “Overseas card usage”.</li>
-                                <li>Select the card to link/delink to an account for ATM transactions.</li>
-                                <li>Select the account to link and tap on the "Next" button to confirm.</li>
-                            </ul>
-                            <p className="mt-4">Note: OCBC Business Debit Card customers without OCBC Online Banking access will not be able to activate the overseas ATM cash withdrawal on their card via Online Banking. To activate overseas cash withdrawal, please submit the <a href="your-link-here" className="text-blue-500 underline">OCBC Business Debit Card Maintenance form</a>.</p>
+                            <ul>
+                            <p className="font-bold">How to Apply for a Cheque Book on OCBC Deposit Account</p>
 
-                            <p className="text-lg font-semibold mt-8">OCBC Digital App</p>
-                            <ul className="list-disc pl-6">
-                                <li>Log in to the OCBC Digital app.</li>
-                                <li>Tap on the menu bar on the top left of the screen.</li>
-                                <li>Tap on “Card services”.</li>
-                                <li>Select “Manage overseas usage”.</li>
-                                <li>Select the card to enable/disable overseas cash withdrawal.</li>
-                                <li>Indicate the period for overseas usage.</li>
-                                <li>Tap on the “Next” and “Agree” buttons.</li>
-                                <li>Tap on the “Submit” button after reviewing the changes.</li>
+                            <p className="mt-2 font-bold">Complete the Cheque Book Request Form</p>
+
+                            <p className="mt-2 font-bold">Via OCBC Internet Banking:</p>
+                                <ul>
+                                <li>Login to OCBC Internet banking</li>
+                                <li>Enter your access code, PIN, and one-time password</li>
+                                <li>Scroll over “Customer Service” and under “Accounts & cheques” → “Cheque services”</li>
+                                <li>Select “Stop Cheque Request” from the left side menu</li>
+                                <p className="mt-2 font-bold">Processing Times:</p>
+                                    <ul>
+                                    <li>Requests submitted before 7pm (Mondays to Fridays) and 5pm (Saturdays) will take immediate effect.</li>
+                                    <li>Requests submitted after these times will take effect on the next working day.</li>
+                                    </ul>
+                                </ul>
+
+                            <p className="mt-2 font-bold">Via Phone Banking:</p>
+                                <ul>
+                                <li>Dial 1800 363 3333 or (65) 6363 3333 if overseas</li>
+                                <li>Select language</li>
+                                <li>Press *3 and enter your phone banking access code and PIN followed by #</li>
+                                <li>Select 1 for Balance and transaction</li>
+                                <li>Select 1 for Balance</li>
+                                <li>Select 2 for Banking Accounts and select account</li>
+                                <li>Select 3 for Cheque Transaction</li>
+                                <li>Select 3 for Stop Cheque</li>
+                                <li>Enter cheque number</li>
+                                <p className="mt-2 font-bold">Processing Times:</p>
+                                    <ul>
+                                    <li>Requests submitted before 7pm (Mondays to Fridays) and 5pm (Saturdays) will take immediate effect.</li>
+                                    <li>Requests submitted after these times will take effect on the next working day.</li>
+                                    </ul>
+                                </ul>
+
+
+                            <p className="mt-2 font-bold">Via Customer Service Centre:</p>
+                                <ul>
+                                <li>Dial 1800 363 3333 or (65) 6363 3333 if overseas</li>
+                                <li>Select language</li>
+                                <li>Press 0 and select 2 for Banking</li>
+                                <p className="mt-2 font-bold">Processing Times:</p>
+                                    <ul>
+                                    <li>Requests submitted before 10pm daily will take immediate effect.</li>
+                                    <li>Requests submitted after 10pm will take effect on the next working day.</li>
+                                    </ul>
+                                </ul>
                             </ul>
+
                         </div>, 
-                        "Overseas Card Activation"
+                        "Lost Cheque"
                     )} 
                     className="cursor-pointer bg-[#F2F2F2] border-2 border-gray-600 p-4 text-left shadow-md rounded-md hover:shadow-lg hover:bg-[#E0E0E0] w-[300px] h-[150px] relative"
                 >
                     <div className="flex justify-between items-start">
-                        <h3 className="font-bold text-xl max-w-[10rem]">Overseas Card Activation</h3>
-                        <img src={require('../images/globe.svg').default} alt="Overseas Card Usage" className="w-10 h-10" />
+                        <h3 className="font-bold text-xl max-w-[10rem]">Lost Cheque</h3>
+                        <img src={require('../images/cheque-lost.svg').default} alt="Lost Cheque" className="w-10 h-10" />
                     </div>
                     <div className="absolute bottom-4 right-4 flex items-center">
                         <p className="text-lg mr-1">Learn more</p>
@@ -154,75 +198,60 @@ function CardsFaq() {
                     </div>
                 </div>
 
-                {/* Apply for Card Button */}
+                {/* Cheque Status */}
                 <div 
                     onClick={() => openModal(
                         <div>
-                            <p className="text-lg font-semibold">Why should I use Myinfo to complete my application?</p>
-                            <ul className="list-disc pl-6">
-                                <li>Myinfo contains Singapore government-verified information on you, which you can allow banks to use to support your application.</li>
-                                <li>Using Myinfo will auto-populate the majority of the fields in the application form, shortening the process and providing an almost immediate application outcome.</li>
+                            <ul>
+                            <p className="font-bold">OCBC Internet Banking:</p>
+                                <ul>
+                                <li>Log in to OCBC Internet Banking</li>
+                                <li>Enter your access code, PIN, and one-time password</li>
+                                <li>Scroll over “Customer Service” and select “Cheque services”</li>
+                                <li>Select “Cheque Status Inquiry” and click on the respective account</li>
+                                </ul>
+
+                            <p className="mt-4 font-bold">OCBC App:</p>
+                                <ul>
+                                <li>Log in to the OCBC app</li>
+                                <li>Tap on the “More” icon in the bottom navigation bar</li>
+                                <li>Tap on “Deposit account settings” → “Access cheque services”</li>
+                                <li>Select “Check cheque status”</li>
+                                <li>Follow the OCBC app instructions</li>
+                                </ul>
+
+                            <p className="mt-4 font-bold">Important Note:</p>
+                                <ul>
+                                <li>To stop a cheque today, submit your request before 7pm from Mondays to Fridays, and before 5pm on Saturdays.</li>
+                                <li>Requests submitted after these times will be completed the next business day.</li>
+                                <li><strong>Fees:</strong> S$15 to stop a cheque and S$30 to stop a series of cheques.</li>
+                                </ul>
+
+                            <p className="mt-4 font-bold">OCBC Internet Banking Secured Email:</p>
+                                <ul>
+                                <li>Log in to OCBC Internet Banking</li>
+                                <li>Enter your access code, PIN, and one-time password</li>
+                                <li>Scroll over “Mailbox” and click on “Compose Mail”</li>
+                                <li>Receive information on cheque status after the cheque has been presented to the bank.</li>
+                                </ul>
+
+                            <p className="mt-4 font-bold">Customer Service Centre:</p>
+                                <ul>
+                                <li>Dial 1800 363 3333 or (65) 6363 3333 if overseas</li>
+                                <li>Select language</li>
+                                <li>Press 0 and select 2 for Banking</li>
+                                <li>Receive information on cheque status after the cheque has been presented to the bank.</li>
+                                </ul>
                             </ul>
 
-                            <p className="text-lg font-semibold mt-8">If I use Myinfo to make my application, is it possible to edit fields pre-filled by Myinfo? If so, what are the editable fields?</p>
-                            <ul className="list-disc pl-6">
-                                <li>As Myinfo contains verified information, only some fields are editable, including:
-                                    <ul className="list-disc pl-6">
-                                        <li>Mobile number</li>
-                                        <li>Email address</li>
-                                        <li>Name of employer (if you are a Singaporean or PR)</li>
-                                        <li>Education level</li>
-                                    </ul>
-                                </li>
-                                <li>To update non-editable fields, contact the relevant agencies as indicated in Myinfo.</li>
-                                <li>If you are using a different mailing address from what is in Myinfo, please complete the other form instead.</li>
-                            </ul>
-
-                            <p className="text-lg font-semibold mt-8">I am an existing OCBC credit card holder. Can I apply for a 2nd credit card via this channel?</p>
-                            <ul className="list-disc pl-6">
-                                <li>If you wish to apply for a 2nd credit card and are satisfied with your current credit limit, apply via Internet Banking for instant approval.</li>
-                                <li>You will receive your card details instantly through a link sent via SMS and email.</li>
-                            </ul>
-
-                            <p className="text-lg font-semibold mt-8">I am currently receiving the bank's one-time passwords through a mobile number that is different from the one I used in my application. Will this change with my application?</p>
-                            <ul className="list-disc pl-6">
-                                <li>No, your one-time passwords will continue to be sent to the original mobile number.</li>
-                            </ul>
-
-                            <p className="text-lg font-semibold mt-8">I completed my application at a roadshow. Is this different from applying through the bank's website?</p>
-                            <ul className="list-disc pl-6">
-                                <li>Your application is not processed immediately at a roadshow. After one hour, you will receive an SMS and email with a link to trigger instant processing.</li>
-                            </ul>
-
-                            <p className="text-lg font-semibold mt-8">When will I be required to use the hardcopy application form?</p>
-                            <ul className="list-disc pl-6">
-                                <li>You will need a hardcopy form if:
-                                    <ul className="list-disc pl-6">
-                                        <li>Applying for a supplementary card.</li>
-                                        <li>Your mailing address is outside of Singapore.</li>
-                                    </ul>
-                                </li>
-                                <li>Visit any OCBC branch for a hardcopy form.</li>
-                            </ul>
-
-                            <p className="text-lg font-semibold mt-8">What are the system downtimes and how will I be impacted by it?</p>
-                            <ul className="list-disc pl-6">
-                                <li>From 9:30 pm to 6 am daily, and on Sundays and Public Holidays (for ExtraCash Loans), you may receive an approval status but won’t receive SMS and email notifications with the link to product details.</li>
-                                <li>From 12 am to 8 am daily, due to Credit Bureau maintenance, your unsecured credit card or loan/line application will not receive an instantaneous outcome.</li>
-                            </ul>
-
-                            <p className="text-lg font-semibold mt-8">How will I be contacted if my application requires pending documents or has been rejected?</p>
-                            <ul className="list-disc pl-6">
-                                <li>You will receive an email and a physical letter for each product applied for, informing you of any required documents or if your application has been rejected.</li>
-                            </ul>
                         </div>, 
-                        "Apply for Card"
+                        "Status of Issued Cheque"
                     )}
                     className="cursor-pointer bg-[#F2F2F2] border-2 border-gray-600 p-4 text-left shadow-md rounded-md hover:shadow-lg hover:bg-[#E0E0E0] w-[300px] h-[150px] relative"
                 >
                     <div className="flex justify-between items-start">
-                        <h3 className="font-bold text-xl max-w-[10rem]">Apply for Card</h3>
-                        <img src={require('../images/form.svg').default} alt="Apply for Card" className="w-10 h-10" />
+                        <h3 className="font-bold text-xl max-w-[10rem]">Status of Issued Cheque</h3>
+                        <img src={require('../images/cheque-status.svg').default} alt="Status of Issued Cheque" className="w-10 h-10" />
                     </div>
                     <div className="absolute bottom-4 right-4 flex items-center">
                         <p className="text-lg mr-1">Learn more</p>
@@ -234,56 +263,36 @@ function CardsFaq() {
                 <div 
                     onClick={() => openModal(
                         <div>
-                            <p className="text-lg font-semibold">Why has my credit limit gone down when I cannot see the transaction in my Internet Banking?</p>
-                            <ul className="list-disc pl-6">
-                                <li>When you perform a transaction, the amount is earmarked from your credit limit first.</li>
-                                <li>The transaction may not appear in Internet Banking immediately because it hasn’t been posted yet.</li>
-                                <li>Once the merchant records and posts the transaction to your card, it will appear in Internet Banking, and the amount will be deducted from your credit limit.</li>
+                            <ul>
+                            <p class="font-bold">You can stop your cheque payment through OCBC Internet Banking or the OCBC app.</p>
+
+                            <p class="mt-4 font-bold">OCBC Internet Banking: </p>
+                                <ul>
+                                <li>Log in to OCBC Internet Banking</li>
+                                <li>Enter your access code, PIN, and one-time password</li>
+                                <li>Scroll over “Customer Service” and under “Accounts & cheques” → “Cheque services”</li>
+                                <li>Select “Stop Cheque Request” from the left side menu</li>
+                                <li>Be informed on cheque status after the cheque has been presented to the bank.</li>
+                                </ul>
+
+                            <p class="mt-4 font-bold">OCBC Digital: </p>
+                                <ul>
+                                <li>Log in to OCBC app</li>
+                                <li>Tap on the “More” icon in the bottom navigation bar</li>
+                                <li>Tap on “Deposit account settings” → “Access cheque services”</li>
+                                <li>Select “Stop cheque payment”</li>
+                                <li>Follow the OCBC app instructions</li>
+                                </ul>
                             </ul>
 
-                            <p className="text-lg font-semibold mt-8">Why doesn't the total available credit limit on my statement match with the spending on my cards?</p>
-                            <ul className="list-disc pl-6">
-                                <li>The total available credit limit on your statement considers the outstanding and earmarked amounts on all your cards.</li>
-                                <li>Example breakdown:
-                                    <table className="table-auto border-collapse border border-gray-300 mt-4">
-                                        <thead>
-                                            <tr>
-                                                <th className="border border-gray-300 px-4 py-2">Card 1</th>
-                                                <th className="border border-gray-300 px-4 py-2">Card 2</th>
-                                                <th className="border border-gray-300 px-4 py-2">Card 3</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td className="border border-gray-300 px-4 py-2">Outstanding amount: S$500</td>
-                                                <td className="border border-gray-300 px-4 py-2">Outstanding amount: S$500</td>
-                                                <td className="border border-gray-300 px-4 py-2">Outstanding amount: S$500</td>
-                                            </tr>
-                                            <tr>
-                                                <td className="border border-gray-300 px-4 py-2">Earmarked amount: S$700</td>
-                                                <td className="border border-gray-300 px-4 py-2">Earmarked amount: -</td>
-                                                <td className="border border-gray-300 px-4 py-2">Earmarked amount: S$250</td>
-                                            </tr>
-                                            <tr>
-                                                <td colSpan="3" className="border border-gray-300 px-4 py-2 text-center font-semibold">Total credit limit: S$10,000</td>
-                                            </tr>
-                                            <tr>
-                                                <td colSpan="3" className="border border-gray-300 px-4 py-2 text-center font-semibold">Total available credit limit: S$7,550</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </li>
-                                <li>The total available credit limit is based on the point in time your statement was generated, so it won’t include any transactions made afterward.</li>
-                                <li>For a more accurate total available credit limit, log in to OCBC Internet Banking or the OCBC Digital app.</li>
-                            </ul>
                         </div>, 
-                        "Credit Limit"
+                        "Stop Cheque Payment"
                     )}
                     className="cursor-pointer bg-[#F2F2F2] border-2 border-gray-600 p-4 text-left shadow-md rounded-md hover:shadow-lg hover:bg-[#E0E0E0] w-[300px] h-[150px] relative"
                 >
                     <div className="flex justify-between items-start">
-                        <h3 className="font-bold text-xl max-w-[10rem]">Credit Limit</h3>
-                        <img src={require('../images/CardCancel.png')} alt="Credit Limit" className="w-10 h-8" />
+                        <h3 className="font-bold text-xl max-w-[10rem]">Stop Cheque Payment</h3>
+                        <img src={require('../images/cheque-stop.webp')} alt="Stop Cheque Payment" className="w-10 h-10" />
                     </div>
                     <div className="absolute bottom-4 right-4 flex items-center">
                         <p className="text-lg mr-1">Learn more</p>
@@ -294,46 +303,48 @@ function CardsFaq() {
 
             {/* Bottom 4 Squares */}
             <div id="extraButtons" className={isExpanded ? "grid grid-cols-2 md:grid-cols-4 gap-8 mt-8 mx-auto max-w-[1280px]" : "hidden"}>
-            {/* Check Balance */}
+            {/* Request Bank Statement */}
             <div 
                 onClick={() => openModal(
                     <div>
-                        <p className="text-lg font-semibold">Internet Banking</p>
-                        <ul className="list-disc pl-6">
-                            <li>Log in to OCBC Online Banking.</li>
-                            <li>Click on “Your Accounts”.</li>
-                            <li>From the drop-down, click “Overview”.</li>
-                            <li>Scroll down to view “What you owe (Liabilities)” under Credit Cards.</li>
-                            <li>Look for “Amount Due” for the specific card type.</li>
+                        <ul>
+                        <p className="font-bold mt-4">OCBC Internet Banking: </p>
+                            <ul>
+                            <li>Log in to OCBC Internet Banking</li>
+                            <li>Enter your access code, PIN, and one-time password</li>
+                            <li>Click on “View Account” and select “Overview”</li>
+                            <li>Scroll down to “Deposits” and click on the required account number</li>
+                            <li>Select “Documents”</li>
+                            <li>Select “Account Type,” “From,” and “To” date to view</li>
+                            </ul>
+
+                        <p className="mt-4"><strong>Note:</strong> The account is required to be tagged to your OCBC Internet Banking service.</p>
+
+                        <p className="font-bold mt-4">OCBC Internet Banking Secured Email: </p>
+                            <ul>
+                            <li>Log in to OCBC Internet Banking with your Access Code and PIN</li>
+                            <li>Select “View accounts” in the top navigation bar</li>
+                            <li>Select “Manage Documents”</li>
+                            <li>Uncheck the boxes for the corresponding account(s) to receive paper statements</li>
+                            </ul>
+
+                        <p className="font-bold mt-4">Branch: </p>
+                            <ul>
+                            <li>Locate branch</li>
+                            <li>You will receive the banking statement within 7 working days via mail.</li>
+                            </ul>
                         </ul>
 
-                        <p className="text-lg font-semibold mt-8">OCBC Digital</p>
-                        <ul className="list-disc pl-6">
-                            <li>Log in to the OCBC Digital app.</li>
-                            <li>Select "What you owe".</li>
-                            <li>Select the relevant Credit Card to view your Credit Card balance.</li>
-                        </ul>
-
-                        <p className="text-lg font-semibold mt-8">Phone Banking</p>
-                        <ul className="list-disc pl-6">
-                            <li>Dial 1800 363 3333 (local) or +65 6363 3333 (overseas).</li>
-                            <li>Select your Language Preference.</li>
-                            <li>Press *3 and enter your phone banking access code and PIN, followed by #.</li>
-                            <li>Select 1 for Balance and transaction.</li>
-                            <li>Select 1 for Balance.</li>
-                            <li>Select 1 for Credit Card.</li>
-                        </ul>
-                        <p className="mt-4">Note: Your credit card balance does not include any payments or transactions made today.</p>
                     </div>, 
-                    "Check Balance"
+                    "Request Bank Statement"
                 )} 
                 className="cursor-pointer bg-[#F2F2F2] border-2 border-gray-600 p-4 text-left shadow-md rounded-md hover:shadow-lg hover:bg-[#E0E0E0] w-[300px] h-[150px] relative"
             >
                 <div className="flex justify-between items-start">
                     <h3 className="font-bold text-xl max-w-[10rem]">
-                        Check Balance
+                        Request Bank Statement
                     </h3>
-                    <img src={require('../images/dollar.svg').default} alt="Check Balance" className="w-10 h-10" />
+                    <img src={require('../images/BankStatement.png')} alt="Request Bank Statement" className="w-10 h-10" />
                 </div>
                 <div className="absolute bottom-4 right-4 flex items-center">
                     <p className="text-lg mr-1">Learn more</p>
@@ -341,29 +352,64 @@ function CardsFaq() {
                 </div>
             </div>
             
-            {/* Check Transaction */}
+            {/* Remit Money Overseas */}
             <div 
                 onClick={() => openModal(
                     <div>
-                        <p className="text-lg font-semibold">View Credit Card Details on Online Banking</p>
-                        <ul className="list-disc pl-6">
-                            <li>Log in to OCBC Online Banking.</li>
-                            <li>Click on “Your Accounts”.</li>
-                            <li>From the drop-down menu, click “Overview”.</li>
-                            <li>Scroll down to view “What you owe (Liabilities)” under Credit Cards.</li>
-                            <li>Click on the specific card type.</li>
-                            <li>From the popout tooltip, select "Details / Transactions".</li>
+                        <ul>
+                        <p className="font-bold">Branch: </p>
+                            <ul>
+                            <li>Locate branch</li>
+                            <li>Placements will be processed immediately.</li>
+                            </ul>
+
+                        <p class="font-bold mt-4">Online Banking: </p>
+                            <ul>
+                            <li>To place a fixed deposit online, you need an existing savings or chequing account, as well as a fixed deposit account with the bank.</li>
+                            <li>Login to online banking</li>
+                            <li>Enter your access code, PIN, and one-time password</li>
+                            <li>Select “Time Deposit” and on the tooltip, select "Place new deposit"</li>
+                            <li>Select the Time Deposit account number for the new placement</li>
+                            <li>Select the currency and indicate the amount</li>
+                            <li>Select the term</li>
+                            <li>Select the funding amount</li>
+                            <li>Read and agree to the terms and conditions</li>
+                            <li>Preview the placement details and indicative interest rate, then click “Next”</li>
+                            <li>The placement will be processed and indicated in the Time Deposit Account</li>
+                            </ul>
+
+                        <p className="font-bold mt-4">Fixed Deposit Placement Hours: </p>
+                            <ul>
+                            <li>Monday to Friday, 9.20am to 6pm</li>
+                            <li>Instructions received outside these hours will be processed on the next working day (public and currency holidays excluded).</li>
+                            </ul>
+
+
+                        <p className="font-bold mt-4">Foreign Currency Fixed Deposit: </p>
+                            <ul>
+                            <li>Your fixed deposit will be placed within 2 working days (public and currency holidays excluded) after we receive your instructions.</li>
+                            <li>If you withdraw your time deposit before it matures, you may incur an early withdrawal fee (depending on the remaining tenor and prevailing penalty rate) and earn no or lower interest.</li>
+                            </ul>
+
+                        <p class="font-bold mt-4">Customer Service Centre: </p>
+                            <ul>
+                            <li>Dial 1800 363 3333 or (65) 6363 3333 if overseas</li>
+                            <li>Select language</li>
+                            <li>Press 0 and select 2 for Banking</li>
+                            <li>For the fixed deposit to be valued on the same day, submit your request before 4pm (Mondays to Fridays).</li>
+                            <li>Requests submitted after these times will be completed the next business day.</li>
+                            </ul>
                         </ul>
                     </div>, 
-                    "Check Transaction"
+                    "SGD Fixed Deposit"
                 )} 
                 className="cursor-pointer bg-[#F2F2F2] border-2 border-gray-600 p-4 text-left shadow-md rounded-md hover:shadow-lg hover:bg-[#E0E0E0] w-[300px] h-[150px] relative"
             >
                 <div className="flex justify-between items-start">
-                    <h3 className="font-bold text-xl max-w-[10rem]">
-                        Check Transaction
+                    <h3 className="font-bold text-xl max-w-[12rem]">
+                        SGD Fixed Deposit
                     </h3>
-                    <img src={require('../images/transaction.svg').default} alt="Check Transaction" className="w-10 h-10" />
+                    <img src={require('../images/account-deposit.svg').default} alt="SGD Fixed Deposit" className="w-10 h-10" />
                 </div>
                 <div className="absolute bottom-4 right-4 flex items-center">
                     <p className="text-lg mr-1">Learn more</p>
@@ -371,32 +417,48 @@ function CardsFaq() {
                 </div>
             </div>
             
-            {/* Card Replacement */}
+            {/* Withdraw Fixed Deposit */}
             <div 
                 onClick={() => openModal(
                     <div>
-                        <p className="text-lg font-semibold">Request a Replacement Card via OCBC Online Banking</p>
-                        <p>You can request a replacement card through OCBC Online Banking.</p>
+                        <ul>
+                        <p class="font-bold">Branch: </p>
+                            <ul>
+                            <li>Locate branch</li>
+                            <li>Withdrawals will take immediate effect.</li>
+                            </ul>
 
-                        <p className="text-lg font-semibold mt-8">Request a Replacement Card via OCBC Digital</p>
-                        <ul className="list-disc pl-6">
-                            <li>Log in to the OCBC Digital app.</li>
-                            <li>Tap on the menu bar on the top left of the screen.</li>
-                            <li>Tap on "Card services".</li>
-                            <li>Select “Replace Card”.</li>
-                            <li>Select the card you wish to replace.</li>
-                            <li>Select the reason for replacing your card.</li>
+                        <p class="font-bold mt-4">Customer Service Centre: </p>
+                            <ul>
+                            <li>To withdraw an SGD Fixed Deposit, you need an existing savings or chequing account.</li>
+                            <li>Dial 1800 363 3333 or (65) 6363 3333 if overseas</li>
+                            <li>Select language</li>
+                            <li>Press 0 and select 2 for Banking</li>
+                            <li>Withdrawals will take effect in 1 working day.</li>
+                            </ul>
+
+                        <p class="font-bold mt-4">Online Banking: </p>
+                            <ul>
+                            <li>To withdraw a fixed deposit online, you need to submit the Time Deposit Instruction form via Internet Banking.</li>
+                            <li>Log in to online banking</li>
+                            <li>Enter your access code, PIN, and one-time password</li>
+                            <li>Select “Time Deposit” and click on “Change of Maturity Instruction” or “Terminating Time Deposit” to submit the request via the online form</li>
+                            <li>Key in the details</li>
+                            <li>Read and agree to the terms and conditions</li>
+                            <li>Preview the placement details and click “Next”</li>
+                            <li>The request will be processed.</li>
+                            </ul>
                         </ul>
                     </div>, 
-                    "Card Replacement"
+                    "Withdraw Fixed Deposit"
                 )}  
                 className="cursor-pointer bg-[#F2F2F2] border-2 border-gray-600 p-4 text-left shadow-md rounded-md hover:shadow-lg hover:bg-[#E0E0E0] w-[300px] h-[150px] relative"
             >
                 <div className="flex justify-between items-start">
                     <h3 className="font-bold text-xl max-w-[10rem]">
-                        Card Replacement
+                        Withdraw Fixed Deposit
                     </h3>
-                    <img src={require('../images/CardReplacement.png')} alt="Card Replacement" className="w-10 h-10" />
+                    <img src={require('../images/account-withdraw.svg').default} alt="Withdraw Fixed Deposit" className="w-10 h-10" />
                 </div>
                 <div className="absolute bottom-4 right-4 flex items-center">
                     <p className="text-lg mr-1">Learn more</p>
@@ -476,8 +538,11 @@ function CardsFaq() {
             {/* Footer Component */}
             <Footer /> 
             </section>
+
+            {/* Chatbot Button and Interface */}
+            <Chatbot />
         </div>
     );
 }
 
-export default CardsFaq;
+export default AccountFaq;
