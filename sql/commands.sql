@@ -17,6 +17,7 @@ DROP TABLE IF EXISTS Branch;
 CREATE TABLE Branch (
     BranchID INT PRIMARY KEY IDENTITY(1,1),
     BranchName NVARCHAR(100) NOT NULL,
+    Street NVARCHAR(100),
     Location NVARCHAR(255),
     ContactNumber NVARCHAR(15),
     OpeningHours NVARCHAR(50)
@@ -118,13 +119,13 @@ CREATE TABLE AvailableSlots (
 );
 
 -- Insert sample data into Branch table
-INSERT INTO Branch (BranchName, Location, ContactNumber, OpeningHours)
+INSERT INTO Branch (BranchName, Street, Location, ContactNumber, OpeningHours)
 VALUES 
-('OCBC Centre Branch', '65 Chulia St #01-00, OCBC Centre, Singapore 049513', '6363 3333', 'Mon-Fri: 9.00am to 4.30pm; Sat: 9.00am to 11.30am'),
-('Marina Bay Financial Centre Branch', '10 Marina Boulevard #01-04, Marina Bay Financial Centre Tower 2, Singapore 018983', '6363 3333', 'Mon-Fri: 9.00am to 4.30pm; Sat: 9.00am to 11.30am'),
-('Orchardgateway Branch', '277 Orchard Road, orchardgateway, #01-16, #B1-12 & #B2-12, Singapore 238858', '6363 3333', 'Mon-Sun: 11.00am to 7.00pm'),
-('Tiong Bahru Plaza Branch', '302 Tiong Bahru Road #01-125/126 Tiong Bahru Plaza, Singapore 168732', '6363 3333', 'Mon-Sun: 11.00am to 7.00pm'),
-('ION Orchard Branch', '2 Orchard Turn #B2-57, Singapore 238801', '6363 3333', 'Mon-Sun: 11.00am to 7.00pm');
+('OCBC Centre Branch', '65 Chulia St', '#01-00, OCBC Centre, Singapore 049513', '6363 3333', 'Mon-Fri: 9.00am to 4.30pm; Sat: 9.00am to 11.30am'),
+('Marina Bay Financial Centre Branch', '10 Marina Boulevard', '#01-04, Marina Bay Financial Centre Tower 2, Singapore 018983', '6363 3333', 'Mon-Fri: 9.00am to 4.30pm; Sat: 9.00am to 11.30am'),
+('Orchardgateway Branch', '277 Orchard Road, orchardgateway', '#01-16, #B1-12 & #B2-12, Singapore 238858', '6363 3333', 'Mon-Sun: 11.00am to 7.00pm'),
+('Tiong Bahru Plaza Branch', '302 Tiong Bahru Road', '#01-125/126 Tiong Bahru Plaza, Singapore 168732', '6363 3333', 'Mon-Sun: 11.00am to 7.00pm'),
+('ION Orchard Branch', '2 Orchard Turn', '#B2-57, Singapore 238801', '6363 3333', 'Mon-Sun: 11.00am to 7.00pm');
 
 -- Insert departments into Departments table
 INSERT INTO Departments (DepartmentName)

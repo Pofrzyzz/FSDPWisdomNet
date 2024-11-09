@@ -2,6 +2,7 @@
 const express = require('express');
 const cors = require('cors');
 const { saveContact } = require('./controllers/contactController');
+const { fetchBranches } = require('./controllers/branchController');
 const app = express();
 
 // Middleware to parse JSON requests
@@ -9,6 +10,7 @@ app.use(express.json());
 
 // Enable CORS for all routes
 app.use(cors());
+app.use('/api/branch', fetchBranches);
 
 // Route for posting contact info
 app.post('/api/contact', saveContact);
