@@ -1,8 +1,8 @@
-const { sql } = require('../../dbConfig');
+const { sql, poolPromise } = require('../../dbConfig');
 
 const getAllBranches = async () => {
   try {
-    const pool = await sql.connect(process.env.DB_CONNECTION);
+    const pool = await poolPromise;
     const result = await pool.request().query(`
       SELECT BranchID as id, BranchName as name, Street as street, Location as additionalInfo 
       FROM Branch
