@@ -6,7 +6,7 @@ function Calendar({ selectedBranch, onDateTimeSelect }) {
     const [selectedDate, setSelectedDate] = useState(null);
     const [selectedTime, setSelectedTime] = useState('');
 
-    const timeSlots = ['0900', '1000', '1200', '1230', '1400', '1600', '1700', '1800', '1900', '2000'];
+    const timeSlots = ['1100', '1130', '1200', '1230', '1300', '1330', '1400', '1430', '1500', '1530', '1600', '1700', '1800', '1900', '2000'];
 
     const toggleDateTimePicker = () => {
         if (selectedBranch) {
