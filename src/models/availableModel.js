@@ -5,7 +5,7 @@ async function getAvailableSlots(branchID, date) {
     const pool = await poolPromise;
     const result = await pool.request()
       .input('BranchID', sql.Int, branchID)
-      .input('Date', sql.Date, date) 
+      .input('Date', sql.Date, date)
       .query(`
         SELECT SlotID, StartTime, EndTime
         FROM AvailableSlots
@@ -14,7 +14,7 @@ async function getAvailableSlots(branchID, date) {
           AND IsBooked = 0  -- Only available slots
       `);
 
-    return result.recordset;  
+    return result.recordset;  // Array of available slots
   } catch (error) {
     console.error("Error fetching available slots:", error.message);
     throw new Error("Error fetching available slots: " + error.message);
@@ -32,7 +32,7 @@ async function bookSlot(slotID) {
         WHERE SlotID = @SlotID
       `);
 
-    return result.rowsAffected[0] > 0;
+    return result.rowsAffected[0] > 0; // Return true if row is affected
   } catch (error) {
     console.error("Error booking slot:", error.message);
     throw new Error("Error booking slot: " + error.message);
