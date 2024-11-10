@@ -12,7 +12,7 @@ function Calendar({ selectedBranch, onDateTimeSelect }) {
     // Fetch available slots from the API
     const fetchAvailableSlots = async () => {
         if (selectedBranch) {
-            const response = await fetch(`/api/availableSlots?branchID=${selectedBranch}`);
+            const response = await fetch(`/api/slots/available?branchID=${selectedBranch.id}`);
             const data = await response.json();
             setAvailableSlots(data);
         }
