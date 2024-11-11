@@ -1,40 +1,40 @@
 const express = require('express');
+const http = require('http');
 const cors = require('cors');
-const { saveContact } = require('./controllers/contactController');
-const { fetchBranches } = require('./controllers/branchController');
-const { getAvailableSlots, bookSlot } = require('./controllers/availableController');
-const appointmentController = require('./controllers/appointmentController'); 
-const { validateAppointment } = require('./middlewares/validateAppointment');
+const { Server } = require('socket.io');
+const setupSocket = require('./socket');
+const contactController = require('./controllers/contactController');
+const branchController = require('./controllers/branchController');
+const availableController = require('./controllers/availableController');
+const appointmentController = require('./controllers/appointmentController');
+const validateAppointment = require('./middlewares/validateAppointment');
 const validateDate = require('./middlewares/validateDate');
 
 const app = express();
-
-// Middleware to parse JSON requests
 app.use(express.json());
-
-// Enable CORS for all routes
 app.use(cors());
 
-// Route for getting branches
-app.get('/api/branch', fetchBranches);
+const server = http.createServer(app);
 
-// Route for posting contact info
-app.post('/api/contact', saveContact);
+const io = new Server(server, {
+  cors: {
+    origin: '*',
+    methods: ['GET', 'POST']
+  }
+});
 
-// Route for getting available slots (validate date using middleware)
-app.get('/api/slots/available', validateDate, getAvailableSlots);
+// Set up Socket.io events
+setupSocket(io);
 
-// Route to get available slots by branch and date
+// Define routes directly
+app.get('/api/branch', branchController.fetchBranches);
+app.post('/api/contact', contactController.saveContact);
+app.get('/api/slots/available', validateDate.validateDate, availableController.getAvailableSlots);
+app.post('/api/slots/book', availableController.bookSlot);
 app.get('/api/available-slots', appointmentController.getAvailableSlots);
-  
-// Route to create an appointment
-app.post('/api/create', validateAppointment, appointmentController.createAppointment);
+app.post('/api/create', validateAppointment.validateAppointment, appointmentController.createAppointment);
 
-// Route for booking a slot with date validation middleware
-app.post('/api/slots/book', bookSlot);
-
-// Start the server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

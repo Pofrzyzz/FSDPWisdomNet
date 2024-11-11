@@ -12,7 +12,7 @@ import GeneralFaq from './pages/generalfaq'
 import LoansFaq from './pages/loans'
 import LoginPage from './pages/login';
 import SignUpPage from './pages/signup';
-
+import OperatorDashboard from './pages/operatorDashboard';
 
 function App() {
   return (
@@ -30,6 +30,7 @@ function App() {
         <Route path="/GeneralFaq" element={<GeneralFaq />} />
         <Route path="/LoginPage" element={<LoginPage/>}/>
         <Route path="/SignUpPage" element={<SignUpPage/>}/>
+        <Route path="/OperatorPage" element={<OperatorDashboard/>}/>
       </Routes>
     </Router>
   );

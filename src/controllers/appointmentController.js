@@ -1,8 +1,8 @@
-// Appointment Controller
+// src/controllers/appointmentController.js
 const appointmentModel = require('../models/appointmentModel');
 
 // Get available slots
-exports.getAvailableSlots = async (req, res) => {
+const getAvailableSlots = async (req, res) => {
   const { branchID, appointmentDate } = req.query;
 
   // Validate inputs
@@ -25,7 +25,7 @@ exports.getAvailableSlots = async (req, res) => {
 };
 
 // Create an appointment
-exports.createAppointment = async (req, res) => {
+const createAppointment = async (req, res) => {
   const { branchID, fullName, email, reason, appointmentDate, appointmentTime, slotID } = req.body;
 
   // Validate inputs
@@ -49,3 +49,6 @@ exports.createAppointment = async (req, res) => {
     res.status(500).json({ error: 'Error creating appointment' });
   }
 };
+
+// Export the functions using shorthand syntax
+module.exports = { getAvailableSlots, createAppointment };
