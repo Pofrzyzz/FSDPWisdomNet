@@ -37,6 +37,7 @@ app.post('/api/slots/book', availableController.bookSlot); // Book a slot
 // Routes for appointments
 app.get('/api/appointment/available-slots', appointmentController.getAvailableSlots); // Get available slots by branch and date
 app.post('/api/appointment/create', validateAppointment.validateAppointment, appointmentController.createAppointment); // Create an appointment with validation
+app.get('/api/appointment/slot', appointmentController.getSlotById)
 
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {

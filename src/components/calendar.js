@@ -7,6 +7,7 @@ function Calendar({ selectedBranch, onDateTimeSelect }) {
     const [selectedDate, setSelectedDate] = useState(null);
     const [selectedTime, setSelectedTime] = useState('');
     const [timeSlots, setTimeSlots] = useState([]);
+    const [selectedSlotID, setSelectedSlotID] = useState(null);
 
     const toggleDateTimePicker = () => {
         if (selectedBranch) {
@@ -40,15 +41,17 @@ function Calendar({ selectedBranch, onDateTimeSelect }) {
         if (selectedBranch) {
             fetchAvailableSlots(selectedBranch.id, newSelectedDate.toISOString().split('T')[0]);
         }
-        if (selectedTime) {
-            onDateTimeSelect(`${newSelectedDate.toISOString().split('T')[0]} ${selectedTime}`);
-        }
     };
 
-    const handleTimeSelect = (time) => {
+    const handleTimeSelect = (time, slotID) => {
         setSelectedTime(time);
+        setSelectedSlotID(slotID); // Store the selected SlotID
         if (selectedDate) {
-            onDateTimeSelect(`${selectedDate.toISOString().split('T')[0]} ${time}`);
+            onDateTimeSelect({
+                date: selectedDate.toISOString().split('T')[0],
+                time: time,
+                slotID: slotID
+            });
         }
     };
 
@@ -57,15 +60,13 @@ function Calendar({ selectedBranch, onDateTimeSelect }) {
             const response = await axios.get('http://localhost:5000/api/slots/available', {
                 params: { branchID, date }
             });
-            // Assuming the response contains an array of available slots
-            setTimeSlots(response.data.map(slot => slot.StartTime));  // Format the time correctly (HHmm)
+            setTimeSlots(response.data); // Store complete slot data including SlotID and StartTime
         } catch (error) {
             console.error("Error fetching available slots:", error);
         }
     };
 
     useEffect(() => {
-        // Reset selected time when branch changes
         setSelectedTime('');
     }, [selectedBranch]);
 
@@ -127,15 +128,15 @@ function Calendar({ selectedBranch, onDateTimeSelect }) {
                     <div className="flex-none w-20 h-80 overflow-y-auto">
                         <h3 className="text-gray-700 font-bold mb-2">Time:</h3>
                         <div className="flex flex-col space-y-2">
-                            {timeSlots.map((time) => (
+                            {timeSlots.map((slot) => (
                                 <button
-                                    key={time}
-                                    onClick={() => handleTimeSelect(time)}
+                                    key={slot.SlotID} // Use SlotID as key
+                                    onClick={() => handleTimeSelect(slot.StartTime, slot.SlotID)} // Pass SlotID along with time
                                     className={`px-4 py-2 border rounded-lg transition-colors duration-200 ${
-                                        selectedTime === time ? 'bg-red-500 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                                        selectedTime === slot.StartTime ? 'bg-red-500 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                                     } focus:outline-none`}
                                 >
-                                    {time}
+                                    {slot.StartTime}
                                 </button>
                             ))}
                         </div>

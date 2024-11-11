@@ -97,7 +97,7 @@ CREATE TABLE ContactUs (
     SubmissionDateTime DATETIME DEFAULT GETDATE()
 );
 
--- Create Appointment table
+-- Create Appointment table 
 CREATE TABLE Appointment (
     AppointmentID INT PRIMARY KEY IDENTITY(1,1),
     BranchID INT FOREIGN KEY REFERENCES Branch(BranchID),
@@ -106,8 +106,11 @@ CREATE TABLE Appointment (
     Reason NVARCHAR(255),
     AppointmentDate DATE NOT NULL,
     AppointmentTime TIME NOT NULL,
-    BookingDateTime DATETIME DEFAULT GETDATE()
+    BookingDateTime DATETIME DEFAULT GETDATE(),
+    SlotID INT, 
+    FOREIGN KEY (SlotID) REFERENCES AvailableSlots(SlotID)
 );
+
 
 -- Create AvailableSlots table
 CREATE TABLE AvailableSlots (

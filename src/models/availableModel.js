@@ -15,7 +15,7 @@ async function getAvailableSlots(branchID, date) {
           AND IsBooked = 0;
       `);
 
-    return result.recordset;  // Array of available slots
+    return result.recordset;  
   } catch (error) {
     console.error("Error fetching available slots:", error.message);
     throw new Error("Error fetching available slots: " + error.message);
