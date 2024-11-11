@@ -1,6 +1,7 @@
+// src/pages/ContactUs.js
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';  // Import Axios for API calls
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import NavBar from '../components/navbar';
 import ContactBanner from '../images/ContactBanner.svg';
 import Footer from '../components/footer';
@@ -31,45 +32,50 @@ function ContactUs() {
     setSelectedProblem(problem);
   };
 
-  // src/pages/ContactUs.js
-const handleConfirm = async () => {
-  try {
-    const response = await axios.post('http://localhost:5000/api/contact', {
-      mobileNumber,
-      selectedProblem,
-    });
-
-    if (response.status === 200) {
-      const queueNumber = response.data.queueNumber;
-      console.log("Queue Number received from backend:", queueNumber);
-
-      setShowModal(false);
-      navigate('/InQueuePage', {
-        state: {
-          mobileNumber,
-          selectedProblem,
-          queueNumber,  // Pass queue number to InQueue.js
-        },
+  const handleConfirm = async () => {
+    try {
+      const response = await axios.post('http://localhost:5000/api/contact', {
+        mobileNumber,
+        selectedProblem,
       });
-    }
-  } catch (error) {
-    console.error('Error saving contact info:', error);
-    setErrorMessage('Failed to join the queue. Please try again later.');
-  }
-};
 
-  
+      if (response.status === 200) {
+        const queueNumber = response.data.queueNumber;
+        console.log("Queue Number received from backend:", queueNumber);
+
+        setShowModal(false);
+        navigate('/InQueuePage', {
+          state: {
+            mobileNumber,
+            selectedProblem,
+            queueNumber, // Pass queue number to InQueue.js
+          },
+        });
+      }
+    } catch (error) {
+      console.error('Error saving contact info:', error);
+      setErrorMessage('Failed to join the queue. Please try again later.');
+    }
+  };
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-100 relative">
       <NavBar />
+
+      {/* Back button */}
+      <Link to="/HomePage">
+        <div className="absolute top-40 left-16 text-lg font-semibold cursor-pointer z-10 flex items-center hover:underline hover:decoration-white">
+          <img src={require('../images/arrow-left-red.svg').default} alt="Back" className="w-5 h-5 mr-2" />
+          <span className="text-white">Back to Help & Support</span>
+        </div>
+      </Link>
 
       <section className="flex flex-col min-h-screen">
         <div className="relative w-full h-80 md:h-96 overflow-hidden">
           <img
             src={ContactBanner}
             alt="Contact Us Banner"
-            className="w-full h-full object-cover object-[center_10%]" 
+            className="w-full h-full object-cover object-[center_10%]"
           />
           <div className="absolute inset-0 flex flex-col items-center justify-center text-white bg-black bg-opacity-60">
             <h1 className="text-3xl md:text-5xl font-bold mt-32 md:mt-40">Contact Us</h1>
@@ -97,12 +103,11 @@ const handleConfirm = async () => {
               </div>
             </div>
           </div>
-          
+
           {/* Mobile Number Section with Error Message Below the Border */}
           <div className="w-full md:w-2/5">
             <div className="bg-white shadow-md rounded-lg p-6">
               <label htmlFor="mobileNumber" className="block text-gray-700 mb-2 text-left text-xl font-bold">Mobile Number</label>
-              
               <input
                 type="text"
                 id="mobileNumber"
@@ -138,16 +143,20 @@ const handleConfirm = async () => {
               </button>
               <h2 className="text-2xl font-semibold mb-6">How can we assist you today?</h2>
               <div className="grid grid-cols-3 gap-4 mb-4">
-                <button className={`bg-gray-200 w-56 h-24 rounded flex items-center justify-center text-xl text-center ${selectedProblem === 'Card Services' ? 'border-4 border-red-500' : ''}`} onClick={() => handleSelectProblem('Card Services')}>Card Services</button>
-                <button className={`bg-gray-200 w-56 h-24 rounded flex items-center justify-center text-xl text-center ${selectedProblem === 'Payment & Transfers' ? 'border-4 border-red-500' : ''}`} onClick={() => handleSelectProblem('Payment & Transfers')}>Payment & Transfers</button>
-                <button className={`bg-gray-200 w-56 h-24 rounded flex items-center justify-center text-xl text-center ${selectedProblem === 'Digital Banking Assistance' ? 'border-4 border-red-500' : ''}`} onClick={() => handleSelectProblem('Digital Banking Assistance')}>Digital Banking Assistance</button>
-                <button className={`bg-gray-200 w-56 h-24 rounded flex items-center justify-center text-xl text-center ${selectedProblem === 'Loan & Financing' ? 'border-4 border-red-500' : ''}`} onClick={() => handleSelectProblem('Loan & Financing')}>Loan & Financing</button>
-                <button className={`bg-gray-200 w-56 h-24 rounded flex items-center justify-center text-xl text-center ${selectedProblem === 'Fraud & Security' ? 'border-4 border-red-500' : ''}`} onClick={() => handleSelectProblem('Fraud & Security')}>Fraud & Security</button>
-                <button className={`bg-gray-200 w-56 h-24 rounded flex items-center justify-center text-xl text-center ${selectedProblem === 'Investment & Insurance' ? 'border-4 border-red-500' : ''}`} onClick={() => handleSelectProblem('Investment & Insurance')}>Investment & Insurance</button>
+                {/* Problem Selection Buttons */}
+                {['Card Services', 'Payment & Transfers', 'Digital Banking Assistance', 'Loan & Financing', 'Fraud & Security', 'Investment & Insurance'].map((problem) => (
+                  <button
+                    key={problem}
+                    className={`bg-gray-200 w-56 h-24 rounded flex items-center justify-center text-xl text-center ${selectedProblem === problem ? 'border-4 border-red-500' : ''}`}
+                    onClick={() => handleSelectProblem(problem)}
+                  >
+                    {problem}
+                  </button>
+                ))}
               </div>
               <button
                 className="absolute bottom-2.5 right-8 bg-red-500 text-white py-1 px-6 rounded-full text-sm font-bold hover:bg-red-600 transition duration-200"
-                onClick={handleConfirm} 
+                onClick={handleConfirm}
               >
                 Confirm
               </button>
@@ -163,6 +172,7 @@ const handleConfirm = async () => {
 }
 
 export default ContactUs;
+
 
 
 
