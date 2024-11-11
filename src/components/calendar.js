@@ -1,26 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { FaCalendarAlt } from 'react-icons/fa';
 
 function Calendar({ selectedBranch, onDateTimeSelect }) {
     const [isDateTimePickerOpen, setIsDateTimePickerOpen] = useState(false);
     const [selectedDate, setSelectedDate] = useState(null);
     const [selectedTime, setSelectedTime] = useState('');
-    const [availableSlots, setAvailableSlots] = useState([]);
 
-    const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const timeSlots = ['0900', '1000', '1200', '1230', '1400', '1600', '1700', '1800', '1900', '2000'];
 
-    // Fetch available slots from the API
-    const fetchAvailableSlots = async () => {
+    const toggleDateTimePicker = () => {
         if (selectedBranch) {
-            const response = await fetch(`/api/slots/available?branchID=${selectedBranch.id}`);
-            const data = await response.json();
-            setAvailableSlots(data);
+            setIsDateTimePickerOpen(!isDateTimePickerOpen);
         }
     };
 
-    useEffect(() => {
-        fetchAvailableSlots();
-    }, [selectedBranch]);
+    const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
     const getDaysInMonth = (year, month) => {
         return new Date(year, month + 1, 0).getDate();
@@ -39,12 +33,7 @@ function Calendar({ selectedBranch, onDateTimeSelect }) {
     };
 
     const handleDateSelect = (day) => {
-        const newSelectedDate = new Date(
-            selectedDate ? selectedDate.getFullYear() : new Date().getFullYear(),
-            selectedDate ? selectedDate.getMonth() : new Date().getMonth(),
-            day,
-            12
-        );
+        const newSelectedDate = new Date(selectedDate ? selectedDate.getFullYear() : new Date().getFullYear(), selectedDate ? selectedDate.getMonth() : new Date().getMonth(), day, 12);
         setSelectedDate(newSelectedDate);
         if (selectedTime) {
             onDateTimeSelect(`${newSelectedDate.toISOString().split('T')[0]} ${selectedTime}`);
@@ -55,20 +44,6 @@ function Calendar({ selectedBranch, onDateTimeSelect }) {
         setSelectedTime(time);
         if (selectedDate) {
             onDateTimeSelect(`${selectedDate.toISOString().split('T')[0]} ${time}`);
-        }
-    };
-
-    // Filter time slots based on selected date
-    const getAvailableTimeSlotsForDate = (date) => {
-        const formattedDate = date.toISOString().split('T')[0];
-        return availableSlots.filter(
-            (slot) => slot.AppointmentDate === formattedDate && !slot.IsBooked
-        );
-    };
-
-    const toggleDateTimePicker = () => {
-        if (selectedBranch) {
-            setIsDateTimePickerOpen(!isDateTimePickerOpen);
         }
     };
 
@@ -106,7 +81,7 @@ function Calendar({ selectedBranch, onDateTimeSelect }) {
                             </button>
                         </div>
                         <div className="grid grid-cols-7 gap-2 text-center">
-                            {daysOfWeek.map((day) => (
+                            {daysOfWeek.map(day => (
                                 <div key={day} className="font">{day}</div>
                             ))}
                             {Array.from({ length: getFirstDayOfMonth(selectedDate ? selectedDate.getFullYear() : new Date().getFullYear(), selectedDate ? selectedDate.getMonth() : new Date().getMonth()) }, (_, i) => (
@@ -116,8 +91,9 @@ function Calendar({ selectedBranch, onDateTimeSelect }) {
                                 <button
                                     key={i}
                                     onClick={() => handleDateSelect(i + 1)}
-                                    className={`px-2 py-1 rounded-lg ${selectedDate && selectedDate.getDate() === i + 1 ? 'bg-red-500 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
-                                    disabled={new Date().getDate() > i + 1} // Disable past dates
+                                    className={`px-2 py-1 rounded-lg ${
+                                        selectedDate && selectedDate.getDate() === i + 1 ? 'bg-red-500 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                                    }`}
                                 >
                                     {i + 1}
                                 </button>
@@ -129,15 +105,15 @@ function Calendar({ selectedBranch, onDateTimeSelect }) {
                     <div className="flex-none w-20 h-80 overflow-y-auto">
                         <h3 className="text-gray-700 font-bold mb-2">Time:</h3>
                         <div className="flex flex-col space-y-2">
-                            {getAvailableTimeSlotsForDate(selectedDate).map((slot) => (
+                            {timeSlots.map((time) => (
                                 <button
-                                    key={slot.StartTime}
-                                    onClick={() => handleTimeSelect(slot.StartTime)}
+                                    key={time}
+                                    onClick={() => handleTimeSelect(time)}
                                     className={`px-4 py-2 border rounded-lg transition-colors duration-200 ${
-                                        selectedTime === slot.StartTime ? 'bg-red-500 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                                        selectedTime === time ? 'bg-red-500 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                                     } focus:outline-none`}
                                 >
-                                    {slot.StartTime} - {slot.EndTime}
+                                    {time}
                                 </button>
                             ))}
                         </div>
