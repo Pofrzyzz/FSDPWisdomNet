@@ -26,7 +26,7 @@ function Chatbot() {
           message: greeting,
           timestamp: new Date()
         }
-      ]);
+      ]); 
     });
 
     return () => socket.off();
