@@ -31,12 +31,12 @@ app.get('/api/branch', branchController.fetchBranches); // Route to get all bran
 app.post('/api/contact', contactController.saveContact); // Route to save contact info
 
 // Routes for available slots
-app.get('/api/available', validateDate, availableController.getAvailableSlots); // Get available slots, with date validation
+app.get('/api/slots/available', validateDate.validateDate, availableController.getAvailableSlots); // Get available slots, with date validation
 app.post('/api/slots/book', availableController.bookSlot); // Book a slot
 
 // Routes for appointments
 app.get('/api/appointment/available-slots', appointmentController.getAvailableSlots); // Get available slots by branch and date
-app.post('/api/appointment/create', validateAppointment, appointmentController.createAppointment); // Create an appointment with validation
+app.post('/api/appointment/create', validateAppointment.validateAppointment, appointmentController.createAppointment); // Create an appointment with validation
 
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
