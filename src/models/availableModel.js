@@ -7,7 +7,7 @@ async function getAvailableSlots(branchID, date) {
       .input('BranchID', sql.Int, branchID)
       .input('Date', sql.Date, date)
       .query(`
-        SELECT SlotID, StartTime, EndTime
+        SELECT SlotID, StartTime
         FROM AvailableSlots
         WHERE BranchID = @BranchID
           AND AppointmentDate = @Date

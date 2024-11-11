@@ -26,13 +26,17 @@ const io = new Server(server, {
 // Set up Socket.io events
 setupSocket(io);
 
-// Define routes directly
-app.get('/api/branch', branchController.fetchBranches);
-app.post('/api/contact', contactController.saveContact);
-app.get('/api/slots/available', validateDate.validateDate, availableController.getAvailableSlots);
-app.post('/api/slots/book', availableController.bookSlot);
-app.get('/api/available-slots', appointmentController.getAvailableSlots);
-app.post('/api/create', validateAppointment.validateAppointment, appointmentController.createAppointment);
+// Define API routes
+app.get('/api/branch', branchController.fetchBranches); // Route to get all branches
+app.post('/api/contact', contactController.saveContact); // Route to save contact info
+
+// Routes for available slots
+app.get('/api/available', validateDate, availableController.getAvailableSlots); // Get available slots, with date validation
+app.post('/api/slots/book', availableController.bookSlot); // Book a slot
+
+// Routes for appointments
+app.get('/api/appointment/available-slots', appointmentController.getAvailableSlots); // Get available slots by branch and date
+app.post('/api/appointment/create', validateAppointment, appointmentController.createAppointment); // Create an appointment with validation
 
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {

@@ -33,7 +33,7 @@ function BookingPage() {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        branchID: selectedBranch.id, // Assuming `selectedBranch` has an `id`
+                        branchID: selectedBranch.branchID, // Assuming `selectedBranch` has an `id`
                         fullName: formData.fullName,
                         email: formData.email,
                         reason: formData.reason,
