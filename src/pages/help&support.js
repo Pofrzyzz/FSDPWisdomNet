@@ -4,8 +4,8 @@ import CommonFaqs from '../components/commonfaqs';
 import ContactBooking from '../components/contactbooking';
 import Footer from '../components/footer';
 import Help from '../components/needhelp';
-import search from '../images/search.svg';
 import Chatbot from '../components/chatbot';
+import Searchbar from '../components/searchbar'
 
 function HomePage() {
   return (
@@ -17,15 +17,7 @@ function HomePage() {
 
           {/* Search Bar */}
           <div className="relative mx-auto max-w-xl mt-6">
-            <input 
-              type="text" 
-              placeholder="Search for common enquiries..." 
-              className="w-full p-4 border text-gray-700 focus:outline-none focus:border-blue-500 rounded-full"
-            />
-            <button 
-              className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-600">
-                <img src={search} alt="Search" className="w-8 h-8"/>
-            </button>
+            <Searchbar />
           </div>
           
           {/* Common FAQ Section */}

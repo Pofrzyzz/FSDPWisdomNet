@@ -234,12 +234,12 @@ function LoansFaq() {
                             <ul>
                             <p className="font-bold">Learn More About Repricing: </p>
                                 <ul>
-                                <li>To learn more about repricing your home loan, visit our <a href="URL_Here" target="_blank">Home Loan Repricing page</a>.</li>
+                                <li>To learn more about repricing your home loan, visit our <a className='text-blue-500'href="https://www.ocbc.com/personal-banking/loans/home-loan-repricing" target="_blank">Home Loan Repricing page</a>.</li>
                                 </ul>
 
                             <p className="font-bold mt-4">Request to Reprice Your Home Loan: </p>
                                 <ul>
-                                <li>Use the <a href="URL_Here" target="_blank">application form</a> to submit a request to reprice your home loan.</li>
+                                <li>Use the <a className="text-blue-500" href="https://www.ocbc.com/personal-banking/loans/mortgage-form-repricing/#/" target="_blank">application form</a> to submit a request to reprice your home loan.</li>
                                 <li>We will inform you of the outcome or request more information within two weeks of your application date.</li>
                                 </ul>
                             </ul>
