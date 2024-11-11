@@ -1,10 +1,13 @@
 const db = require('../../dbConfig'); // assuming you have a db connection file
 
 // Get available slots for a branch and date
-exports.getAvailableSlots = async (branchID, appointmentDate) => {
+async function getAvailableSlots(branchID, appointmentDate) {
   try {
     const query = `
-      SELECT SlotID, StartTime, EndTime
+      SELECT 
+        SlotID, 
+        CONVERT(VARCHAR(5), StartTime, 108) AS StartTime,   -- Format StartTime as HH:MM
+        CONVERT(VARCHAR(5), EndTime, 108) AS EndTime        -- Format EndTime as HH:MM
       FROM AvailableSlots
       WHERE BranchID = ? AND AppointmentDate = ? AND IsBooked = 0;
     `;
@@ -13,10 +16,10 @@ exports.getAvailableSlots = async (branchID, appointmentDate) => {
   } catch (err) {
     throw new Error('Error fetching available slots: ' + err.message);
   }
-};
+}
 
 // Create a new appointment
-exports.createAppointment = async (branchID, fullName, email, reason, appointmentDate, appointmentTime) => {
+async function createAppointment(branchID, fullName, email, reason, appointmentDate, appointmentTime) {
   try {
     const query = `
       INSERT INTO Appointment (BranchID, FullName, Email, Reason, AppointmentDate, AppointmentTime)
@@ -27,10 +30,10 @@ exports.createAppointment = async (branchID, fullName, email, reason, appointmen
   } catch (err) {
     throw new Error('Error creating appointment: ' + err.message);
   }
-};
+}
 
 // Mark a slot as booked
-exports.bookSlot = async (slotID) => {
+async function bookSlot(slotID) {
   try {
     const query = `
       UPDATE AvailableSlots
@@ -41,4 +44,7 @@ exports.bookSlot = async (slotID) => {
   } catch (err) {
     throw new Error('Error booking slot: ' + err.message);
   }
-};
+}
+
+// Export all functions together
+module.exports = { getAvailableSlots, createAppointment, bookSlot };

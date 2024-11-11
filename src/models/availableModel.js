@@ -7,14 +7,17 @@ async function getAvailableSlots(branchID, date) {
       .input('BranchID', sql.Int, branchID)
       .input('Date', sql.Date, date)
       .query(`
-        SELECT SlotID, StartTime
+        SELECT 
+          SlotID, 
+          FORMAT(StartTime, 'HH:mm') AS StartTime,   -- Format StartTime as HH:MM
+          FORMAT(EndTime, 'HH:mm') AS EndTime        -- Format EndTime as HH:MM
         FROM AvailableSlots
         WHERE BranchID = @BranchID
           AND AppointmentDate = @Date
-          AND IsBooked = 0  -- Only available slots
+          AND IsBooked = 0;  -- Only available slots
       `);
 
-    return result.recordset;  // Array of available slots
+    return result.recordset;  // Array of available slots with formatted time
   } catch (error) {
     console.error("Error fetching available slots:", error.message);
     throw new Error("Error fetching available slots: " + error.message);
