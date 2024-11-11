@@ -13,6 +13,7 @@ DROP TABLE IF EXISTS Appointment;
 DROP TABLE IF EXISTS ContactUs;
 DROP TABLE IF EXISTS Branch;
 
+
 -- Create Branch table
 CREATE TABLE Branch (
     BranchID INT PRIMARY KEY IDENTITY(1,1),
