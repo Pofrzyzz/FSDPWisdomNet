@@ -7,11 +7,12 @@ async function getAvailableSlots(branchID, date) {
       .input('BranchID', sql.Int, branchID)
       .input('Date', sql.Date, date)
       .query(`
-        SELECT SlotID, StartTime
+        SELECT SlotID, 
+               FORMAT(ISNULL(CAST(StartTime AS DATETIME), '1900-01-01 00:00:00'), 'HHmm') AS StartTime
         FROM AvailableSlots
         WHERE BranchID = @BranchID
           AND AppointmentDate = @Date
-          AND IsBooked = 0  -- Only available slots
+          AND IsBooked = 0;
       `);
 
     return result.recordset;  // Array of available slots

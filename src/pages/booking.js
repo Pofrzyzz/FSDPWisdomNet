@@ -9,6 +9,7 @@ import { Link } from 'react-router-dom';
 
 function BookingPage() {
     const [selectedBranch, setSelectedBranch] = useState(null);
+    const [selectedDate, setSelectedDate] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [isConfirmed, setIsConfirmed] = useState(false);
     const [formData, setFormData] = useState({
