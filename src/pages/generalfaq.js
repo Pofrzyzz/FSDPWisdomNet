@@ -2,6 +2,7 @@ import React from "react";
 import { useEffect } from "react";
 import { useState } from "react";
 import { Link } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import NavBar from "../components/navbar";
 import CommonFaqs from "../components/commonfaqs";
 import GeneralBanner from '../images/generalfaq.png';
@@ -13,9 +14,21 @@ import Chatbot from '../components/chatbot';
 
 function GeneralFaq() {
 
+
+    const location = useLocation();
     useEffect(() => {
-        document.title = "Investments | Help & Support | OCBC Singapore";
-    }, []);
+        // Retrieve the popupId from the URL
+        const queryParams = new URLSearchParams(location.search);
+        const popupId = queryParams.get('popupButton');
+        
+        // Directly find the button by ID and trigger a click if the popupId exists
+        if (popupId) {
+          const button = document.getElementById(popupId);
+          if (button) {
+            button.click();
+          }
+        }
+      }, [location]);
 
     const [isExpanded, setIsExpanded] = useState(false);
 
@@ -36,6 +49,8 @@ function GeneralFaq() {
     const closeModal = () => {
         setIsModalOpen(false);
     };
+
+
 
     return (
         <div className="font-opensans">
@@ -72,7 +87,7 @@ function GeneralFaq() {
             {/* Top 4 square buttons */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-8 mx-auto max-w-[1280px]">
                 {/* Change Contact Details */}
-                <div 
+                <div id="contactDetails"
                     onClick={() => openModal(
                         <div>
                             <ul>
@@ -178,7 +193,7 @@ function GeneralFaq() {
                 </div>
 
                 {/* Retrieve Access Code */}
-                <div 
+                <div id="accessCode"
                     onClick={() => openModal(
                         <div>
                             <ul>
@@ -283,7 +298,7 @@ function GeneralFaq() {
                 </div>
 
                 {/* Fee Waiver */}
-                <div 
+                <div id="feeWaiver"
                     onClick={() => openModal(
                         <div>
                             <ul>
@@ -359,7 +374,7 @@ function GeneralFaq() {
                 </div>
 
                 {/* Withdrawal Activation */}
-                <div 
+                <div id="withdrawalActivation"
                     onClick={() => openModal(
                         <div>
                             <ul>
