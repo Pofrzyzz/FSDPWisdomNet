@@ -104,7 +104,7 @@ function CardsFaq() {
                             </ul>
 
                             {/* Alternative Option */}
-                            <p className="mt-4">Alternatively, you can use the <a href="your-link-here" className="text-blue-500 underline">card activation form</a> here.</p>
+                            <p className="mt-4">Alternatively, you can use the <a href="https://internet.ocbc.com/cardactivation/" className="text-blue-500 underline">card activation form</a> here.</p>
                         </div>, 
                         "Card Activation"
                     )} 
@@ -131,7 +131,7 @@ function CardsFaq() {
                                 <li>Select the card to link/delink to an account for ATM transactions.</li>
                                 <li>Select the account to link and tap on the "Next" button to confirm.</li>
                             </ul>
-                            <p className="mt-4">Note: OCBC Business Debit Card customers without OCBC Online Banking access will not be able to activate the overseas ATM cash withdrawal on their card via Online Banking. To activate overseas cash withdrawal, please submit the <a href="your-link-here" className="text-blue-500 underline">OCBC Business Debit Card Maintenance form</a>.</p>
+                            <p className="mt-4">Note: OCBC Business Debit Card customers without OCBC Online Banking access will not be able to activate the overseas ATM cash withdrawal on their card via Online Banking. To activate overseas cash withdrawal, please submit the OCBC Business Debit Card Maintenance form.</p>
 
                             <p className="text-lg font-semibold mt-8">OCBC Digital App</p>
                             <ul className="list-disc pl-6">

@@ -5,8 +5,8 @@ import ContactBooking from '../components/contactbooking';
 import Footer from '../components/footer';
 import Help from '../components/needhelp';
 import HelpDesk from '../images/HelpDesk.jpg';
-import search from '../images/search.svg';
 import Chatbot from '../components/chatbot';
+import Searchbar from '../components/searchbar'
 
 function HomePage() {
   return (

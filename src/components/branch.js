@@ -7,14 +7,14 @@ function Branch({ onBranchSelect }) {
     const [branches, setBranches] = useState([]); 
 
     useEffect(() => {
-        axios.get('/api/branch')
+        axios.get('http://localhost:5000/api/branch')  // Use full URL with port number
             .then((response) => {
-                setBranches(response.data); 
+                setBranches(response.data);
             })
             .catch((error) => {
                 console.error('Error fetching branches:', error);
             });
-    }, []); 
+    }, []);
 
     const toggleDropdown = () => {
         setIsOpen(!isOpen);
@@ -34,7 +34,7 @@ function Branch({ onBranchSelect }) {
                     onClick={toggleDropdown}
                     className="w-72 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 bg-white hover:bg-red-500 hover:text-white transition duration-200 flex items-center justify-between"
                 >
-                    <span>{selectedBranch ? selectedBranch.BranchName : 'Select a branch'}</span>
+                    <span>{selectedBranch ? selectedBranch.name : 'Select a branch'}</span>
                     <svg className="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
                     </svg>
@@ -43,13 +43,13 @@ function Branch({ onBranchSelect }) {
                     <div className="absolute z-20 left-1/2 transform -translate-x-1/2 w-72 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg overflow-y-auto h-50 w-96">
                         {branches.map((branch) => (
                             <div
-                                key={branch.BranchID}
+                                key={branch.id}  // Adjusted to use "id" as per branchModel
                                 onClick={() => handleBranchSelect(branch)}
                                 className="p-4 hover:bg-red-500 hover:text-white cursor-pointer transition duration-200"
                             >
-                                <h3 className="font-bold">{branch.BranchName}</h3>
-                                <p className="text-sm">{branch.Street}</p>
-                                <p className="text-sm text-gray-500">{branch.Location}</p>
+                                <h3 className="font-bold">{branch.name}</h3>
+                                <p className="text-sm">{branch.street}</p>
+                                <p className="text-sm text-gray-500">{branch.additionalInfo}</p>
                             </div>
                         ))}
                     </div>

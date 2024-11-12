@@ -1,8 +1,7 @@
-// Available Controller
-const { getAvailableSlots, bookSlot } = require('../models/availableModel');
+// src/controllers/availableController.js
+const availableModel = require('../models/availableModel'); 
 
-// Get available slots for a specific branch and date
-exports.getAvailableSlots = async (req, res) => {
+const getAvailableSlots = async (req, res) => {
   const { branchID, date } = req.query;
 
   if (!branchID || !date) {
@@ -10,7 +9,7 @@ exports.getAvailableSlots = async (req, res) => {
   }
 
   try {
-    const slots = await getAvailableSlots(branchID, date);
+    const slots = await availableModel.getAvailableSlots(branchID, date);
 
     if (slots.length === 0) {
       return res.status(404).json({ message: "No available slots for this date" });
@@ -23,8 +22,7 @@ exports.getAvailableSlots = async (req, res) => {
   }
 };
 
-// Book a slot by slotID
-exports.bookSlot = async (req, res) => {
+const bookSlot = async (req, res) => {
   const { slotID } = req.body;
 
   if (!slotID) {
@@ -32,7 +30,7 @@ exports.bookSlot = async (req, res) => {
   }
 
   try {
-    const success = await bookSlot(slotID);
+    const success = await availableModel.bookSlot(slotID);
 
     if (success) {
       res.status(200).json({ message: "Slot successfully booked" });
@@ -44,3 +42,6 @@ exports.bookSlot = async (req, res) => {
     res.status(500).json({ message: "Internal server error while booking slot" });
   }
 };
+
+// Export functions using shorthand property names
+module.exports = { getAvailableSlots, bookSlot };

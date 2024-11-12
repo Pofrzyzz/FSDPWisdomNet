@@ -18,4 +18,4 @@ function validateDate(req, res, next) {
   next();  // Proceed to the next middleware or route handler
 }
 
-module.exports = validateDate;
+module.exports = {validateDate} ;
