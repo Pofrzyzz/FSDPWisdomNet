@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import SearchIcon from '../images/search.svg'
+import Fuse from 'fuse.js';
+import SearchIcon from '../images/search.svg';
 
 const searchIndex = [
   { title: "General", keywords: ["contact details", "access code", "fee waiver", "withdrawal activation", "bank code", "myinfo", "remote account"], url: "/GeneralFaq" },
@@ -9,26 +10,25 @@ const searchIndex = [
   { title: "Accounts", keywords: ["account", "cheque", "book", "cheque status", "bank statement", "fixed deposit", "withdraw"], url: "/AccountsFaq" },
 ];
 
+const fuse = new Fuse(searchIndex, {
+  keys: ['keywords', 'title'],
+  threshold: 0.4, // Adjusts sensitivity; lower values = stricter matches, higher values = more fuzzy
+});
+
 function SearchBar() {
   const [query, setQuery] = useState("");
   const navigate = useNavigate();
 
-  const results = searchIndex.filter((item) =>
-    item.title.toLowerCase().includes(query.toLowerCase()) ||
-    item.keywords.some(keyword => keyword.toLowerCase().includes(query.toLowerCase()))
-  );
-
-  
-
   const handleSearch = () => {
-
     if (query.length < 3) {
       alert("Please enter at least 3 characters to search.");
       return;
     }
 
+    const results = fuse.search(query);
+    
     if (results.length > 0) {
-      navigate(results[0].url); 
+      navigate(results[0].item.url);
     } else {
       alert("No results found");
     }
