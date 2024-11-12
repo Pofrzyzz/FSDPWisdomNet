@@ -20,33 +20,6 @@ const getAvailableSlots = async (req, res) => {
     }
 };
 
-const { createAppointment } = require('../models/appointmentModel');
-
-async function createAppointmentController(req, res) {
-    const { BranchID, FullName, Email, Reason, AppointmentDate, SlotID } = req.body;
-
-    // Validate input
-    if (!BranchID || !FullName || !Email || !AppointmentDate || !SlotID) {
-        return res.status(400).json({ error: 'Missing required fields' });
-    }
-
-    try {
-        // Call the model to create an appointment
-        const result = await createAppointment({ BranchID, FullName, Email, Reason, AppointmentDate, SlotID });
-
-        // Check for any errors from the model
-        if (result.error) {
-            return res.status(400).json({ error: result.error });
-        }
-
-        // Send success response
-        return res.status(201).json({ message: result.success });
-    } catch (error) {
-        return res.status(500).json({ error: 'Internal server error' });
-    }
-}
-
-
 // Get slot details by SlotID
 async function createAppointment(req, res) {
     const { BranchID, FullName, Email, Reason, AppointmentDate, AppointmentTime, SlotID } = req.body;
