@@ -2,6 +2,7 @@ import React from "react";
 import { useState } from "react";
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import NavBar from "../components/navbar";
 import CommonFaqs from "../components/commonfaqs";
 import AccountBanner from '../images/account.png';
@@ -14,9 +15,20 @@ import Chatbot from '../components/chatbot';
 
 function AccountFaq() {
 
+    const location = useLocation();
     useEffect(() => {
-        document.title = "Accounts | Help & Support | OCBC Singapore";
-    }, []);
+        // Retrieve the popupId from the URL
+        const queryParams = new URLSearchParams(location.search);
+        const popupId = queryParams.get('popupButton');
+        
+        // Directly find the button by ID and trigger a click if the popupId exists
+        if (popupId) {
+          const button = document.getElementById(popupId);
+          if (button) {
+            button.click();
+          }
+        }
+      }, [location]);
 
     const [isExpanded, setIsExpanded] = useState(false);
 
@@ -37,6 +49,7 @@ function AccountFaq() {
     const closeModal = () => {
         setIsModalOpen(false);
     };
+
 
     return (
         <div className="font-opensans">
@@ -73,7 +86,7 @@ function AccountFaq() {
             {/* Top 4 square buttons */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-8 mx-auto max-w-[1280px]">
                 {/* Apply for Cheque Book */}
-                <div 
+                <div id="applyCheque"
                     onClick={() => openModal(
                         <div>
                             <ul>
@@ -130,7 +143,7 @@ function AccountFaq() {
                 </div>
 
                 {/* Lost Cheque */}
-                <div 
+                <div id="lostCheque"
                     onClick={() => openModal(
                         <div>
                             <ul>
@@ -199,7 +212,7 @@ function AccountFaq() {
                 </div>
 
                 {/* Cheque Status */}
-                <div 
+                <div id="chequeStatus"
                     onClick={() => openModal(
                         <div>
                             <ul>
@@ -259,8 +272,8 @@ function AccountFaq() {
                     </div>
                 </div>
 
-                {/* Credit Limit Button */}
-                <div 
+                {/* Stop Cheque Payment */}
+                <div id="stopCheque"
                     onClick={() => openModal(
                         <div>
                             <ul>
@@ -304,7 +317,7 @@ function AccountFaq() {
             {/* Bottom 4 Squares */}
             <div id="extraButtons" className={isExpanded ? "grid grid-cols-2 md:grid-cols-4 gap-8 mt-8 mx-auto max-w-[1280px]" : "hidden"}>
             {/* Request Bank Statement */}
-            <div 
+            <div id="reqBankStatement"
                 onClick={() => openModal(
                     <div>
                         <ul>
@@ -352,8 +365,8 @@ function AccountFaq() {
                 </div>
             </div>
             
-            {/* Remit Money Overseas */}
-            <div 
+            {/* SGD Fixed Deposit */}
+            <div id="sgdFixedDep"
                 onClick={() => openModal(
                     <div>
                         <ul>
@@ -418,7 +431,7 @@ function AccountFaq() {
             </div>
             
             {/* Withdraw Fixed Deposit */}
-            <div 
+            <div id="withdrawFixedDep"
                 onClick={() => openModal(
                     <div>
                         <ul>
@@ -467,7 +480,7 @@ function AccountFaq() {
             </div>
 
             {/* Retrieve Statements */}
-            <div 
+            <div id="retrieveStatements"
                 onClick={() => openModal(
                     <div>
                         <p className="text-lg font-semibold">OCBC Internet Banking</p>

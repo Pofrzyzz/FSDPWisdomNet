@@ -2,6 +2,7 @@ import React from "react";
 import { useEffect } from "react";
 import { useState } from "react";
 import { Link } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import NavBar from "../components/navbar";
 import CommonFaqs from "../components/commonfaqs";
 import LoanBanner from '../images/loan.png';
@@ -13,9 +14,20 @@ import Chatbot from '../components/chatbot';
 
 function LoansFaq() {
 
+    const location = useLocation();
     useEffect(() => {
-        document.title = "Loans | Help & Support | OCBC Singapore";
-    }, []);
+        // Retrieve the popupId from the URL
+        const queryParams = new URLSearchParams(location.search);
+        const popupId = queryParams.get('popupButton');
+        
+        // Directly find the button by ID and trigger a click if the popupId exists
+        if (popupId) {
+          const button = document.getElementById(popupId);
+          if (button) {
+            button.click();
+          }
+        }
+      }, [location]);
 
     const [isExpanded, setIsExpanded] = useState(false);
 
@@ -72,7 +84,7 @@ function LoansFaq() {
             {/* Top 4 square buttons */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-8 mx-auto max-w-[1280px]">
                 {/* Full Loan Repayment */}
-                <div 
+                <div id="fullLoanRepayment"
                     onClick={() => openModal(
                         <div>
                             <ul>
@@ -117,8 +129,8 @@ function LoansFaq() {
                     </div>
                 </div>
 
-                {/* Partial Loan Repayment} */}
-                <div 
+                {/* Partial Loan Repayment */}
+                <div id="partialLoanRepayment"
                     onClick={() => openModal(
                         <div>
                             <ul>
@@ -178,7 +190,7 @@ function LoansFaq() {
                 </div>
 
                 {/* Cancel Partial Prepayment */}
-                <div 
+                <div id="cancelPartialPrepayment"
                     onClick={() => openModal(
                         <div>
                             <ul>
@@ -227,8 +239,8 @@ function LoansFaq() {
                     </div>
                 </div>
 
-                {/* Change Loan Interest Rate Package*/}
-                <div 
+                {/* Change Loan Interest Rate Package */}
+                <div id="changePackage"
                     onClick={() => openModal(
                         <div>
                             <ul>
@@ -262,7 +274,7 @@ function LoansFaq() {
             {/* Bottom 4 Squares */}
             <div id="extraButtons" className={isExpanded ? "grid grid-cols-2 md:grid-cols-4 gap-8 mt-8 mx-auto max-w-[1280px]" : "hidden"}>
             {/* Change Insurance Tenure Length */}
-            <div 
+            <div id="changeTenureLength"
                 onClick={() => openModal(
                     <div>
                         <ul>
@@ -309,7 +321,7 @@ function LoansFaq() {
             </div>
             
             {/* Change Debiting Account */}
-            <div 
+            <div id="changeDebitingAcc"
                 onClick={() => openModal(
                     <div>
                     <p className="font-bold">Changing the Debiting Account for Your Home Loan:</p>
@@ -357,8 +369,8 @@ function LoansFaq() {
                 </div>
             </div>
             
-            {/* Card Replacement */}
-            <div 
+            {/* Cancel Fire Insurance Policy */}
+            <div id="cancelFireInsurance"
                 onClick={() => openModal(
                     <div>
                         <ul>
@@ -389,8 +401,8 @@ function LoansFaq() {
                 </div>
             </div>
 
-            {/* Retrieve Statements */}
-            <div 
+            {/* Request Home Loan Statements */}
+            <div id="requestHomeStatement"
                 onClick={() => openModal(
                     <div>
                         <ul>
