@@ -20,7 +20,6 @@ const getAvailableSlots = async (req, res) => {
     }
 };
 
-
 // Get slot details by SlotID
 async function createAppointment(req, res) {
     const { BranchID, FullName, Email, Reason, AppointmentDate, AppointmentTime, SlotID } = req.body;
