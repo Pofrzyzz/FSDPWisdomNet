@@ -9,6 +9,7 @@ import { Link } from 'react-router-dom';
 
 function BookingPage() {
     const [selectedBranch, setSelectedBranch] = useState(null);
+    const [selectedDate, setSelectedDate] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [isConfirmed, setIsConfirmed] = useState(false);
     const [formData, setFormData] = useState({
@@ -18,52 +19,76 @@ function BookingPage() {
     });
     const [showTooltip, setShowTooltip] = useState(false);
     const [selectedDateTime, setSelectedDateTime] = useState(null);
+    const [slotID, setSlotID] = useState(null);
     const [errors, setErrors] = useState({
         branch: '',
         dateTime: '',
         form: '',
     });
 
-    const handleConfirm = async () => {
-        if (formData.fullName && formData.email && formData.reason && selectedBranch && selectedDateTime) {
-            try {
-                const response = await fetch('/api/slots/book', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        branchID: selectedBranch.branchID, // Assuming `selectedBranch` has an `id`
-                        fullName: formData.fullName,
-                        email: formData.email,
-                        reason: formData.reason,
-                        appointmentDate: selectedDateTime.split(' ')[0], // Extract date
-                        appointmentTime: selectedDateTime.split(' ')[1], // Extract time
-                    }),
-                });
-                const data = await response.json();
-
-                if (response.ok) {
-                    setIsConfirmed(true);
-                    setShowModal(true);
-                } else {
-                    setErrors(prevErrors => ({
-                        ...prevErrors,
-                        form: data.error || 'An error occurred while booking your appointment.',
-                    }));
-                }
-            } catch (error) {
-                setErrors(prevErrors => ({
-                    ...prevErrors,
-                    form: 'Failed to book the appointment. Please try again later.',
-                }));
-            }
+    const handleConfirm = () => {
+        if (formData.fullName && formData.email && formData.reason && selectedBranch && slotID) {
+            setIsConfirmed(true);
+            setShowModal(true);
         } else {
             setErrors(prevErrors => ({
                 ...prevErrors,
                 form: 'Please fill in all the fields.',
             }));
         }
+    };
+
+    // const handleConfirm = async () => {
+    //     if (formData.fullName && formData.email && formData.reason && selectedBranch && slotID) {
+
+    //         try {
+    //             // Format the appointment time as 'HH:mm:ss.ssssss'
+    //             const timeWithMicroseconds = selectedDateTime?.time + ":00.0000000"; // Example: "10:00:00.0000000"
+            
+    //             const response = await fetch('http://localhost:5000/api/appointment/create', {
+    //                 method: 'POST',
+    //                 headers: {
+    //                     'Content-Type': 'application/json',
+    //                 },
+    //                 body: JSON.stringify({
+    //                     branchID: selectedBranch.id,
+    //                     fullName: formData.fullName,
+    //                     email: formData.email,
+    //                     reason: formData.reason,
+    //                     appointmentDate: selectedDateTime?.date,  // 'YYYY-MM-DD'
+    //                     appointmentTime: timeWithMicroseconds,  // Send time with microseconds
+    //                     slotID: slotID, // Send the slotID here
+    //                 }),
+    //             });
+    
+    //             const data = await response.json();
+    
+    //             if (response.ok) {
+    //                 setIsConfirmed(true);
+    //                 setShowModal(true);
+    //             } else {
+    //                 setErrors(prevErrors => ({
+    //                     ...prevErrors,
+    //                     form: data.error || 'An error occurred while booking your appointment.',
+    //                 }));
+    //             }
+    //         } catch (error) {
+    //             setErrors(prevErrors => ({
+    //                 ...prevErrors,
+    //                 form: 'Failed to book the appointment. Please try again later.',
+    //             }));
+    //         }
+    //     } else {
+    //         setErrors(prevErrors => ({
+    //             ...prevErrors,
+    //             form: 'Please fill in all the fields.',
+    //         }));
+    //     }
+    // };
+
+    const handleDateTimeSelect = (dateTimeInfo) => {
+        setSelectedDateTime(dateTimeInfo); 
+        setSlotID(dateTimeInfo.slotID); // Set slotID separately if you want to use it directly
     };
 
     const handleClose = () => {
@@ -142,7 +167,7 @@ function BookingPage() {
                                 onMouseEnter={() => !selectedBranch && setShowTooltip(true)} 
                                 onMouseLeave={() => setShowTooltip(false)}
                             >
-                                <Calendar selectedBranch={selectedBranch} onDateTimeSelect={setSelectedDateTime} />
+                                <Calendar selectedBranch={selectedBranch} onDateTimeSelect={handleDateTimeSelect} />
                                 {errors.dateTime && <p className="text-red-500 text-sm mt-1">{errors.dateTime}</p>}
                                 {showTooltip && (
                                     <div className="absolute bg-red-500 text-white text-sm p-2 rounded shadow-lg" 
@@ -171,8 +196,8 @@ function BookingPage() {
                                 <>
                                     <h2 className="text-2xl font-bold mb-4">Booking Confirmed!</h2>
                                     <div className="flex items-center justify-between mb-4">
-                                        <span>{selectedBranch?.name} branch</span>
-                                        <span>{selectedDateTime}</span>
+                                        <span>{selectedBranch?.name}</span>
+                                        <span>{selectedDateTime?.date} {selectedDateTime?.time}</span> {/* Correct rendering of selectedDateTime */}
                                     </div>
                                     <div className="mb-2">
                                         <strong>Full name (NRIC):</strong> {formData.fullName}
@@ -194,8 +219,8 @@ function BookingPage() {
                                 <>
                                     <h2 className="text-xl font-bold mb-4">Confirm Booking</h2>
                                     <div className="flex items-center justify-between mb-4">
-                                        <span>{selectedBranch?.name} branch</span>
-                                        <span>{selectedDateTime}</span>
+                                        <span>{selectedBranch?.name}</span>
+                                        <span>{selectedDateTime?.date} {selectedDateTime?.time}</span> {/* Correct rendering of selectedDateTime */}
                                     </div>
                                     <div className="mb-4">
                                         <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="fullName">
@@ -249,12 +274,7 @@ function BookingPage() {
                 )}
             </section>
 
-            <section>
-                {/* Footer Component */}
-                <Footer /> 
-            </section>
-
-            {/* Chatbot Button and Interface */}
+            <Footer />
             <Chatbot />
         </div>
     );

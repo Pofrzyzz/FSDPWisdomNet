@@ -2,6 +2,7 @@ import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
 import { Link } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import NavBar from "../components/navbar";
 import CommonFaqs from "../components/commonfaqs";
 import CardBanner from '../images/CardBanner.png';
@@ -13,9 +14,20 @@ import Chatbot from '../components/chatbot';
 
 function CardsFaq() {
 
+    const location = useLocation();
     useEffect(() => {
-        document.title = "Cards | Help & Support | OCBC Singapore";
-    }, []);
+        // Retrieve the popupId from the URL
+        const queryParams = new URLSearchParams(location.search);
+        const popupId = queryParams.get('popupButton');
+        
+        // Directly find the button by ID and trigger a click if the popupId exists
+        if (popupId) {
+          const button = document.getElementById(popupId);
+          if (button) {
+            button.click();
+          }
+        }
+      }, [location]);
 
     const [isExpanded, setIsExpanded] = useState(false);
 
@@ -36,6 +48,7 @@ function CardsFaq() {
     const closeModal = () => {
         setIsModalOpen(false);
     };
+
 
     return (
         <div className="font-opensans">
@@ -72,13 +85,12 @@ function CardsFaq() {
             {/* Top 4 square buttons */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-8 mx-auto max-w-[1280px]">
                 {/* Card Activation Button */}
-                <div 
+                <div id="cardActivation"
                     onClick={() => openModal(
                         <div>
                             <p className="text-lg font-semibold">Credit and Debit Card Activation</p>
                             <p>You can activate your credit or debit card via OCBC using one of the following channels:</p>
 
-                            {/* OCBC App Steps */}
                             <p className="mt-4 font-semibold">Via OCBC App</p>
                             <ul className="list-disc pl-6">
                                 <li>Log in to the OCBC app.</li>
@@ -92,7 +104,6 @@ function CardsFaq() {
                                 <li>Tap on “Submit” after reviewing the activation details.</li>
                             </ul>
 
-                            {/* OCBC Internet Banking Steps */}
                             <p className="mt-4 font-semibold">Via OCBC Internet Banking</p>
                             <ul className="list-disc pl-6">
                                 <li>Log in to OCBC Internet Banking with your access code and PIN.</li>
@@ -103,7 +114,6 @@ function CardsFaq() {
                                 <li>Tap on “Submit” after reviewing the activation details.</li>
                             </ul>
 
-                            {/* Alternative Option */}
                             <p className="mt-4">Alternatively, you can use the <a href="https://internet.ocbc.com/cardactivation/" className="text-blue-500 underline">card activation form</a> here.</p>
                         </div>, 
                         "Card Activation"
@@ -121,7 +131,7 @@ function CardsFaq() {
                 </div>
 
                 {/* Overseas Card Activation Button */}
-                <div 
+                <div id="overseasCardActivation"
                     onClick={() => openModal(
                         <div>
                             <p className="text-lg font-semibold">OCBC Internet Banking</p>
@@ -160,7 +170,7 @@ function CardsFaq() {
                 </div>
 
                 {/* Apply for Card Button */}
-                <div 
+                <div id="applyCard"
                     onClick={() => openModal(
                         <div>
                             <p className="text-lg font-semibold">Why should I use Myinfo to complete my application?</p>
@@ -236,7 +246,7 @@ function CardsFaq() {
                 </div>
 
                 {/* Credit Limit Button */}
-                <div 
+                <div id="creditLimit"
                     onClick={() => openModal(
                         <div>
                             <p className="text-lg font-semibold">Why has my credit limit gone down when I cannot see the transaction in my Internet Banking?</p>
@@ -300,7 +310,7 @@ function CardsFaq() {
             {/* Bottom 4 Squares */}
             <div id="extraButtons" className={isExpanded ? "grid grid-cols-2 md:grid-cols-4 gap-8 mt-8 mx-auto max-w-[1280px]" : "hidden"}>
             {/* Check Balance */}
-            <div 
+            <div id="checkBalance"
                 onClick={() => openModal(
                     <div>
                         <p className="text-lg font-semibold">Internet Banking</p>
@@ -347,7 +357,7 @@ function CardsFaq() {
             </div>
             
             {/* Check Transaction */}
-            <div 
+            <div id="checkTransaction"
                 onClick={() => openModal(
                     <div>
                         <p className="text-lg font-semibold">View Credit Card Details on Online Banking</p>
@@ -377,7 +387,7 @@ function CardsFaq() {
             </div>
             
             {/* Card Replacement */}
-            <div 
+            <div id="cardReplacement"
                 onClick={() => openModal(
                     <div>
                         <p className="text-lg font-semibold">Request a Replacement Card via OCBC Online Banking</p>
@@ -410,7 +420,7 @@ function CardsFaq() {
             </div>
 
             {/* Retrieve Statements */}
-            <div 
+            <div id="retrieveStatements"
                 onClick={() => openModal(
                     <div>
                         <p className="text-lg font-semibold">OCBC Internet Banking</p>

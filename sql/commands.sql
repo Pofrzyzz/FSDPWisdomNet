@@ -97,18 +97,6 @@ CREATE TABLE ContactUs (
     SubmissionDateTime DATETIME DEFAULT GETDATE()
 );
 
--- Create Appointment table
-CREATE TABLE Appointment (
-    AppointmentID INT PRIMARY KEY IDENTITY(1,1),
-    BranchID INT FOREIGN KEY REFERENCES Branch(BranchID),
-    FullName NVARCHAR(100) NOT NULL,
-    Email NVARCHAR(100) NOT NULL,
-    Reason NVARCHAR(255),
-    AppointmentDate DATE NOT NULL,
-    AppointmentTime TIME NOT NULL,
-    BookingDateTime DATETIME DEFAULT GETDATE()
-);
-
 -- Create AvailableSlots table
 CREATE TABLE AvailableSlots (
     SlotID INT PRIMARY KEY IDENTITY(1,1),
@@ -117,6 +105,20 @@ CREATE TABLE AvailableSlots (
     StartTime TIME NOT NULL,
     EndTime TIME NOT NULL,
     IsBooked BIT DEFAULT 0
+);
+
+-- Create Appointment table 
+CREATE TABLE Appointment (
+    AppointmentID INT PRIMARY KEY IDENTITY(1,1),
+    BranchID INT FOREIGN KEY REFERENCES Branch(BranchID),
+    FullName NVARCHAR(100) NOT NULL,
+    Email NVARCHAR(100) NOT NULL,
+    Reason NVARCHAR(255),
+    AppointmentDate DATE NOT NULL,
+    AppointmentTime TIME NOT NULL,
+    BookingDateTime DATETIME DEFAULT GETDATE(),
+    SlotID INT, 
+    FOREIGN KEY (SlotID) REFERENCES AvailableSlots(SlotID)
 );
 
 -- Insert sample data into Branch table

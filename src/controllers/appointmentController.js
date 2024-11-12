@@ -1,5 +1,6 @@
 const appointmentModel = require('../models/appointmentModel');
 
+// Get available slots for a branch and date
 const getAvailableSlots = async (req, res) => {
     const { branchID, appointmentDate } = req.query;
 
@@ -19,25 +20,29 @@ const getAvailableSlots = async (req, res) => {
     }
 };
 
-const createAppointment = async (req, res) => {
-    const { branchID, fullName, email, reason, appointmentDate, appointmentTime, slotID } = req.body;
+// Get slot details by SlotID
+async function createAppointment(req, res) {
+    const { BranchID, FullName, Email, Reason, AppointmentDate, AppointmentTime, SlotID } = req.body;
 
-    if (!branchID || !fullName || !email || !reason || !appointmentDate || !appointmentTime || !slotID) {
-        return res.status(400).json({ message: "All fields are required" });
+    // Validate input
+    if (!BranchID || !FullName || !Email || !AppointmentDate || !AppointmentTime || !SlotID) {
+        return res.status(400).json({ error: 'Missing required fields' });
     }
 
     try {
-        const result = await appointmentModel.createAppointment(branchID, fullName, email, reason, appointmentDate, appointmentTime);
-        await appointmentModel.bookSlot(slotID);
+        // Call the model to create an appointment
+        const result = await createAppointment({ BranchID, FullName, Email, Reason, AppointmentDate, AppointmentTime, SlotID });
 
-        res.status(200).json({
-            message: 'Appointment created successfully',
-            appointmentID: result.insertId,
-        });
-    } catch (err) {
-        console.error("Error creating appointment:", err.message);
-        res.status(500).json({ error: 'Error creating appointment' });
+        // Check for any errors from the model
+        if (result.error) {
+            return res.status(400).json({ error: result.error });
+        }
+
+        // Send success response
+        return res.status(201).json({ message: result.success });
+    } catch (error) {
+        return res.status(500).json({ error: 'Internal server error' });
     }
-};
+}
 
 module.exports = { getAvailableSlots, createAppointment };
