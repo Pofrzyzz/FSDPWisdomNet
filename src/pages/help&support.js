@@ -30,15 +30,8 @@ function HomePage() {
               Help & Support
             </h1>
             {/* Search Bar */}
-            <div className="relative mx-auto max-w-2xl mt-12">
-              <input
-                type="text"
-                placeholder="Search for common enquiries..."
-                className="w-full p-4 border text-gray-700 focus:outline-none focus:border-blue-500 rounded-full"
-              />
-              <button className="absolute right-6 top-1/2 transform -translate-y-1/2 text-gray-600">
-                <img src={search} alt="Search" className="w-8 h-8" />
-              </button>
+            <div >
+              <Searchbar />
             </div>
           </div>
         </div>
