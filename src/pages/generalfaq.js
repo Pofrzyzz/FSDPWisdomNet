@@ -426,7 +426,7 @@ function GeneralFaq() {
             {/* Bottom 4 Squares */}
             <div id="extraButtons" className={isExpanded ? "grid grid-cols-2 md:grid-cols-4 gap-8 mt-8 mx-auto max-w-[1280px]" : "hidden"}>
             {/* Bank Code */}
-            <div 
+            <div id="bankCode"
                 onClick={() => openModal(
                     <div>
                         <ul>
@@ -466,7 +466,7 @@ function GeneralFaq() {
             </div>
             
             {/* MyInfo Information */}
-            <div 
+            <div id="myInfo"
                 onClick={() => openModal(
                     <div>
                         <ul>
@@ -539,7 +539,7 @@ function GeneralFaq() {
             </div>
             
             {/* Apply through MyInfo */}
-            <div 
+            <div id="applyMyInfo"
                 onClick={() => openModal(
                     <div>
                         <ul>
@@ -596,8 +596,8 @@ function GeneralFaq() {
                 </div>
             </div>
 
-            {/* Retrieve Statements */}
-            <div 
+            {/* About Remote Account Opening */}
+            <div id="openRemoteAcc"
                 onClick={() => openModal(
                     <div>
                         <ul>
