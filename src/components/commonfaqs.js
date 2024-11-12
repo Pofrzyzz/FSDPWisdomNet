@@ -10,7 +10,7 @@ function CommonFaqs() {
             </div>           
 
             {/* Container for topics */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mx-auto max-w-[1280px]">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mx-auto max-w-[1440px]">
 
                 {/* General */}
                 <Link to="/GeneralFaq">
