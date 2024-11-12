@@ -1,40 +1,32 @@
 // chatController.js
-const { startChatSession, saveMessageToDatabase } = require('../models/chatModel');
 
-const requestChat = async (userId, name, nric, branchId, departmentId) => {
-    try {
-      const chatId = await startChatSession(userId, branchId, departmentId);
-      const operator = await getAvailableOperator(branchId, departmentId);
-  
-      if (!operator) {
-        throw new Error('No available operators in this department.');
-      }
-  
-      // Connect the operator with the user
-      return { chatId, operator };
-    } catch (error) {
-      console.error('Error requesting chat:', error);
-      throw error;
-    }
+const chatSessions = {}; // In-memory storage for sessions
+const messagesStore = {}; // In-memory storage for messages
+const operator = {
+  operatorId: 1,
+  operatorName: "John Doe",
+  departmentName: "Customer Support",
+  branchName: "OCBC Main Branch"
+};
+
+// Function to start a new chat session
+const requestChat = (userId, name, nric) => {
+  const chatId = `chat_${Date.now()}`; // Unique chat ID using timestamp
+  chatSessions[chatId] = { userId, name, nric, chatId, operator };
+  messagesStore[chatId] = [];
+
+  return { chatId, operator };
+};
+
+// Function to save messages to in-memory storage
+const handleMessage = (chatId, senderType, messageText) => {
+  const message = {
+    senderType,
+    messageText,
+    timestamp: new Date()
   };
-
-const initiateChat = async (userId, branchId, departmentId) => {
-  try {
-    const chatId = await startChatSession(userId, branchId, departmentId);
-    return chatId;
-  } catch (error) {
-    console.error('Error initiating chat session:', error);
-    throw error;
-  }
+  messagesStore[chatId].push(message);
+  return message;
 };
 
-const handleMessage = async (chatId, senderType, messageText) => {
-  try {
-    await saveMessageToDatabase(chatId, senderType, messageText);
-  } catch (error) {
-    console.error('Error saving message:', error);
-    throw error;
-  }
-};
-
-module.exports = { initiateChat, handleMessage, requestChat};
+module.exports = { requestChat, handleMessage };

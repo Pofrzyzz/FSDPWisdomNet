@@ -1,53 +1,85 @@
 // src/components/chatbot.js
 import React, { useState, useEffect } from 'react';
 import { io } from 'socket.io-client';
+import { db } from '../firebaseConfig';
+import { collection, addDoc, serverTimestamp, onSnapshot, orderBy, query } from 'firebase/firestore';
 import chatbotIcon from '../images/chatbot.svg';
 
-const socket = io('http://localhost:5000'); // Ensure this URL points to the Express server
+const socket = io('http://localhost:5000');
 
 function Chatbot() {
   const [isChatOpen, setIsChatOpen] = useState(false);
-  const [step, setStep] = useState(1); // Start at step 1
+  const [step, setStep] = useState(1);
   const [name, setName] = useState('');
   const [nric, setNric] = useState('');
+  const [nricError, setNricError] = useState(''); // Track NRIC validation error
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [chatId, setChatId] = useState(null);
+  const messagesEndRef = React.useRef(null);
 
   useEffect(() => {
-    socket.on('chatMessage', (msg) => {
-      setMessages((prevMessages) => [...prevMessages, msg]);
-    });
+    if (chatId) {
+      const messagesRef = query(collection(db, 'chats', chatId, 'messages'), orderBy('timestamp', 'asc'));
+      const unsubscribe = onSnapshot(messagesRef, (snapshot) => {
+        const newMessages = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+        setMessages(newMessages);
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+      });
 
-    socket.on('chatAssigned', ({ operatorName, branch, department, greeting }) => {
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        {
-          sender: 'operator',
-          message: greeting,
-          timestamp: new Date()
-        }
-      ]); 
-    });
-
-    return () => socket.off();
-  }, []);
-
-  const startLiveChat = () => {
-    setStep(2);
-  };
-
-  const submitUserInfo = () => {
-    if (name && nric) {
-      setStep(5); // Go to chat step after submitting
-      socket.emit('startChat', { name, nric });
+      return unsubscribe;
     }
+  }, [chatId]);
+
+  const isValidNric = (nric) => {
+    return /^[STFG]\d{7}[A-Z]$/.test(nric); // Validates NRIC format
   };
 
-  const sendMessage = () => {
-    if (message.trim()) {
-      const timestamp = new Date();
+  const startLiveChat = () => setStep(2);
+
+  const submitUserInfo = async () => {
+    if (!name) {
+      alert("Please enter your name.");
+      return;
+    }
+    if (!isValidNric(nric)) {
+      setNricError("Please enter a valid NRIC (e.g., S1234567A).");
+      return;
+    }
+    setNricError('');
+    setIsLoading(true);
+
+    const chatRef = await addDoc(collection(db, 'chats'), {
+      name,
+      nric,
+      status: 'active',
+      createdAt: serverTimestamp(),
+    });
+
+    setChatId(chatRef.id);
+    setIsLoading(false);
+    setStep(5);
+    socket.emit('startChat', { name, nric, chatId: chatRef.id });
+
+    // Send an auto-generated greeting message
+    await addDoc(collection(db, 'chats', chatRef.id, 'messages'), {
+      message: `Hello ${name}, welcome to our live chat! An operator will be with you shortly.`,
+      sender: 'system',
+      timestamp: serverTimestamp(),
+    });
+  };
+
+  const sendMessage = async () => {
+    if (message.trim() && chatId) {
+      const newMessage = {
+        message,
+        sender: 'user',
+        timestamp: serverTimestamp(),
+      };
+
+      await addDoc(collection(db, 'chats', chatId, 'messages'), newMessage);
       socket.emit('chatMessage', message);
-      setMessages((prevMessages) => [...prevMessages, { sender: 'user', message, timestamp }]);
       setMessage('');
     }
   };
@@ -64,45 +96,25 @@ function Chatbot() {
                 <p className="text-sm">Our chatbot is here to assist with your inquiries.</p>
               </div>
             </div>
-            <button
-              className="text-white hover:text-gray-200 text-2xl font-bold p-4"
-              onClick={() => setIsChatOpen(false)}
-            >
-              &#x2212;
-            </button>
+            <button className="text-white hover:text-gray-200 text-2xl font-bold p-4" onClick={() => setIsChatOpen(false)}>&#x2212;</button>
           </div>
           <div className="p-4 flex flex-col h-full justify-between">
-            {/* Step 1: Ask if the user wants to start a live chat */}
             {step === 1 && (
               <div>
                 <p className="text-sm text-gray-600">Would you like to start a live chat?</p>
                 <button className="bg-[#DD101E] text-white p-2 rounded-lg w-full mt-2" onClick={startLiveChat}>Yes, Start Live Chat</button>
               </div>
             )}
-
-            {/* Step 2: Ask for user information */}
             {step === 2 && (
               <div>
-                <input
-                  type="text"
-                  placeholder="Your Name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="w-full p-2 mb-2 border rounded-lg"
-                />
-                <input
-                  type="text"
-                  placeholder="NRIC"
-                  value={nric}
-                  onChange={(e) => setNric(e.target.value)}
-                  className="w-full p-2 mb-2 border rounded-lg"
-                />
+                <input type="text" placeholder="Your Name" value={name} onChange={(e) => setName(e.target.value)} className="w-full p-2 mb-2 border rounded-lg" />
+                <input type="text" placeholder="NRIC" value={nric} onChange={(e) => setNric(e.target.value)} className="w-full p-2 mb-2 border rounded-lg" />
+                {nricError && <p className="text-red-500 text-sm mt-1">{nricError}</p>}
                 <button className="bg-[#DD101E] text-white p-2 rounded-lg w-full mt-2" onClick={submitUserInfo}>Submit</button>
               </div>
             )}
-
-            {/* Step 5: Show chat messages */}
-            {step === 5 && (
+            {isLoading && <div className="flex items-center justify-center h-full text-gray-700 text-lg font-semibold"><p>Wait a moment while we connect you to an operator...</p></div>}
+            {step === 5 && !isLoading && (
               <div>
                 <div className="overflow-y-scroll h-80 mb-4">
                   {messages.map((msg, index) => (
@@ -110,21 +122,15 @@ function Chatbot() {
                       <div className={`p-2 rounded-lg max-w-xs text-sm ${msg.sender === 'user' ? 'bg-gray-300 text-black' : 'bg-gray-200 text-black'}`}>
                         {msg.message}
                       </div>
-                      <p className="text-xs text-gray-500 mt-1">
-                        {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      <p className="text-xs text-gray-500">
+                        {msg.timestamp?.toDate ? msg.timestamp.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
                       </p>
                     </div>
                   ))}
+                  <div ref={messagesEndRef} />
                 </div>
                 <div className="flex items-center">
-                  <input
-                    type="text"
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    placeholder="Type a message..."
-                    className="flex-1 p-2 border rounded-l-lg"
-                    onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-                  />
+                  <input type="text" value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Type a message..." className="flex-1 p-2 border rounded-l-lg" onKeyPress={(e) => e.key === 'Enter' && sendMessage()} />
                   <button onClick={sendMessage} className="bg-[#DD101E] text-white p-2 rounded-r-lg">Send</button>
                 </div>
               </div>
