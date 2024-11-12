@@ -4,6 +4,7 @@ import CommonFaqs from '../components/commonfaqs';
 import ContactBooking from '../components/contactbooking';
 import Footer from '../components/footer';
 import Help from '../components/needhelp';
+import HelpDesk from '../images/HelpDesk.jpg';
 import Chatbot from '../components/chatbot';
 import Searchbar from '../components/searchbar'
 
@@ -11,30 +12,47 @@ function HomePage() {
   return (
     <div className="flex flex-col min-h-screen bg-gray-100">
       <Navbar />
-      <section className="bg-white py-16">
-        <div className="container mx-auto px-6 md:px-12 text-center">
-          <h1 className="text-3xl md:text-5xl font-bold mt-28 md:mt-28">Help & Support</h1>
-
-          {/* Search Bar */}
-          <div className="relative mx-auto max-w-xl mt-6">
-            <Searchbar />
+      
+      <section className="relative bg-white py-16 h-[420px]">
+        <div className="container mx-auto px-6 md:px-12 text-center h-full">
+          {/* Wrap the CardBanner image in a container with z-index */}
+          <div className="absolute inset-0 z-0">
+            <img
+              src={HelpDesk}
+              alt="Help Desk"
+              className="w-full h-full object-cover"
+            />
+            {/* Red line at the bottom of the image */}
+            <div className="absolute bottom-0 left-0 w-full h-[2px] bg-red-500"></div>
           </div>
-          
-          {/* Common FAQ Section */}
-          <CommonFaqs />
-          {/* View More Button */}
-          <button className="mt-8 px-6 py-2 bg-red-600 text-white font-semibold rounded-md hover:bg-red-700 transition-colors">
-            View More
-          </button>
+          <div className="relative z-10">
+            <h1 className="text-7xl md:text-5xl font-bold mt-32 md:mt-32 text-white">
+              Help & Support
+            </h1>
+            {/* Search Bar */}
+            <div >
+              <Searchbar />
+            </div>
+          </div>
         </div>
       </section>
-      
+
+      {/* CommonFaqs Component */}
+      <CommonFaqs />
+
+      {/* View More Button */}
+      <div className="flex justify-center mt-16">
+        <button className="px-6 py-2 bg-red-600 text-white font-semibold rounded-md hover:bg-red-700 transition-colors">
+          View More
+        </button>
+      </div>
+
       {/* Other Sections */}
       <section className="flex flex-col min-h-screen">
         <ContactBooking />
         <Help />
       </section>
-      
+
       <Footer />
 
       {/* Chatbot Button and Interface */}
