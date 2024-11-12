@@ -26,46 +26,10 @@ function BookingPage() {
         form: '',
     });
 
-    const handleConfirm = async () => {
+    const handleConfirm = () => {
         if (formData.fullName && formData.email && formData.reason && selectedBranch && slotID) {
-
-            try {
-                // Format the appointment time as 'HH:mm:ss.ssssss'
-                const timeWithMicroseconds = selectedDateTime?.time + ":00.0000000"; // Example: "10:00:00.0000000"
-            
-                const response = await fetch('http://localhost:5000/api/appointment/create', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        branchID: selectedBranch.id,
-                        fullName: formData.fullName,
-                        email: formData.email,
-                        reason: formData.reason,
-                        appointmentDate: selectedDateTime?.date,  // 'YYYY-MM-DD'
-                        appointmentTime: timeWithMicroseconds,  // Send time with microseconds
-                        slotID: slotID, // Send the slotID here
-                    }),
-                });
-    
-                const data = await response.json();
-    
-                if (response.ok) {
-                    setIsConfirmed(true);
-                    setShowModal(true);
-                } else {
-                    setErrors(prevErrors => ({
-                        ...prevErrors,
-                        form: data.error || 'An error occurred while booking your appointment.',
-                    }));
-                }
-            } catch (error) {
-                setErrors(prevErrors => ({
-                    ...prevErrors,
-                    form: 'Failed to book the appointment. Please try again later.',
-                }));
-            }
+            setIsConfirmed(true);
+            setShowModal(true);
         } else {
             setErrors(prevErrors => ({
                 ...prevErrors,
@@ -73,6 +37,54 @@ function BookingPage() {
             }));
         }
     };
+
+    // const handleConfirm = async () => {
+    //     if (formData.fullName && formData.email && formData.reason && selectedBranch && slotID) {
+
+    //         try {
+    //             // Format the appointment time as 'HH:mm:ss.ssssss'
+    //             const timeWithMicroseconds = selectedDateTime?.time + ":00.0000000"; // Example: "10:00:00.0000000"
+            
+    //             const response = await fetch('http://localhost:5000/api/appointment/create', {
+    //                 method: 'POST',
+    //                 headers: {
+    //                     'Content-Type': 'application/json',
+    //                 },
+    //                 body: JSON.stringify({
+    //                     branchID: selectedBranch.id,
+    //                     fullName: formData.fullName,
+    //                     email: formData.email,
+    //                     reason: formData.reason,
+    //                     appointmentDate: selectedDateTime?.date,  // 'YYYY-MM-DD'
+    //                     appointmentTime: timeWithMicroseconds,  // Send time with microseconds
+    //                     slotID: slotID, // Send the slotID here
+    //                 }),
+    //             });
+    
+    //             const data = await response.json();
+    
+    //             if (response.ok) {
+    //                 setIsConfirmed(true);
+    //                 setShowModal(true);
+    //             } else {
+    //                 setErrors(prevErrors => ({
+    //                     ...prevErrors,
+    //                     form: data.error || 'An error occurred while booking your appointment.',
+    //                 }));
+    //             }
+    //         } catch (error) {
+    //             setErrors(prevErrors => ({
+    //                 ...prevErrors,
+    //                 form: 'Failed to book the appointment. Please try again later.',
+    //             }));
+    //         }
+    //     } else {
+    //         setErrors(prevErrors => ({
+    //             ...prevErrors,
+    //             form: 'Please fill in all the fields.',
+    //         }));
+    //     }
+    // };
 
     const handleDateTimeSelect = (dateTimeInfo) => {
         setSelectedDateTime(dateTimeInfo); 
@@ -184,7 +196,7 @@ function BookingPage() {
                                 <>
                                     <h2 className="text-2xl font-bold mb-4">Booking Confirmed!</h2>
                                     <div className="flex items-center justify-between mb-4">
-                                        <span>{selectedBranch?.name} branch</span>
+                                        <span>{selectedBranch?.name}</span>
                                         <span>{selectedDateTime?.date} {selectedDateTime?.time}</span> {/* Correct rendering of selectedDateTime */}
                                     </div>
                                     <div className="mb-2">

@@ -20,64 +20,56 @@ const getAvailableSlots = async (req, res) => {
     }
 };
 
-// Create an appointment and book the slot
-const createAppointment = async (req, res) => {
-    const { branchID, fullName, email, reason, appointmentDate, appointmentTime, slotID } = req.body;
+const { createAppointment } = require('../models/appointmentModel');
 
-    // Validate required fields
-    if (!branchID || !fullName || !email || !reason || !appointmentDate || !appointmentTime || !slotID) {
-        return res.status(400).json({ message: "All fields are required" });
+async function createAppointmentController(req, res) {
+    const { BranchID, FullName, Email, Reason, AppointmentDate, SlotID } = req.body;
+
+    // Validate input
+    if (!BranchID || !FullName || !Email || !AppointmentDate || !SlotID) {
+        return res.status(400).json({ error: 'Missing required fields' });
     }
 
     try {
-        // Check if the slot is available
-        const slot = await appointmentModel.getSlotById(slotID);
+        // Call the model to create an appointment
+        const result = await createAppointment({ BranchID, FullName, Email, Reason, AppointmentDate, SlotID });
 
-        if (!slot) {
-            return res.status(404).json({ message: "Slot not found" });
+        // Check for any errors from the model
+        if (result.error) {
+            return res.status(400).json({ error: result.error });
         }
 
-        if (slot.IsBooked === 1) {
-            return res.status(400).json({ message: "The selected slot is already booked" });
-        }
-
-        // Create the appointment
-        const appointmentID = await appointmentModel.createAppointment(branchID, fullName, email, reason, appointmentDate, appointmentTime, slotID);
-
-        // Mark the slot as booked
-        await appointmentModel.bookSlot(slotID);
-
-        // Return success response with the AppointmentID
-        res.status(201).json({
-            message: 'Appointment created successfully',
-            appointmentID: appointmentID,  // Return the AppointmentID of the newly created appointment
-        });
-    } catch (err) {
-        console.error("Error creating appointment:", err.message);
-        res.status(500).json({ error: 'Error creating appointment' });
+        // Send success response
+        return res.status(201).json({ message: result.success });
+    } catch (error) {
+        return res.status(500).json({ error: 'Internal server error' });
     }
-};
+}
+
 
 // Get slot details by SlotID
-const getSlotById = async (req, res) => {
-    const { slotID } = req.params;  // Expecting SlotID in the URL params
+async function createAppointment(req, res) {
+    const { BranchID, FullName, Email, Reason, AppointmentDate, AppointmentTime, SlotID } = req.body;
 
-    if (!slotID) {
-        return res.status(400).json({ message: "SlotID is required" });  
+    // Validate input
+    if (!BranchID || !FullName || !Email || !AppointmentDate || !AppointmentTime || !SlotID) {
+        return res.status(400).json({ error: 'Missing required fields' });
     }
 
     try {
-        const slot = await appointmentModel.getSlotById(slotID);
+        // Call the model to create an appointment
+        const result = await createAppointment({ BranchID, FullName, Email, Reason, AppointmentDate, AppointmentTime, SlotID });
 
-        if (!slot) {
-            return res.status(404).json({ message: "Slot not found" }); 
+        // Check for any errors from the model
+        if (result.error) {
+            return res.status(400).json({ error: result.error });
         }
 
-        res.status(200).json(slot);
-    } catch (err) {
-        console.error("Error fetching slot details:", err.message);
-        res.status(500).json({ error: "Error fetching slot details" });  
+        // Send success response
+        return res.status(201).json({ message: result.success });
+    } catch (error) {
+        return res.status(500).json({ error: 'Internal server error' });
     }
-};
+}
 
-module.exports = { getAvailableSlots, createAppointment, getSlotById };
+module.exports = { getAvailableSlots, createAppointment };
