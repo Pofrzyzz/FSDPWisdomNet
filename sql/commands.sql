@@ -13,7 +13,6 @@ DROP TABLE IF EXISTS Appointment;
 DROP TABLE IF EXISTS ContactUs;
 DROP TABLE IF EXISTS Branch;
 
-
 -- Create Branch table
 CREATE TABLE Branch (
     BranchID INT PRIMARY KEY IDENTITY(1,1),
@@ -48,13 +47,14 @@ CREATE TABLE Users (
     CreatedAt DATETIME DEFAULT GETDATE()
 );
 
--- Create Chats table
+-- Create Chats table with new SocketID column
 CREATE TABLE Chats (
     ChatID INT PRIMARY KEY IDENTITY(1,1),
     UserID INT,
     BranchID INT,
     DepartmentID INT,
     OperatorID INT,
+    SocketID NVARCHAR(255), -- New SocketID column to store session socket ID
     StartedAt DATETIME DEFAULT GETDATE(),
     EndedAt DATETIME,
     TransferredToCall BIT DEFAULT 0,

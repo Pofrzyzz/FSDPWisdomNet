@@ -4,7 +4,10 @@ const {sql} = require('../../dbConfig'); // Assuming you're using mssql
 async function getAvailableSlots(branchID, appointmentDate) {
   try {
     const query = `
-      SELECT SlotID, StartTime, EndTime
+      SELECT 
+        SlotID, 
+        CONVERT(VARCHAR(5), StartTime, 108) AS StartTime,   -- Format StartTime as HH:MM
+        CONVERT(VARCHAR(5), EndTime, 108) AS EndTime        -- Format EndTime as HH:MM
       FROM AvailableSlots
       WHERE BranchID = @BranchID AND AppointmentDate = @AppointmentDate AND IsBooked = 0;
     `;
@@ -16,7 +19,7 @@ async function getAvailableSlots(branchID, appointmentDate) {
   } catch (err) {
     throw new Error('Error fetching available slots: ' + err.message);
   }
-};
+}
 
 // Get a specific slot by its ID
 async function getSlotById(slotID) {

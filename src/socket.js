@@ -1,68 +1,28 @@
-// src/socket.js
-const { requestChat } = require('./controllers/chatController');
-const { getOperatorDetails } = require('./models/operatorModel');
+// socket.js
+const { requestChat, handleMessage } = require('./controllers/chatController');
 
 const setupSocket = (io) => {
   io.on('connection', (socket) => {
     console.log(`User connected: ${socket.id}`);
 
-    socket.on('startChat', async ({ name, nric, department }) => {
-      try {
-        const { chatId, operator } = await requestChat(socket.id, name, nric, department);
+    // Start a new chat session
+    socket.on('startChat', ({ name, nric }) => {
+      const { chatId, operator } = requestChat(socket.id, name, nric);
 
-        if (!operator) {
-          socket.emit('noOperatorAvailable', { message: 'No operator is available at the moment. Please try again later.' });
-          return;
-        }
+      socket.join(chatId); // User joins their chat room
 
-        socket.chatId = chatId;
-        socket.operatorId = operator.OperatorID;
+      const greetingMessage = `Hello ${name}, I am ${operator.operatorName} from ${operator.departmentName}. How can I assist you today?`;
+      handleMessage(chatId, 'operator', greetingMessage); // Add greeting to message history
 
-        // Join the operator's room
-        socket.join(`operator_${operator.OperatorID}`);
-
-        // Send auto-generated welcome message
-        const greetingMessage = `Hello, I am ${operator.OperatorName} from the ${operator.DepartmentName} department at the ${operator.BranchName} branch. How can I assist you today?`;
-        socket.emit('chatAssigned', {
-          operatorName: operator.OperatorName,
-          branch: operator.BranchName,
-          department: operator.DepartmentName,
-          greeting: greetingMessage,
-        });
-
-        // Notify the operator about the new chat request
-        io.to(`operator_${operator.OperatorID}`).emit('newChatRequest', {
-          chatId,
-          userId: socket.id,
-          name,
-          nric,
-          message: greetingMessage, // Send the greeting message for the operator to see
-        });
-
-        console.log(`Assigned operator ${operator.OperatorID} to chat ID ${chatId}`);
-      } catch (error) {
-        console.error('Error starting chat:', error);
-        socket.emit('error', { message: 'An error occurred while starting the chat. Please try again.' });
-      }
+      socket.emit('chatAssigned', { greeting: greetingMessage });
     });
 
+    // Receive and broadcast chat messages
     socket.on('chatMessage', (msg) => {
-      if (socket.operatorId) {
-        io.to(`operator_${socket.operatorId}`).emit('receiveMessage', {
-          sender: 'user',
-          message: msg,
-          timestamp: new Date(),
-        });
-      }
-    });
-
-    socket.on('operatorMessage', (msg) => {
-      if (socket.chatId) {
-        io.to(socket.chatId).emit('chatMessage', {
-          sender: 'operator',
-          message: msg,
-          timestamp: new Date(),
-        });
+      const chatId = Object.keys(socket.rooms).find(id => id.startsWith('chat_'));
+      if (chatId) {
+        const message = handleMessage(chatId, 'user', msg);
+        io.to(chatId).emit('chatMessage', message);
       }
     });
 
