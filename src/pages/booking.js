@@ -219,7 +219,7 @@ function BookingPage() {
                                 <>
                                     <h2 className="text-xl font-bold mb-4">Confirm Booking</h2>
                                     <div className="flex items-center justify-between mb-4">
-                                        <span>{selectedBranch?.name} branch</span>
+                                        <span>{selectedBranch?.name}</span>
                                         <span>{selectedDateTime?.date} {selectedDateTime?.time}</span> {/* Correct rendering of selectedDateTime */}
                                     </div>
                                     <div className="mb-4">
