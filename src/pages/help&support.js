@@ -13,7 +13,7 @@ function HomePage() {
     <div className="flex flex-col min-h-screen bg-gray-100">
       <Navbar />
       
-      <section className="relative bg-white py-16 h-[400px]">
+      <section className="relative bg-white py-16 h-[420px]">
         <div className="container mx-auto px-6 md:px-12 text-center h-full">
           {/* Wrap the CardBanner image in a container with z-index */}
           <div className="absolute inset-0 z-0">
@@ -26,17 +26,17 @@ function HomePage() {
             <div className="absolute bottom-0 left-0 w-full h-[2px] bg-red-500"></div>
           </div>
           <div className="relative z-10">
-            <h1 className="text-7xl md:text-5xl font-bold mt-28 md:mt-28 text-white">
+            <h1 className="text-7xl md:text-5xl font-bold mt-32 md:mt-32 text-white">
               Help & Support
             </h1>
             {/* Search Bar */}
-            <div className="relative mx-auto max-w-xl mt-6">
+            <div className="relative mx-auto max-w-2xl mt-12">
               <input
                 type="text"
                 placeholder="Search for common enquiries..."
                 className="w-full p-4 border text-gray-700 focus:outline-none focus:border-blue-500 rounded-full"
               />
-              <button className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-600">
+              <button className="absolute right-6 top-1/2 transform -translate-y-1/2 text-gray-600">
                 <img src={search} alt="Search" className="w-8 h-8" />
               </button>
             </div>
@@ -48,7 +48,7 @@ function HomePage() {
       <CommonFaqs />
 
       {/* View More Button */}
-      <div className="flex justify-center mt-8">
+      <div className="flex justify-center mt-16">
         <button className="px-6 py-2 bg-red-600 text-white font-semibold rounded-md hover:bg-red-700 transition-colors">
           View More
         </button>
