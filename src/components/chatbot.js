@@ -138,9 +138,9 @@ function Chatbot() {
           </div>
         </div>
       ) : (
-        <button className="flex items-center bg-[#DD101E] text-white p-3 rounded-full shadow-lg hover:bg-[#C00E1A] transition-colors" onClick={() => setIsChatOpen(true)}>
-          <img src={chatbotIcon} alt="Chatbot Icon" className="w-8 h-8 mr-2" />
-          <span>Need Help</span>
+        <button className="flex items-center bg-[#DA291C] text-white pt-4 pb-4 pl-6 pr-6 rounded-full shadow-lg hover:bg-[#C00E1A] transition-colors" onClick={() => setIsChatOpen(true)}>
+          <img src={chatbotIcon} alt="Chatbot Icon" className="w-6 h-6 mr-2" />
+          <span className='font-opensans font-bold'>Need help?</span>
         </button>
       )}
     </div>
