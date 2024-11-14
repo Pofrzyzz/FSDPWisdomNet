@@ -53,7 +53,6 @@ function NavBar() {
             <div className="flex justify-center items-center py-2 border-t border-gray-300 bg-gray-300">
                 <div className="flex space-x-20 text-sm">
                     <a href="HomePage" className="text-gray-500 hover:text-gray-900">Support</a>
-                    <a href="CardsFaq" className="text-gray-500 hover:text-gray-900">FAQ</a>
                     <a href="ContactUsPage" className="text-gray-500 hover:text-gray-900">Contact Us</a>
                     <a href="BookingPage" className="text-gray-500 hover:text-gray-900">Book an Appointment</a>
                 </div>

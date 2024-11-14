@@ -149,7 +149,7 @@ function BookingPage() {
                     </Link>
 
                     <div className="absolute inset-0 flex flex-col items-center justify-center text-white bg-black bg-opacity-60">
-                        <h1 className="text-3xl md:text-5xl font-bold mt-32 md:mt-40">Book an Appointment</h1>
+                        <h1 className="text-3xl md:text-6xl font-geomanist font-bold mt-32 md:mt-40">Book an Appointment</h1>
                         <p className="text-center mt-3 max-w-2xl text-base md:text-lg leading-tight px-4">
                             Make a booking to consult our specialist for banking enquiries<br />
                         </p>

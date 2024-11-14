@@ -78,7 +78,7 @@ const SearchBar = () => {
   };
 
   return (
-    <div className="relative mx-auto max-w-xl mt-6">
+    <div className="relative font-geomanist mx-auto max-w-xl mt-6">
       <input
         type="text"
         placeholder="Search for common enquiries..."
@@ -89,7 +89,7 @@ const SearchBar = () => {
       
       {/* Suggestions Dropdown */}
       {suggestions.length > 0 && (
-        <div className="absolute left-0 right-0 bg-white border border-gray-300 rounded-lg mt-2 max-h-60 overflow-y-auto shadow-lg z-10">
+        <div className="absolute left-0 right-0 bg-white border border-gray-300 rounded-lg mt-2 max-h-60 overflow-y-auto shadow-lg z-10 font-opensans">
           {suggestions.map((suggestion, index) => (
             <div
               key={index}
