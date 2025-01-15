@@ -95,7 +95,7 @@ function ContactUs() {
               </div>
               <div>
                 <p className="text-gray-500 mb-1">Currently In Queue</p>
-                <h3 className="text-4xl font-semibold">26</h3>
+                <h3 className="text-4xl font-semibold">0</h3> {/* Current customer in queue */}
               </div>
               <div>
                 <p className="text-gray-500 mb-1">Waiting Time</p>

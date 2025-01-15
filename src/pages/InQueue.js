@@ -13,6 +13,12 @@ function InQueue() {
   // Retrieve passed state (mobile number, problem, and queue number)
   const { mobileNumber, selectedProblem, queueNumber } = location.state || {};
 
+  // Ensure queueNumber is within the range [0, 20]
+  const normalizedQueueNumber = Math.max(0, Math.min(queueNumber || 0, 20));
+
+  // Calculate progress percentage based on 20 segments
+  const progressPercentage = (normalizedQueueNumber / 20) * 100;
+
   console.log("Received data in InQueue.js:", { mobileNumber, selectedProblem, queueNumber });
 
   return (
@@ -58,7 +64,7 @@ function InQueue() {
 
         {/* Display Actual Queue Number */}
         <h2 className="text-6xl font-bold text-center text-black mb-2">
-          {queueNumber !== undefined ? queueNumber : "Queue number not available"}
+          {normalizedQueueNumber}
         </h2>
         <p className="text-gray-500 text-sm text-center mb-6">PEOPLE AHEAD OF YOU</p>
 
@@ -66,11 +72,20 @@ function InQueue() {
         <div className="w-full max-w-lg relative">
           <div className="relative w-full h-4 bg-gray-300 rounded-full overflow-hidden">
             {/* Red progress part */}
-            <div className="absolute top-0 left-0 h-full bg-red-500 rounded-full" style={{ width: '50%' }}></div>
+            <div
+              className="absolute top-0 left-0 h-full bg-red-500 rounded-full"
+              style={{ width: `${progressPercentage}%` }}
+            ></div>
           </div>
+          {/* Progress indicator circle */}
           <div
             className="absolute w-6 h-6 bg-white border-2 border-red-500 rounded-full shadow-lg"
-            style={{ top: '-4px', left: '50%', transform: 'translateX(-50%)', boxShadow: '0 0 3px 2px rgba(255, 0, 0, 0.5)' }}
+            style={{
+              top: '-4px',
+              left: `${progressPercentage}%`,
+              transform: 'translateX(-50%)',
+              boxShadow: '0 0 3px 2px rgba(255, 0, 0, 0.5)',
+            }}
           ></div>
         </div>
 
@@ -87,6 +102,9 @@ function InQueue() {
 }
 
 export default InQueue;
+
+
+
 
 
 
