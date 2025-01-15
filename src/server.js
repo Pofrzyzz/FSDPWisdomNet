@@ -10,6 +10,7 @@ const appointmentController = require('./controllers/appointmentController');
 const appointmentModel = require('./models/appointmentModel');
 const validateAppointment = require('./middlewares/validateAppointment');
 const validateDate = require('./middlewares/validateDate');
+const axios = require('axios'); // For making API calls to Flask
 
 const app = express();
 app.use(express.json());
@@ -27,6 +28,33 @@ const io = new Server(server, {
 // Set up Socket.io events
 setupSocket(io);
 
+// AI Chatbot (aichatbot) Socket.io Namespace
+const aiChatbotNamespace = io.of('/aichatbot');
+
+aiChatbotNamespace.on('connection', (socket) => {
+  console.log(`AI Chatbot user connected: ${socket.id}`);
+
+  socket.on('chat_message', async (message) => {
+    console.log(`AI Chatbot message received: ${message}`);
+
+    try {
+      // Forward the message to the Flask backend for processing
+      const response = await axios.post('http://localhost:5001/api/chatbot', { message });
+      const botReply = response.data.response;
+
+      // Send the AI-generated response back to the client
+      socket.emit('chat_reply', botReply);
+    } catch (error) {
+      console.error('Error communicating with AI Chatbot backend:', error.message);
+      socket.emit('chat_reply', 'Sorry, something went wrong. Please try again.');
+    }
+  });
+
+  socket.on('disconnect', () => {
+    console.log(`AI Chatbot user disconnected: ${socket.id}`);
+  });
+});
+
 // Define API routes
 app.get('/api/branch', branchController.fetchBranches); // Route to get all branches
 app.post('/api/contact', contactController.saveContact); // Route to save contact info
@@ -38,7 +66,7 @@ app.post('/api/slots/book', availableController.bookSlot); // Book a slot
 // Routes for appointments
 app.get('/api/appointment/available-slots', appointmentController.getAvailableSlots); // Get available slots by branch and date
 app.post('/api/appointment/create', validateAppointment.validateAppointment, appointmentController.createAppointment); // Create an appointment with validation
-app.get('/api/appointment/slot', appointmentModel.getSlotById)
+app.get('/api/appointment/slot', appointmentModel.getSlotById);
 
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {

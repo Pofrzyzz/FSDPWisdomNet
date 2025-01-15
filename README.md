@@ -11,3 +11,5 @@
 - `npm install socket.io-client`
 - `npm install fuse.js`
 - `npm install firebase`
+- `pip install flask flask-cors`
+- `pip install transformers datasets torch accelerate`
