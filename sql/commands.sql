@@ -42,9 +42,10 @@ CREATE TABLE Operators (
 -- Create Users table
 CREATE TABLE Users (
     UserID INT PRIMARY KEY IDENTITY(1,1),
-    NRIC VARCHAR(20) UNIQUE NOT NULL,
-    PhoneNumber VARCHAR(20),
-    CreatedAt DATETIME DEFAULT GETDATE()
+	Username VARCHAR(100) UNIQUE NOT NULL,
+    NRIC CHAR(9) UNIQUE NOT NULL,
+	Email VARCHAR(100) UNIQUE NOT NULL,
+	Pin INT NOT NULL,
 );
 
 -- Create Chats table with new SocketID column
@@ -111,14 +112,12 @@ CREATE TABLE AvailableSlots (
 CREATE TABLE Appointment (
     AppointmentID INT PRIMARY KEY IDENTITY(1,1),
     BranchID INT FOREIGN KEY REFERENCES Branch(BranchID),
-    FullName NVARCHAR(100) NOT NULL,
-    Email NVARCHAR(100) NOT NULL,
+	UserID INT,
     Reason NVARCHAR(255),
-    AppointmentDate DATE NOT NULL,
-    AppointmentTime TIME NOT NULL,
     BookingDateTime DATETIME DEFAULT GETDATE(),
     SlotID INT, 
-    FOREIGN KEY (SlotID) REFERENCES AvailableSlots(SlotID)
+    FOREIGN KEY (SlotID) REFERENCES AvailableSlots(SlotID),
+	FOREIGN KEY (UserID) REFERENCES Users(UserID)
 );
 
 -- Insert sample data into Branch table
@@ -133,6 +132,15 @@ VALUES
 -- Insert departments into Departments table
 INSERT INTO Departments (DepartmentName)
 VALUES ('Account Services'), ('Fraud Department'), ('Loan Enquiries'), ('Card Services'), ('Miscellaneous');
+
+-- Insert sample users into Users table
+INSERT INTO Users (Username, NRIC, Email, Pin) 
+VALUES 
+('john_doe', 'S1234567A', 'john.doe@example.com', 123456),
+('jane_smith', 'T9876543B', 'jane.smith@example.com', 567812),
+('alex_brown', 'F7654321C', 'alex.brown@example.com', 901234),
+('susan_lee', 'G8765432D', 'susan.lee@example.com', 345678),
+('michael_wong', 'S2345678E', 'michael.wong@example.com', 237890);
 
 -- Insert sample operators into Operators table with unique, realistic names
 DECLARE @BranchID INT;
@@ -191,8 +199,8 @@ CLOSE BranchCursor;
 DEALLOCATE BranchCursor;
 
 -- Declare variables for time slot generation
-DECLARE @StartDate DATE = '2024-11-06';  -- Start date
-DECLARE @EndDate DATE = DATEADD(MONTH, 1, @StartDate);  -- End date (one month later)
+DECLARE @StartDate DATE = '2025-01-01';  -- Start date
+DECLARE @EndDate DATE = DATEADD(MONTH, 12, @StartDate);  -- End date (one month later)
 DECLARE @CurrentDate DATE;
 DECLARE @StartTime TIME;
 DECLARE @EndTime TIME;
@@ -245,3 +253,5 @@ END;
 
 CLOSE BranchSlotCursor;
 DEALLOCATE BranchSlotCursor;
+
+
