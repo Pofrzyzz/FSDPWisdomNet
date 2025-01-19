@@ -10,6 +10,8 @@ const appointmentController = require('./controllers/appointmentController');
 const appointmentModel = require('./models/appointmentModel');
 const validateAppointment = require('./middlewares/validateAppointment');
 const validateDate = require('./middlewares/validateDate');
+const loginController = require('./controllers/loginController');
+const signupController = require('./controllers/signupController');
 
 const app = express();
 app.use(express.json());
@@ -26,6 +28,10 @@ const io = new Server(server, {
 
 // Set up Socket.io events
 setupSocket(io);
+
+// Route for login/sign up user
+app.post('/api/users/login', loginController.loginUser);
+app.post('/api/users/signup', signupController.signUpUser);
 
 // Define API routes
 app.get('/api/branch', branchController.fetchBranches); // Route to get all branches
