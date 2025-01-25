@@ -26,65 +26,68 @@ function BookingPage() {
         form: '',
     });
 
-    const handleConfirm = () => {
-        if (formData.fullName && formData.email && formData.reason && selectedBranch && slotID) {
-            setIsConfirmed(true);
-            setShowModal(true);
-        } else {
-            setErrors(prevErrors => ({
+    const handleConfirm = async () => {
+        if (!formData.fullName || !formData.email || !formData.reason || !selectedBranch || !slotID || !selectedDateTime) {
+            setErrors((prevErrors) => ({
                 ...prevErrors,
                 form: 'Please fill in all the fields.',
+            }));
+            return;
+        }
+
+        try {
+            // Prepare appointment time in a format compatible with SQL.
+            const timeWithMicroseconds = `${selectedDateTime?.time}:00.0000000`; // Example: "10:00:00.0000000"
+
+            const appointmentData = {
+                branchID: selectedBranch.id,
+                fullName: formData.fullName,
+                email: formData.email,
+                reason: formData.reason,
+                appointmentDate: selectedDateTime?.date, // Format: 'YYYY-MM-DD'
+                appointmentTime: timeWithMicroseconds, // Format: 'HH:mm:ss.ssssss'
+                slotID, // Pass slotID for further processing
+            };
+
+            const response = await fetch('http://localhost:5000/api/appointment/create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(appointmentData),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                // Show success modal
+                setIsConfirmed(true);
+                setShowModal(true);
+
+                // Reset state
+                setFormData({
+                    fullName: '',
+                    email: '',
+                    reason: '',
+                });
+                setSelectedBranch(null);
+                setSelectedDateTime(null);
+                setSlotID(null);
+            } else {
+                setErrors((prevErrors) => ({
+                    ...prevErrors,
+                    form: data.error || 'An error occurred while booking your appointment.',
+                }));
+            }
+        } catch (error) {
+            console.error('Error during appointment booking:', error);
+            setErrors((prevErrors) => ({
+                ...prevErrors,
+                form: 'Failed to book the appointment. Please try again later.',
             }));
         }
     };
 
-    // const handleConfirm = async () => {
-    //     if (formData.fullName && formData.email && formData.reason && selectedBranch && slotID) {
-
-    //         try {
-    //             // Format the appointment time as 'HH:mm:ss.ssssss'
-    //             const timeWithMicroseconds = selectedDateTime?.time + ":00.0000000"; // Example: "10:00:00.0000000"
-            
-    //             const response = await fetch('http://localhost:5000/api/appointment/create', {
-    //                 method: 'POST',
-    //                 headers: {
-    //                     'Content-Type': 'application/json',
-    //                 },
-    //                 body: JSON.stringify({
-    //                     branchID: selectedBranch.id,
-    //                     fullName: formData.fullName,
-    //                     email: formData.email,
-    //                     reason: formData.reason,
-    //                     appointmentDate: selectedDateTime?.date,  // 'YYYY-MM-DD'
-    //                     appointmentTime: timeWithMicroseconds,  // Send time with microseconds
-    //                     slotID: slotID, // Send the slotID here
-    //                 }),
-    //             });
-    
-    //             const data = await response.json();
-    
-    //             if (response.ok) {
-    //                 setIsConfirmed(true);
-    //                 setShowModal(true);
-    //             } else {
-    //                 setErrors(prevErrors => ({
-    //                     ...prevErrors,
-    //                     form: data.error || 'An error occurred while booking your appointment.',
-    //                 }));
-    //             }
-    //         } catch (error) {
-    //             setErrors(prevErrors => ({
-    //                 ...prevErrors,
-    //                 form: 'Failed to book the appointment. Please try again later.',
-    //             }));
-    //         }
-    //     } else {
-    //         setErrors(prevErrors => ({
-    //             ...prevErrors,
-    //             form: 'Please fill in all the fields.',
-    //         }));
-    //     }
-    // };
 
     const handleDateTimeSelect = (dateTimeInfo) => {
         setSelectedDateTime(dateTimeInfo); 

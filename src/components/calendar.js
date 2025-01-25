@@ -110,18 +110,31 @@ function Calendar({ selectedBranch, onDateTimeSelect }) {
                             {Array.from({ length: getFirstDayOfMonth(selectedDate ? selectedDate.getFullYear() : new Date().getFullYear(), selectedDate ? selectedDate.getMonth() : new Date().getMonth()) }, (_, i) => (
                                 <div key={`empty-${i}`}></div>
                             ))}
-                            {Array.from({ length: getDaysInMonth(selectedDate ? selectedDate.getFullYear() : new Date().getFullYear(), selectedDate ? selectedDate.getMonth() : new Date().getMonth()) }, (_, i) => (
-                                <button
-                                    key={i}
-                                    onClick={() => handleDateSelect(i + 1)}
-                                    className={`px-2 py-1 rounded-lg ${
-                                        selectedDate && selectedDate.getDate() === i + 1 ? 'bg-red-500 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                                    }`}
-                                >
-                                    {i + 1}
-                                </button>
-                            ))}
+                            {Array.from({ length: getDaysInMonth(selectedDate ? selectedDate.getFullYear() : new Date().getFullYear(), selectedDate ? selectedDate.getMonth() : new Date().getMonth()) }, (_, i) => {
+                                const today = new Date(); // Current date
+                                const isToday =
+                                    today.getDate() === i + 1 &&
+                                    today.getMonth() === (selectedDate ? selectedDate.getMonth() : new Date().getMonth()) &&
+                                    today.getFullYear() === (selectedDate ? selectedDate.getFullYear() : new Date().getFullYear());
+
+                                return (
+                                    <button
+                                        key={i}
+                                        onClick={() => handleDateSelect(i + 1)}
+                                        className={`px-2 py-1 rounded-lg ${
+                                            isToday
+                                                ? 'bg-red-500 text-white' // Highlight current date
+                                                : selectedDate && selectedDate.getDate() === i + 1
+                                                ? 'bg-red-300 text-white' // Highlight selected date
+                                                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                                        }`}
+                                    >
+                                        {i + 1}
+                                    </button>
+                                );
+                            })}
                         </div>
+
                     </div>
 
                     {/* Time Slot Selector */}

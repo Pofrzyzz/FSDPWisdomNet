@@ -10,6 +10,8 @@ const appointmentController = require('./controllers/appointmentController');
 const appointmentModel = require('./models/appointmentModel');
 const validateAppointment = require('./middlewares/validateAppointment');
 const validateDate = require('./middlewares/validateDate');
+const loginController = require('./controllers/loginController');
+const signupController = require('./controllers/signupController');
 const axios = require('axios'); // For making API calls to Flask
 
 const app = express();
@@ -27,6 +29,10 @@ const io = new Server(server, {
 
 // Set up Socket.io events
 setupSocket(io);
+
+// Route for login/sign up user
+app.post('/api/users/login', loginController.loginUser);
+app.post('/api/users/signup', signupController.signUpUser);
 
 // AI Chatbot (aichatbot) Socket.io Namespace
 const aiChatbotNamespace = io.of('/aichatbot');

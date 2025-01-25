@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios'; // Import Axios for API calls
 import logo from '../images/logo_ocbc.svg';
 
 const LoginPage = () => {
-  const [formData, setFormData] = useState({ accessCode: '', pin: '' });
+  const [formData, setFormData] = useState({ username: '', pin: '' });
+  const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -13,16 +15,28 @@ const LoginPage = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrorMessage(''); 
 
-    // Replace this with actual login logic
-    const isLoginSuccessful = formData.username === 'user' && formData.pin === '123456';
+    try {
+      // Send login data to the backend
+      const response = await axios.post('http://localhost:5000/api/users/login', {
+        username: formData.username,
+        pin: formData.pin,
+      });
 
-    if (isLoginSuccessful) {
-      navigate('/HomePage');
-    } else {
-      alert('Invalid access code or PIN');
+      // Save userId to localStorage and navigate to the homepage
+      const { id } = response.data.user;
+      localStorage.setItem('userId', id); 
+      navigate('/HomePage'); // Redirect to homepage
+    } catch (error) {
+      // Handle errors
+      if (error.response && error.response.data.error) {
+        setErrorMessage(error.response.data.error); // Backend error
+      } else {
+        setErrorMessage('An error occurred. Please try again later.');
+      }
     }
   };
 
@@ -31,11 +45,16 @@ const LoginPage = () => {
       <div className="bg-white shadow-md rounded-lg p-8 w-full max-w-md">
         {/* Logo */}
         <div className="flex justify-center mb-6">
-        <img src={logo} alt="OCBC Logo" className="h-12"/>
+          <img src={logo} alt="OCBC Logo" className="h-12" />
         </div>
 
         {/* Title */}
         <h2 className="text-2xl font-semibold text-gray-800 mb-4 text-center">Online Banking</h2>
+
+        {/* Error Message */}
+        {errorMessage && (
+          <div className="text-red-500 text-sm text-center mb-4">{errorMessage}</div>
+        )}
 
         {/* Login Form */}
         <form className="space-y-4" onSubmit={handleSubmit}>
@@ -71,9 +90,12 @@ const LoginPage = () => {
             Login
           </button>
 
-            {/* Sign up link */}
-            <p className="text-center text-sm text-gray-600 mt-4">
-            Don't have Online Banking? <a href="SignUpPage" className="text-red-600 hover:underline">Sign up now.</a>
+          {/* Sign up link */}
+          <p className="text-center text-sm text-gray-600 mt-4">
+            Don't have Online Banking?{' '}
+            <a href="SignUpPage" className="text-red-600 hover:underline">
+              Sign up now.
+            </a>
           </p>
         </form>
       </div>
