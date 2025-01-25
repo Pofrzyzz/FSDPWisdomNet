@@ -11,3 +11,8 @@
 - `npm install socket.io-client`
 - `npm install fuse.js`
 - `npm install firebase`
+
+# For Rasa Chatbot (might need python 3.10)
+- `cd src/components/aichatbot`
+- `pip install rasa`
+- `rasa run --cors "*" --enable-api`

@@ -4,6 +4,9 @@
 /node_modules
 /.pnp
 .pnp.js
+/src/components/aichatbot/.rasa
+/src/components/aichatbot/actions/__pycache__
+
 
 # testing
 /coverage
