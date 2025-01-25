@@ -1,7 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { io } from "socket.io-client";
-
-const socket = io("http://localhost:5000/aichatbot");
+import React, { useState } from "react";
+import axios from "axios";
 
 const AIChatbot = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -23,26 +21,49 @@ const AIChatbot = () => {
     }
   };
 
-  useEffect(() => {
-    socket.on("chat_reply", (botReply) => {
-      const botMessage = { role: "bot", content: botReply };
-      setMessages((prev) => [...prev, botMessage]); // Add bot's reply to chat
-    });
-
-    return () => {
-      socket.off("chat_reply");
-    };
-  }, []);
-
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!input.trim()) return;
 
+    // Add user message to chat
     const userMessage = { role: "user", content: input };
     setMessages((prev) => [...prev, userMessage]);
 
-    socket.emit("chat_message", input);
+    try {
+      // Send message to Rasa API
+      const response = await axios.post(
+        "http://localhost:5005/webhooks/rest/webhook",
+        {
+          sender: "user",
+          message: input,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+          },
+          transformRequest: [(data, headers) => {
+            delete headers["X-Requested-With"];
+            return JSON.stringify(data);
+          }],
+        }
+      );
 
-    setInput("");
+
+      // Handle Rasa's responses (it can return multiple messages)
+      const botReplies = response.data.map((reply) => ({
+        role: "bot",
+        content: reply.text,
+        learnMoreLink: reply.custom?.link, // Assume Rasa sends a custom payload with a "link" property
+      }));
+
+      setMessages((prev) => [...prev, ...botReplies]);
+    } catch (error) {
+      console.error("Error communicating with Rasa:", error.message);
+      const errorMessage = { role: "bot", content: "Sorry, something went wrong. Please try again." };
+      setMessages((prev) => [...prev, errorMessage]);
+    }
+
+    setInput(""); // Clear input field
   };
 
   const handleKeyDown = (e) => {
@@ -82,27 +103,23 @@ const AIChatbot = () => {
             <div>
               <h2 className="text-3xl font-bold mt-4">Need help?</h2>
               <p className="text-ms mt-2">
-                Our chatbot is here to assist with your Personal Banking
-                enquiries.
+                Our chatbot is here to assist with your Personal Banking enquiries.
               </p>
             </div>
             <button
               onClick={toggleChat}
               className="ml-auto text-white text-xl font-bold hover:text-gray-200 focus:outline-none mb-20"
             >
-             <span className="block w-6 h-1 bg-white rounded-full"></span>
+              <span className="block w-6 h-1 bg-white rounded-full"></span>
             </button>
           </div>
 
           {/* Messages Section */}
           <div className="flex-1 overflow-y-auto p-6 space-y-4">
-            
             {messages.map((msg, index) => (
               <div
                 key={index}
-                className={`flex ${
-                  msg.role === "user" ? "justify-end" : "justify-start"
-                }`}
+                className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
               >
                 <div
                   className={`p-3 rounded-lg text-base ${
@@ -111,7 +128,17 @@ const AIChatbot = () => {
                       : "bg-gray-200 text-gray-800"
                   }`}
                 >
-                  {msg.content}
+                  <p>{msg.content}</p>
+                  {msg.learnMoreLink && (
+                    <a
+                      href={msg.learnMoreLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-2 inline-block bg-red-500 text-white py-1 px-4 rounded hover:bg-red-600"
+                    >
+                      Learn More
+                    </a>
+                  )}
                 </div>
               </div>
             ))}
@@ -139,5 +166,6 @@ const AIChatbot = () => {
     </div>
   );
 };
+
 
 export default AIChatbot;

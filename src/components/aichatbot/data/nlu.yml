@@ -1,0 +1,260 @@
+version: "3.1"
+nlu:
+  - intent: change_contact_details
+    examples: |
+      - I want to update my contact details
+      - How can I change my phone number?
+      - Update my email
+      - Edit contact information
+      - Change my mailing address
+
+  - intent: retrieve_access_code
+    examples: |
+      - How do I retrieve my access code?
+      - I forgot my access code
+      - Reset access code
+      - What is my access pin?
+
+  - intent: fee_waiver
+    examples: |
+      - Request a fee waiver
+      - How can I waive fees?
+      - Apply for a fee exemption
+      - Waive charges
+
+  - intent: withdrawal_activation
+    examples: |
+      - How do I activate withdrawals?
+      - Enable withdrawal access
+      - Activate withdrawal
+      - Can I withdraw money now?
+
+  - intent: bank_code
+    examples: |
+      - What is the bank code?
+      - Tell me the swift code
+      - What is the routing number?
+      - How can I find the branch code?
+
+  - intent: about_myinfo
+    examples: |
+      - What is MyInfo?
+      - How do I use MyInfo?
+      - Tell me about MyInfo
+      - MyInfo details
+
+  - intent: apply_through_myinfo
+    examples: |
+      - How can I apply using MyInfo?
+      - Use MyInfo for account application
+      - Apply through MyInfo
+      - Submit using MyInfo
+
+  - intent: about_remote_account_opening
+    examples: |
+      - How do I open an account remotely?
+      - Remote account opening steps
+      - Can I open an account online?
+      - Tell me about remote account opening
+
+  - intent: apply_cheque_book
+    examples: |
+      - How can I apply for a cheque book?
+      - Request a new cheque book
+      - Apply cheque book online
+      - I need a cheque book
+
+  - intent: lost_cheque
+    examples: |
+      - I lost my cheque
+      - How do I report a lost cheque?
+      - Report missing cheque
+      - Lost cheque report
+
+  - intent: cheque_status
+    examples: |
+      - Check my cheque status
+      - How do I track a cheque?
+      - What is the status of my cheque?
+      - Track my cheque
+
+  - intent: stop_cheque_payment
+    examples: |
+      - Stop a cheque payment
+      - Cancel my cheque
+      - Void the cheque
+      - How do I stop cheque payment?
+
+  - intent: request_bank_statement
+    examples: |
+      - How do I get a bank statement?
+      - Request a bank statement copy
+      - Get my monthly statement
+      - Provide account statement
+
+  - intent: make_sgd_fixed_deposit
+    examples: |
+      - How do I set up an SGD fixed deposit?
+      - Make a new fixed deposit
+      - Open a fixed deposit account
+      - Fixed deposit setup
+
+  - intent: withdraw_fixed_deposit
+    examples: |
+      - How do I withdraw my fixed deposit?
+      - Close my fixed deposit
+      - Terminate the fixed deposit
+      - Withdraw fixed deposit
+
+  - intent: retrieve_statements
+    examples: |
+      - Retrieve my account statements
+      - View my statements online
+      - Download account statements
+      - How do I get my statements?
+
+  - intent: full_loan_repayment
+    examples: |
+      - How can I fully repay my loan?
+      - Loan settlement steps
+      - Pay off my loan
+      - Clear my loan balance
+
+  - intent: partial_loan_repayment
+    examples: |
+      - How do I make a partial loan repayment?
+      - Reduce my loan balance
+      - Pay part of my loan
+      - Submit partial repayment
+
+  - intent: cancel_partial_prepayment
+    examples: |
+      - How do I cancel a partial prepayment?
+      - Stop partial prepayment
+      - Cancel scheduled repayment
+      - Cancel prepayment
+
+  - intent: change_loan_interest_rate_package
+    examples: |
+      - Change my loan interest rate package
+      - Modify loan interest rate
+      - Update loan package
+      - Adjust interest rate package
+
+  - intent: change_insurance_tenure_length
+    examples: |
+      - Adjust my insurance tenure
+      - Change insurance term
+      - Update insurance tenure
+      - Modify insurance length
+
+  - intent: change_debiting_account
+    examples: |
+      - Switch my debiting account
+      - Change payment account
+      - Update debiting account details
+      - New account for payments
+
+  - intent: cancel_fire_insurance_policy
+    examples: |
+      - Cancel my fire insurance policy
+      - Terminate fire insurance
+      - End fire insurance
+      - Stop fire insurance policy
+
+  - intent: request_home_loan_statements
+    examples: |
+      - How can I get my home loan statement?
+      - Request mortgage statement
+      - Get home loan statement
+      - Provide loan statement
+
+  - intent: card_activation
+    examples: |
+      - How do I activate my card?
+      - Activate debit card
+      - Card activation steps
+      - Enable my card
+
+  - intent: overseas_card_activation
+    examples: |
+      - Activate my card for overseas use
+      - Enable international transactions
+      - Overseas card activation
+      - How to activate card abroad?
+
+  - intent: apply_card
+    examples: |
+      - How do I apply for a card?
+      - Request a new debit card
+      - Apply for a credit card
+      - Card application process
+
+  - intent: credit_limit
+    examples: |
+      - Change my credit limit
+      - Increase card limit
+      - Decrease credit limit
+      - Update credit limit details
+
+  - intent: check_balance
+    examples: |
+      - Check my account balance
+      - View my balance
+      - How much money is left in my account?
+      - What is my balance?
+
+  - intent: check_transaction
+    examples: |
+      - Check recent transactions
+      - View transaction history
+      - Show my transactions
+      - What are my recent transactions?
+
+  - intent: card_replacement
+    examples: |
+      - Replace my lost card
+      - Request a new card
+      - Card reissue process
+      - How to replace damaged card?
+
+  - intent: default
+    examples: |
+      - I don’t understand
+      - Can you help me?
+      - I need assistance
+      - What can you do?
+
+  - intent: greet
+    examples: |
+      - hi
+      - hello
+      - hey
+      - good morning
+      - good afternoon
+      - good evening
+
+  - intent: goodbye
+    examples: |
+      - bye
+      - goodbye
+      - see you
+      - take care
+      - see you later
+      - talk to you soon
+
+  - intent: thank_you
+    examples: |
+      - thank you
+      - thanks
+      - thanks a lot
+      - thank you so much
+      - much appreciated
+
+  - intent: bot_feelings
+    examples: |
+      - are you a bot?
+      - what’s your name?
+      - are you real?
+      - who created you?
+      - what can you do?

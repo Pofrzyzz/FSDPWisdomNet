@@ -44,14 +44,16 @@ aiChatbotNamespace.on('connection', (socket) => {
     console.log(`AI Chatbot message received: ${message}`);
 
     try {
-      // Forward the message to the Flask backend for processing
-      const response = await axios.post('http://localhost:5001/api/chatbot', { message });
-      const botReply = response.data.response;
+      const response = await axios.post('http://localhost:5005/webhooks/rest/webhook', {
+        sender: socket.id, // Use the socket ID as the sender ID for unique tracking
+        message: message,
+      });
 
-      // Send the AI-generated response back to the client
-      socket.emit('chat_reply', botReply);
+      const botReplies = response.data.map((reply) => reply.text).join('\n');
+
+      socket.emit('chat_reply', botReplies);
     } catch (error) {
-      console.error('Error communicating with AI Chatbot backend:', error.message);
+      console.error('Error communicating with Rasa backend:', error.message);
       socket.emit('chat_reply', 'Sorry, something went wrong. Please try again.');
     }
   });
