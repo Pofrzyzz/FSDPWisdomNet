@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react'; // Import useEffect
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios'; // Import Axios for API calls
 import logo from '../images/logo_ocbc.svg';
@@ -7,6 +7,12 @@ const LoginPage = () => {
   const [formData, setFormData] = useState({ username: '', pin: '' });
   const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
+
+  // Clear localStorage on component mount
+  useEffect(() => {
+    localStorage.clear(); // Clear localStorage when the component is loaded
+    console.log('localStorage cleared.');
+  }, []);
 
   const handleChange = (e) => {
     setFormData({
@@ -26,10 +32,17 @@ const LoginPage = () => {
         pin: formData.pin,
       });
 
+      console.log('Login response:', response.data);
+
       // Save userId to localStorage and navigate to the homepage
-      const { id } = response.data.user;
-      localStorage.setItem('userId', id); 
-      navigate('/HomePage'); // Redirect to homepage
+      const { id, username } = response.data.user;
+      if (id) {
+        localStorage.setItem('userId', id); 
+        console.log("User ID:", id);
+        navigate('/HomePage'); // Redirect to homepage  
+      } else {
+        console.error('User ID is undefined');
+      }
     } catch (error) {
       // Handle errors
       if (error.response && error.response.data.error) {

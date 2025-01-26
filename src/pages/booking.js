@@ -13,8 +13,6 @@ function BookingPage() {
     const [showModal, setShowModal] = useState(false);
     const [isConfirmed, setIsConfirmed] = useState(false);
     const [formData, setFormData] = useState({
-        fullName: '',
-        email: '',
         reason: '',
     });
     const [showTooltip, setShowTooltip] = useState(false);
@@ -25,6 +23,35 @@ function BookingPage() {
         dateTime: '',
         form: '',
     });
+
+    const handleBook = () => {
+        let hasErrors = false;
+        const newErrors = { branch: '', dateTime: '', form: '' };
+    
+        if (!selectedBranch) {
+            newErrors.branch = "Please select a branch.";
+            hasErrors = true;
+        }
+        if (!selectedDateTime) {
+            newErrors.dateTime = "Please select a date and time.";
+            hasErrors = true;
+        }
+    
+        setErrors(newErrors);
+    
+        if (!hasErrors) {
+            const userId = localStorage.getItem('userId'); // Check for user ID in local storage
+    
+            if (!userId) {
+                // Show login modal if user is not logged in
+                setShowModal(true);
+            } else {
+                // Proceed with booking if user is logged in
+                setIsConfirmed(false); // Ensure confirmation state is reset
+                setShowModal(true);
+            }
+        }
+    };
 
     const handleConfirm = async () => {
         if (!formData.fullName || !formData.email || !formData.reason || !selectedBranch || !slotID || !selectedDateTime) {
@@ -41,8 +68,6 @@ function BookingPage() {
 
             const appointmentData = {
                 branchID: selectedBranch.id,
-                fullName: formData.fullName,
-                email: formData.email,
                 reason: formData.reason,
                 appointmentDate: selectedDateTime?.date, // Format: 'YYYY-MM-DD'
                 appointmentTime: timeWithMicroseconds, // Format: 'HH:mm:ss.ssssss'
@@ -66,8 +91,6 @@ function BookingPage() {
 
                 // Reset state
                 setFormData({
-                    fullName: '',
-                    email: '',
                     reason: '',
                 });
                 setSelectedBranch(null);
@@ -99,8 +122,6 @@ function BookingPage() {
         setIsConfirmed(false); 
         setErrors({ branch: '', dateTime: '', form: '' }); 
         setFormData({
-            fullName: '',
-            email: '',
             reason: '',
         });
         setSelectedBranch(null);
@@ -109,26 +130,6 @@ function BookingPage() {
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.id]: e.target.value });
-    };
-
-    const handleBook = () => {
-        let hasErrors = false;
-        const newErrors = { branch: '', dateTime: '', form: '' };
-
-        if (!selectedBranch) {
-            newErrors.branch = "Please select a branch.";
-            hasErrors = true;
-        }
-        if (!selectedDateTime) {
-            newErrors.dateTime = "Please select a date and time.";
-            hasErrors = true;
-        }
-
-        setErrors(newErrors);
-
-        if (!hasErrors) {
-            setShowModal(true);
-        }
     };
 
     return (
@@ -195,12 +196,28 @@ function BookingPage() {
                 {showModal && (
                     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
                         <div className="bg-white rounded-lg w-[600px] p-8">
-                            {isConfirmed ? (
+                            {!localStorage.getItem('userId') ? (
+                                <>
+                                    <h2 className="text-xl font-bold mb-4">Please Log In</h2>
+                                    <p className="mb-6">You need to log in to make a booking.</p>
+                                    <div className="flex justify-end">
+                                    <button
+                                        onClick={() => {
+                                            setShowModal(false);
+                                            window.location.href = '/';
+                                        }}
+                                        className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded"
+                                    >
+                                        Log In
+                                        </button>
+                                    </div>
+                                </>
+                            ) : isConfirmed ? (
                                 <>
                                     <h2 className="text-2xl font-bold mb-4">Booking Confirmed!</h2>
                                     <div className="flex items-center justify-between mb-4">
                                         <span>{selectedBranch?.name}</span>
-                                        <span>{selectedDateTime?.date} {selectedDateTime?.time}</span> {/* Correct rendering of selectedDateTime */}
+                                        <span>{selectedDateTime?.date} {selectedDateTime?.time}</span>
                                     </div>
                                     <div className="mb-2">
                                         <strong>Full name (NRIC):</strong> {formData.fullName}
@@ -211,8 +228,8 @@ function BookingPage() {
                                     <div className="mb-4">
                                         <strong>Reason for booking:</strong> {formData.reason}
                                     </div>
-                                    <button 
-                                        onClick={handleClose} 
+                                    <button
+                                        onClick={handleClose}
                                         className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded"
                                     >
                                         Exit
@@ -224,30 +241,6 @@ function BookingPage() {
                                     <div className="flex items-center justify-between mb-4">
                                         <span>{selectedBranch?.name}</span>
                                         <span>{selectedDateTime?.date} {selectedDateTime?.time}</span> {/* Correct rendering of selectedDateTime */}
-                                    </div>
-                                    <div className="mb-4">
-                                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="fullName">
-                                            Full name (NRIC):
-                                        </label>
-                                        <input 
-                                            type="text" 
-                                            id="fullName" 
-                                            value={formData.fullName}
-                                            onChange={handleChange}
-                                            className="w-full px-3 py-2 border rounded focus:outline-none focus:border-blue-500" 
-                                        />
-                                    </div>
-                                    <div className="mb-4">
-                                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
-                                            Email address:
-                                        </label>
-                                        <input 
-                                            type="email" 
-                                            id="email" 
-                                            value={formData.email}
-                                            onChange={handleChange}
-                                            className="w-full px-3 py-2 border rounded focus:outline-none focus:border-blue-500" 
-                                        />
                                     </div>
                                     <div className="mb-6">
                                         <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="reason">
