@@ -12,7 +12,7 @@
 - `npm install fuse.js`
 - `npm install firebase`
 
-# For Rasa Chatbot (might need python 3.10)
+# For Rasa Chatbot (req python 3.10 or older)
 - `cd src/components/aichatbot`
 - `pip install rasa`
 - `rasa run --cors "*" --enable-api`
