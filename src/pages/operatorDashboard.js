@@ -1,4 +1,3 @@
-// src/pages/operatorDashboard.js
 import React, { useState, useEffect, useRef } from 'react';
 import { db } from '../firebaseConfig';
 import { collection, onSnapshot, addDoc, updateDoc, doc, serverTimestamp, query, where, orderBy } from 'firebase/firestore';
@@ -77,10 +76,12 @@ function OperatorDashboard() {
         {selectedChat ? (
           <>
             <div className="flex-1 p-4 overflow-y-scroll bg-white shadow-inner rounded-t-lg">
-              <h3 className="text-xl font-bold mb-4 text-[#DD101E]">Chat with {selectedChat.name}</h3>
+              <h3 className="text-xl font-bold mb-4 text-[#DD101E] p-4 bg-white shadow-sm rounded-t-lg">
+                Chat with {selectedChat.name}
+              </h3>
               {messages.map((msg, index) => (
-                <div key={index} className={`mb-2 ${msg.sender === 'operator' ? 'text-left' : 'text-right'}`}>
-                  <div className={`p-2 rounded ${msg.sender === 'operator' ? 'bg-blue-100' : 'bg-gray-300'}`}>
+                <div key={index} className={`mb-4 ${msg.sender === 'operator' ? 'text-right' : 'text-left'}`}>
+                  <div className={`p-3 rounded-lg max-w-[70%] inline-block ${msg.sender === 'operator' ? 'bg-blue-500 text-white ml-auto' : 'bg-gray-100 text-gray-800 mr-auto'}`}>
                     {msg.message}
                   </div>
                   <p className="text-xs text-gray-500 mt-1">
@@ -90,16 +91,21 @@ function OperatorDashboard() {
               ))}
               <div ref={messagesEndRef} />
             </div>
-            <div className="flex p-4 border-t bg-gray-100">
+            <div className="flex p-4 border-t bg-white">
               <input
                 type="text"
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder="Type a message..."
-                className="flex-1 p-2 border rounded-l-lg"
+                className="flex-1 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
               />
-              <button onClick={sendMessage} className="bg-[#DD101E] text-white p-2 rounded-r-lg">Send</button>
+              <button
+                onClick={sendMessage}
+                className="ml-2 bg-[#DD101E] text-white p-3 rounded-lg hover:bg-[#C00E1A] transition-colors"
+              >
+                Send
+              </button>
             </div>
           </>
         ) : (
