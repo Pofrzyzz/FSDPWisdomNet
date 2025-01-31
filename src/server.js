@@ -12,6 +12,7 @@ const validateAppointment = require('./middlewares/validateAppointment');
 const validateDate = require('./middlewares/validateDate');
 const loginController = require('./controllers/loginController');
 const signupController = require('./controllers/signupController');
+const { decreaseQueueNumber } = require('./controllers/inQueueController'); // Import the function
 const axios = require('axios'); // For making API calls to Flask
 
 const app = express();
@@ -23,7 +24,7 @@ const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
     origin: '*',
-    methods: ['GET', 'POST']
+    methods: ['GET', 'POST', 'PUT'] // Allow PUT requests
   }
 });
 
@@ -67,6 +68,9 @@ aiChatbotNamespace.on('connection', (socket) => {
 app.get('/api/branch', branchController.fetchBranches); // Route to get all branches
 app.post('/api/contact', contactController.saveContact); // Route to save contact info
 
+// PUT route for reducing queue number instead of deleting the user
+app.put('/api/contact/reduce-queue', decreaseQueueNumber);
+
 // Routes for available slots
 app.get('/api/slots/available', validateDate.validateDate, availableController.getAvailableSlots); // Get available slots, with date validation
 app.post('/api/slots/book', availableController.bookSlot); // Book a slot
@@ -80,3 +84,4 @@ const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
