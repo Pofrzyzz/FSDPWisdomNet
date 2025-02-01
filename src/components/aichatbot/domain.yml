@@ -1,0 +1,182 @@
+version: "3.1"
+
+intents:
+  - change_contact_details
+  - retrieve_access_code
+  - fee_waiver
+  - withdrawal_activation
+  - bank_code
+  - about_myinfo
+  - apply_through_myinfo
+  - about_remote_account_opening
+  - apply_cheque_book
+  - lost_cheque
+  - cheque_status
+  - stop_cheque_payment
+  - request_bank_statement
+  - make_sgd_fixed_deposit
+  - withdraw_fixed_deposit
+  - retrieve_statements
+  - full_loan_repayment
+  - partial_loan_repayment
+  - cancel_partial_prepayment
+  - change_loan_interest_rate_package
+  - change_insurance_tenure_length
+  - change_debiting_account
+  - cancel_fire_insurance_policy
+  - request_home_loan_statements
+  - card_activation
+  - overseas_card_activation
+  - apply_card
+  - credit_limit
+  - check_balance
+  - check_transaction
+  - card_replacement
+  - default
+  - greet
+  - goodbye
+  - thank_you
+  - bot_feelings
+
+responses:
+  utter_change_contact_details:
+    - text: "You can update your mailing address, email, or phone number quickly via OCBC Internet Banking or the OCBC app."
+      custom:
+        link: "http://localhost:3000/generalfaq?popupButton=contactDetails"
+  utter_retrieve_access_code:
+    - text: "Your access code will be given to you when you sign up for Internet Banking. It is needed, together with your PIN, to log in."
+      custom:
+        link: "http://localhost:3000/generalfaq?popupButton=accessCode"
+  utter_fee_waiver:
+    - text: "Log in to OCBC app -> Tap on the 'More' icon in the bottom navigation bar. -> Tap on 'Card services' → 'Request fee waiver'."
+      custom:
+        link: "http://localhost:3000/generalfaq?popupButton=feeWaiver"
+  utter_withdrawal_activation:
+    - text: "Activate withdrawals for your account using Internet Banking or by SMS request following simple instructions."
+      custom:
+        link: "http://localhost:3000/generalfaq?popupButton=withdrawalActivation"
+  utter_bank_code:
+    - text: "OCBC bank codes are used for transfers and account identification. Your branch code is the first three digits of your account number."
+      custom:
+        link: "http://localhost:3000/generalfaq?popupButton=bankCode"
+  utter_about_myinfo:
+    - text: "MyInfo is a government data platform that pre-fills forms for faster transactions. Ensure your SingPass is active."
+      custom:
+        link: "http://localhost:3000/generalfaq?popupButton=myInfo"
+  utter_apply_through_myinfo:
+    - text: "Use MyInfo to quickly apply for accounts with pre-filled data from the government database."
+      custom:
+        link: "http://localhost:3000/generalfaq?popupButton=applyMyInfo"
+  utter_about_remote_account_opening:
+    - text: "Open an account remotely via openaccount.ocbc.com without visiting a branch. Available for Singapore residents."
+      custom:
+        link: "http://localhost:3000/generalfaq?popupButton=openRemoteAcc"
+  utter_apply_cheque_book:
+    - text: "You can apply for a new cheque book through OCBC Internet Banking or by visiting a branch."
+      custom:
+        link: "http://localhost:3000/accountsfaq?popupButton=applyCheque"
+  utter_lost_cheque:
+    - text: "Report a lost or missing cheque quickly using Internet Banking or contact customer support."
+      custom:
+        link: "http://localhost:3000/accountsfaq?popupButton=lostCheque"
+  utter_cheque_status:
+    - text: "Track the status of your cheque transactions via Internet Banking or the OCBC app."
+      custom:
+        link: "http://localhost:3000/accountsfaq?popupButton=chequeStatus"
+  utter_stop_cheque_payment:
+    - text: "Stop a cheque payment through OCBC Internet Banking by providing the cheque details."
+      custom:
+        link: "http://localhost:3000/accountsfaq?popupButton=stopCheque"
+  utter_request_bank_statement:
+    - text: "Request a copy of your bank statement online or through the OCBC app for any account type."
+      custom:
+        link: "http://localhost:3000/accountsfaq?popupButton=reqBankStatement"
+  utter_make_sgd_fixed_deposit:
+    - text: "Set up a fixed deposit in SGD through OCBC Internet Banking or by visiting a branch."
+      custom:
+        link: "http://localhost:3000/accountsfaq?popupButton=sgdFixedDep"
+  utter_withdraw_fixed_deposit:
+    - text: "Withdraw your fixed deposit online or through a branch before or after maturity."
+      custom:
+        link: "http://localhost:3000/accountsfaq?popupButton=withdrawFixedDep"
+  utter_retrieve_statements:
+    - text: "View or download your account statements directly from Internet Banking or the OCBC app."
+      custom:
+        link: "http://localhost:3000/accountsfaq?popupButton=retrieveStatements"
+  utter_full_loan_repayment:
+    - text: "Fully repay your loan through Internet Banking or by contacting the OCBC loan department."
+      custom:
+        link: "http://localhost:3000/loansfaq?popupButton=fullLoanRepayment"
+  utter_partial_loan_repayment:
+    - text: "Partially repay your loan by submitting a prepayment request through OCBC Internet Banking."
+      custom:
+        link: "http://localhost:3000/loansfaq?popupButton=partialLoanRepayment"
+  utter_cancel_partial_prepayment:
+    - text: "Cancel a scheduled partial prepayment via Internet Banking before the payment date."
+      custom:
+        link: "http://localhost:3000/loansfaq?popupButton=cancelPartialPrepayment"
+  utter_change_loan_interest_rate_package:
+    - text: "Switch to a different loan interest rate package by contacting the OCBC loan team."
+      custom:
+        link: "http://localhost:3000/loansfaq?popupButton=changePackage"
+  utter_change_insurance_tenure_length:
+    - text: "Request changes to your insurance tenure length by contacting OCBC insurance support."
+      custom:
+        link: "http://localhost:3000/loansfaq?popupButton=changeTenureLength"
+  utter_change_debiting_account:
+    - text: "Switch the debiting account for your payments via OCBC Internet Banking or the app."
+      custom:
+        link: "http://localhost:3000/loansfaq?popupButton=changeDebitingAcc"
+  utter_cancel_fire_insurance_policy:
+    - text: "End your fire insurance policy by submitting a cancellation request through Internet Banking."
+      custom:
+        link: "http://localhost:3000/loansfaq?popupButton=cancelFireInsurance"
+  utter_request_home_loan_statements:
+    - text: "Get detailed home loan statements via Internet Banking or request them from the loan team."
+      custom:
+        link: "http://localhost:3000/loansfaq?popupButton=requestHomeStatement"
+  utter_card_activation:
+    - text: "Activate your debit or credit card online or by following the SMS activation instructions."
+      custom:
+        link: "http://localhost:3000/cardsfaq?popupButton=cardActivation"
+  utter_overseas_card_activation:
+    - text: "Enable your card for overseas usage via Internet Banking or the OCBC app."
+      custom:
+        link: "http://localhost:3000/cardsfaq?popupButton=overseasCardActivation"
+  utter_apply_card:
+    - text: "Apply for a credit or debit card online via the OCBC website or Internet Banking."
+      custom:
+        link: "http://localhost:3000/cardsfaq?popupButton=applyCard"
+  utter_credit_limit:
+    - text: "Request to increase or decrease your credit card limit via Internet Banking."
+      custom:
+        link: "http://localhost:3000/cardsfaq?popupButton=creditLimit"
+  utter_check_balance:
+    - text: "Check your account balance via Internet Banking, the OCBC app, or ATM."
+      custom:
+        link: "http://localhost:3000/cardsfaq?popupButton=checkBalance"
+  utter_check_transaction:
+    - text: "View recent transactions and details via Internet Banking or the OCBC app."
+      custom:
+        link: "http://localhost:3000/cardsfaq?popupButton=checkTransaction"
+  utter_card_replacement:
+    - text: "Request a replacement for your lost or damaged card through Internet Banking or the app."
+      custom:
+        link: "http://localhost:3000/cardsfaq?popupButton=cardReplacement"
+  utter_default:
+    - text: "I'm sorry, I didn't understand that. Can you rephrase?"
+      custom:
+        link: "http://localhost:3000/cardsfaq?popupButton=retrieveStatements"
+  utter_greet:
+    - text: "Hello! How can I assist you today?"
+  utter_goodbye:
+    - text: "Goodbye! Have a great day."
+  utter_thank_you:
+    - text: "You're welcome!"
+  utter_bot_feelings:
+    - text: "I'm an AI chatbot here to help you with your queries."
+ 
+
+session_config:
+  session_expiration_time: 60
+  carry_over_slots_to_new_session: true

@@ -1,0 +1,181 @@
+version: "3.1"
+stories:
+  - story: Change Contact Details
+    steps:
+      - intent: change_contact_details
+      - action: utter_change_contact_details
+
+  - story: Retrieve Access Code
+    steps:
+      - intent: retrieve_access_code
+      - action: utter_retrieve_access_code
+
+  - story: Request Fee Waiver
+    steps:
+      - intent: fee_waiver
+      - action: utter_fee_waiver
+
+  - story: Withdrawal Activation
+    steps:
+      - intent: withdrawal_activation
+      - action: utter_withdrawal_activation
+
+  - story: Bank Code Information
+    steps:
+      - intent: bank_code
+      - action: utter_bank_code
+
+  - story: About MyInfo
+    steps:
+      - intent: about_myinfo
+      - action: utter_about_myinfo
+
+  - story: Apply through MyInfo
+    steps:
+      - intent: apply_through_myinfo
+      - action: utter_apply_through_myinfo
+
+  - story: Remote Account Opening
+    steps:
+      - intent: about_remote_account_opening
+      - action: utter_about_remote_account_opening
+
+  - story: Apply for Cheque Book
+    steps:
+      - intent: apply_cheque_book
+      - action: utter_apply_cheque_book
+
+  - story: Lost Cheque
+    steps:
+      - intent: lost_cheque
+      - action: utter_lost_cheque
+
+  - story: Check Cheque Status
+    steps:
+      - intent: cheque_status
+      - action: utter_cheque_status
+
+  - story: Stop Cheque Payment
+    steps:
+      - intent: stop_cheque_payment
+      - action: utter_stop_cheque_payment
+
+  - story: Request Bank Statement
+    steps:
+      - intent: request_bank_statement
+      - action: utter_request_bank_statement
+
+  - story: Make SGD Fixed Deposit
+    steps:
+      - intent: make_sgd_fixed_deposit
+      - action: utter_make_sgd_fixed_deposit
+
+  - story: Withdraw Fixed Deposit
+    steps:
+      - intent: withdraw_fixed_deposit
+      - action: utter_withdraw_fixed_deposit
+
+  - story: Retrieve Statements
+    steps:
+      - intent: retrieve_statements
+      - action: utter_retrieve_statements
+
+  - story: Full Loan Repayment
+    steps:
+      - intent: full_loan_repayment
+      - action: utter_full_loan_repayment
+
+  - story: Partial Loan Repayment
+    steps:
+      - intent: partial_loan_repayment
+      - action: utter_partial_loan_repayment
+
+  - story: Cancel Partial Prepayment
+    steps:
+      - intent: cancel_partial_prepayment
+      - action: utter_cancel_partial_prepayment
+
+  - story: Change Loan Interest Rate Package
+    steps:
+      - intent: change_loan_interest_rate_package
+      - action: utter_change_loan_interest_rate_package
+
+  - story: Change Insurance Tenure Length
+    steps:
+      - intent: change_insurance_tenure_length
+      - action: utter_change_insurance_tenure_length
+
+  - story: Change Debiting Account
+    steps:
+      - intent: change_debiting_account
+      - action: utter_change_debiting_account
+
+  - story: Cancel Fire Insurance Policy
+    steps:
+      - intent: cancel_fire_insurance_policy
+      - action: utter_cancel_fire_insurance_policy
+
+  - story: Request Home Loan Statements
+    steps:
+      - intent: request_home_loan_statements
+      - action: utter_request_home_loan_statements
+
+  - story: Card Activation
+    steps:
+      - intent: card_activation
+      - action: utter_card_activation
+
+  - story: Overseas Card Activation
+    steps:
+      - intent: overseas_card_activation
+      - action: utter_overseas_card_activation
+
+  - story: Apply for Card
+    steps:
+      - intent: apply_card
+      - action: utter_apply_card
+
+  - story: Credit Limit
+    steps:
+      - intent: credit_limit
+      - action: utter_credit_limit
+
+  - story: Check Balance
+    steps:
+      - intent: check_balance
+      - action: utter_check_balance
+
+  - story: Check Transaction
+    steps:
+      - intent: check_transaction
+      - action: utter_check_transaction
+
+  - story: Card Replacement
+    steps:
+      - intent: card_replacement
+      - action: utter_card_replacement
+
+  - story: Default Fallback
+    steps:
+      - intent: default
+      - action: utter_default
+
+  - story: greet the user
+    steps:
+      - intent: greet
+      - action: utter_greet
+
+  - story: say goodbye to the user
+    steps:
+      - intent: goodbye
+      - action: utter_goodbye
+
+  - story: thank the bot
+    steps:
+      - intent: thank_you
+      - action: utter_thank_you
+
+  - story: respond to bot feelings inquiry
+    steps:
+      - intent: bot_feelings
+      - action: utter_bot_feelings

@@ -672,10 +672,7 @@ function GeneralFaq() {
             <Modal isOpen={isModalOpen} onClose={closeModal} content={modalContent} title={modalTitle} />
         
         </section>
-
-
-
-
+        
         <section className="flex flex-col min-h-screen">
         {/* Help section */}
         <Help/>

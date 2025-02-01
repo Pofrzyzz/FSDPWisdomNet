@@ -7,6 +7,7 @@ import Help from '../components/needhelp';
 import HelpDesk from '../images/HelpDesk.jpg';
 import Chatbot from '../components/chatbot';
 import Searchbar from '../components/searchbar'
+import AIChatbot from '../components/aichatbot/aichatbot'
 
 function HomePage() {
   return (
@@ -48,6 +49,8 @@ function HomePage() {
       </section>
 
       <Footer />
+
+      <AIChatbot/>
 
       {/* Chatbot Button and Interface */}
       <Chatbot />
