@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import ReCAPTCHA from 'react-google-recaptcha';
 import logo from '../images/logo_ocbc.svg';
 
 const SignUpPage = () => {
@@ -9,6 +10,8 @@ const SignUpPage = () => {
     pin: '',
     nric: '',
   });
+  const [captchaVerified, setCaptchaVerified] = useState(false);
+  const captchaRef = useRef(null);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -18,22 +21,32 @@ const SignUpPage = () => {
     });
   };
 
+  const handleCaptchaChange = (value) => {
+    setCaptchaVerified(!!value);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!captchaVerified) {
+      alert('Please verify the CAPTCHA.');
+      return;
+    }
+
     try {
+      const recaptchaToken = captchaRef.current.getValue();
       const response = await fetch('http://localhost:5000/api/users/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, recaptchaToken }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
         alert(data.message);
-        navigate('/HomePage'); // Redirect to the home page
+        navigate('/HomePage');
       } else {
         alert(`Sign-up failed: ${data.message}`);
       }
@@ -99,6 +112,13 @@ const SignUpPage = () => {
               required
             />
           </div>
+          
+          <ReCAPTCHA 
+            sitekey="6Led0skqAAAAAGYGip8-6I8QlJwaWfBw-P3Lz3V6" 
+            onChange={handleCaptchaChange} 
+            ref={captchaRef} 
+          />
+
           <button
             type="submit"
             className="w-full py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700"
