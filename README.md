@@ -11,3 +11,4 @@
 - `npm install socket.io-client`
 - `npm install fuse.js`
 - `npm install firebase`
+- `npm install moment-timezone`

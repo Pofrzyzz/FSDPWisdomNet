@@ -12,6 +12,7 @@ const validateAppointment = require('./middlewares/validateAppointment');
 const validateDate = require('./middlewares/validateDate');
 const loginController = require('./controllers/loginController');
 const signupController = require('./controllers/signupController');
+const historyController = require('./controllers/historyController');
 
 const app = express();
 app.use(express.json());
@@ -42,9 +43,10 @@ app.get('/api/slots/available', validateDate.validateDate, availableController.g
 app.post('/api/slots/book', availableController.bookSlot); // Book a slot
 
 // Routes for appointments
-app.get('/api/appointment/available-slots', appointmentController.getAvailableSlots); // Get available slots by branch and date
 app.post('/api/appointment/create', validateAppointment.validateAppointment, appointmentController.createAppointment); // Create an appointment with validation
-app.get('/api/appointment/slot', appointmentModel.getSlotById)
+
+// Routes for history
+app.get('/api/history/:userId', historyController.getBookingHistory);
 
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {

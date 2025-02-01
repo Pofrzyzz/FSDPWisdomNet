@@ -5,6 +5,8 @@ import NavBar from '../components/navbar';
 import Footer from '../components/footer'; 
 import BackGround from '../images/booking-bg.png';
 import Chatbot from '../components/chatbot';
+import axios from 'axios';
+import moment3 from 'moment';
 import { Link } from 'react-router-dom';
 
 function BookingPage() {
@@ -54,52 +56,54 @@ function BookingPage() {
     };
 
     const handleConfirm = async () => {
-        if (!formData.fullName || !formData.email || !formData.reason || !selectedBranch || !slotID || !selectedDateTime) {
+        const userId = localStorage.getItem('userId'); 
+        const bookingMadeTime = moment3().format('YYYY-MM-DD HH:mm:ss');
+    
+        console.log("Selected Branch:", selectedBranch);
+        console.log("Selected DateTime:", selectedDateTime);
+        console.log("Reason:", formData.reason);
+    
+        if (!userId || !selectedBranch || !slotID || !bookingMadeTime || !formData.reason) {
             setErrors((prevErrors) => ({
                 ...prevErrors,
                 form: 'Please fill in all the fields.',
             }));
             return;
         }
-
+    
         try {
-            // Prepare appointment time in a format compatible with SQL.
-            const timeWithMicroseconds = `${selectedDateTime?.time}:00.0000000`; // Example: "10:00:00.0000000"
-
             const appointmentData = {
-                branchID: selectedBranch.id,
-                reason: formData.reason,
-                appointmentDate: selectedDateTime?.date, // Format: 'YYYY-MM-DD'
-                appointmentTime: timeWithMicroseconds, // Format: 'HH:mm:ss.ssssss'
-                slotID, // Pass slotID for further processing
+                BranchID: selectedBranch.id,
+                UserID: parseInt(userId),
+                Reason: formData.reason,
+                BookingDateTime: bookingMadeTime,
+                SlotID: slotID,
             };
-
-            const response = await fetch('http://localhost:5000/api/appointment/create', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(appointmentData),
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                // Show success modal
+    
+            console.log("Sending Appointment Data:", appointmentData);
+    
+            const response = await axios.post('http://localhost:5000/api/appointment/create', appointmentData);
+            console.log("Backend Response:", response.data);
+    
+            if ((response.status === 200 || response.status === 201) && response.data.message === 'Appointment created successfully') {
                 setIsConfirmed(true);
                 setShowModal(true);
-
-                // Reset state
-                setFormData({
-                    reason: '',
-                });
-                setSelectedBranch(null);
-                setSelectedDateTime(null);
+                
+                // Store values before reset
+                setFormData((prev) => ({
+                    ...prev,
+                    reason: formData.reason,
+                }));
+    
+                setSelectedBranch((prev) => ({ ...prev }));
+                setSelectedDateTime((prev) => ({ ...prev }));
+    
                 setSlotID(null);
             } else {
+                console.error('Unexpected response:', response);
                 setErrors((prevErrors) => ({
                     ...prevErrors,
-                    form: data.error || 'An error occurred while booking your appointment.',
+                    form: response.data.error || 'An error occurred while booking your appointment.',
                 }));
             }
         } catch (error) {
@@ -110,7 +114,8 @@ function BookingPage() {
             }));
         }
     };
-
+    
+    
 
     const handleDateTimeSelect = (dateTimeInfo) => {
         setSelectedDateTime(dateTimeInfo); 
@@ -161,6 +166,12 @@ function BookingPage() {
                 </div>
 
                 <div className="bg-white shadow-md rounded-lg p-8 max-w-2xl mx-auto mt-8">
+                <Link to="/HistoryPage">
+                        <div className="absolute top-90 left-16 text-lg font-semibold cursor-pointer z-10 flex items-center hover:underline hover:decoration-white">
+                            {/* <img src={require('../images/arrow-left-red.svg').default} alt="Back" className="w-5 h-5 mr-2" /> */}
+                            <span className="text-black underline">View Booking History</span>
+                        </div>
+                    </Link>
                     <div className="flex flex-col space-y-8">
                         <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
                             <div className="flex-1">
@@ -216,17 +227,13 @@ function BookingPage() {
                                 <>
                                     <h2 className="text-2xl font-bold mb-4">Booking Confirmed!</h2>
                                     <div className="flex items-center justify-between mb-4">
-                                        <span>{selectedBranch?.name}</span>
-                                        <span>{selectedDateTime?.date} {selectedDateTime?.time}</span>
+                                        <strong>Branch:</strong> <span>{selectedBranch?.name || "Not selected"}</span>
                                     </div>
-                                    <div className="mb-2">
-                                        <strong>Full name (NRIC):</strong> {formData.fullName}
-                                    </div>
-                                    <div className="mb-2">
-                                        <strong>Email address:</strong> {formData.email}
+                                    <div className="flex items-center justify-between mb-4">
+                                        <strong>Date & Time:</strong> <span>{selectedDateTime?.date} {selectedDateTime?.time}</span>
                                     </div>
                                     <div className="mb-4">
-                                        <strong>Reason for booking:</strong> {formData.reason}
+                                        <strong>Reason:</strong> <span>{formData.reason || "Not provided"}</span>
                                     </div>
                                     <button
                                         onClick={handleClose}
