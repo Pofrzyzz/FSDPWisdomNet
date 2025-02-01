@@ -1,10 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import ReCAPTCHA from 'react-google-recaptcha';
 import logo from '../images/logo_ocbc.svg';
 
 
 const SignUpPage = () => {
-  const [formData, setFormData] = useState({ username: '', email: '', password: '' });
+  const [formData, setFormData] = useState({
+    username: '',
+    email: '',
+    pin: '',
+    nric: '',
+  });
+  const [captchaVerified, setCaptchaVerified] = useState(false);
+  const captchaRef = useRef(null);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -14,16 +22,38 @@ const SignUpPage = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleCaptchaChange = (value) => {
+    setCaptchaVerified(!!value);
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!captchaVerified) {
+      alert('Please verify the CAPTCHA.');
+      return;
+    }
 
-    // Replace this with actual signup logic
-    const isSignupSuccessful = formData.username && formData.email && formData.password;
+    try {
+      const recaptchaToken = captchaRef.current.getValue();
+      const response = await fetch('http://localhost:5000/api/users/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ ...formData, recaptchaToken }),
+      });
 
-    if (isSignupSuccessful) {
-      navigate('/home');
-    } else {
-      alert('Please fill out all fields correctly');
+      const data = await response.json();
+
+      if (response.ok) {
+        alert(data.message);
+        navigate('/HomePage');
+      } else {
+        alert(`Sign-up failed: ${data.message}`);
+      }
+    } catch (error) {
+      console.error('Error during sign-up:', error);
+      alert('An error occurred while signing up.');
     }
   };
 
@@ -76,6 +106,24 @@ const SignUpPage = () => {
               required
             />
           </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">NRIC</label>
+            <input
+              type="text"
+              name="nric"
+              placeholder="NRIC (e.g., S1234567A)"
+              value={formData.nric}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:border-red-500"
+              required
+            />
+          </div>
+          
+          <ReCAPTCHA 
+            sitekey="6Led0skqAAAAAGYGip8-6I8QlJwaWfBw-P3Lz3V6" 
+            onChange={handleCaptchaChange} 
+            ref={captchaRef} 
+          />
 
           <button
             type="submit"
