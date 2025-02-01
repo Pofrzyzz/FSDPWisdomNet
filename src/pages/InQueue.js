@@ -10,7 +10,7 @@ function InQueue() {
   const location = useLocation();
 
   const { mobileNumber, selectedProblem, queueNumber: initialQueueNumber } = location.state || {};
-  const [queueNumber, setQueueNumber] = useState(initialQueueNumber || 20); // Default queue is 20 if undefined
+  const [queueNumber, setQueueNumber] = useState(initialQueueNumber || 0); // Default queue is 20 if undefined
   const [showModal, setShowModal] = useState(false);
 
   // Reversed progress bar: Starts empty at 20, fills up as it nears 0
@@ -57,7 +57,7 @@ function InQueue() {
           <div className="inline-block relative ml-2 group">
             <img src={InfoIcon} alt="Information" className="w-5 h-5 cursor-pointer filter transform translate-y-0.5" />
             <div className="absolute left-6 transform -translate-x-full top-full mt-2.5 w-64 p-3 bg-white text-sm text-gray-700 border rounded-lg shadow-lg opacity-0 transition-opacity duration-200 group-hover:opacity-100 z-50">
-              Due to high call volumes, instead of staying on hold, you’ll be notified when it’s your turn.
+            Due to high call volumes, instead of staying on hold, you’ll be notified when it’s your turn, ensuring more efficient service and a smoother experience for all customers.
             </div>
           </div>
         </h1>
@@ -93,11 +93,11 @@ function InQueue() {
           <div className="bg-white rounded-lg shadow-lg p-8 max-w-lg w-full">
             <h2 className="text-xl font-semibold mb-4">Do you want to leave the queue?</h2>
             <p className="text-gray-700 mb-6">
-              If you leave, you will lose your queue position and will not be contacted.
+            You can request a callback when the queue is cleared. If you leave now, you'll lose your position and won’t be contacted.
             </p>
             <div className="flex justify-end gap-4">
               <button onClick={() => setShowModal(false)} className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600">
-                Cancel
+                Call Back Later
               </button>
               <button onClick={handleWithdrawCompletely} className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600">
                 Leave Queue

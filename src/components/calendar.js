@@ -36,12 +36,27 @@ function Calendar({ selectedBranch, onDateTimeSelect }) {
     };
 
     const handleDateSelect = (day) => {
-        const newSelectedDate = new Date(selectedDate ? selectedDate.getFullYear() : new Date().getFullYear(), selectedDate ? selectedDate.getMonth() : new Date().getMonth(), day, 12);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); // Remove time component for accurate comparison
+    
+        const newSelectedDate = new Date(
+            selectedDate ? selectedDate.getFullYear() : today.getFullYear(),
+            selectedDate ? selectedDate.getMonth() : today.getMonth(),
+            day
+        );
+    
+        if (newSelectedDate < today) {
+            return; // Ignore selection if the date is in the past
+        }
+    
         setSelectedDate(newSelectedDate);
         if (selectedBranch) {
-            fetchAvailableSlots(selectedBranch.id, newSelectedDate.toISOString().split('T')[0]);
+            // Use toLocaleDateString with 'en-CA' format to prevent timezone shift issues
+            fetchAvailableSlots(selectedBranch.id, newSelectedDate.toLocaleDateString('en-CA'));
         }
     };
+    
+    
 
     const handleTimeSelect = (time, slotID) => {
         setSelectedTime(time);
@@ -111,21 +126,29 @@ function Calendar({ selectedBranch, onDateTimeSelect }) {
                                 <div key={`empty-${i}`}></div>
                             ))}
                             {Array.from({ length: getDaysInMonth(selectedDate ? selectedDate.getFullYear() : new Date().getFullYear(), selectedDate ? selectedDate.getMonth() : new Date().getMonth()) }, (_, i) => {
-                                const today = new Date(); // Current date
-                                const isToday =
-                                    today.getDate() === i + 1 &&
-                                    today.getMonth() === (selectedDate ? selectedDate.getMonth() : new Date().getMonth()) &&
-                                    today.getFullYear() === (selectedDate ? selectedDate.getFullYear() : new Date().getFullYear());
+                                const today = new Date();
+                                today.setHours(0, 0, 0, 0); // Remove time component
+                                const thisDate = new Date(
+                                    selectedDate ? selectedDate.getFullYear() : today.getFullYear(),
+                                    selectedDate ? selectedDate.getMonth() : today.getMonth(),
+                                    i + 1
+                                );
+
+                                const isToday = today.getTime() === thisDate.getTime();
+                                const isPast = thisDate < today; // Check if the date is in the past
 
                                 return (
                                     <button
                                         key={i}
-                                        onClick={() => handleDateSelect(i + 1)}
+                                        onClick={() => !isPast && handleDateSelect(i + 1)}
+                                        disabled={isPast} // Disable past dates
                                         className={`px-2 py-1 rounded-lg ${
                                             isToday
-                                                ? 'bg-red-500 text-white' // Highlight current date
+                                                ? 'bg-red-500 text-white' // Highlight today
                                                 : selectedDate && selectedDate.getDate() === i + 1
                                                 ? 'bg-red-300 text-white' // Highlight selected date
+                                                : isPast
+                                                ? 'bg-gray-100 text-gray-400 cursor-not-allowed' // Style past dates
                                                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                                         }`}
                                     >
@@ -133,6 +156,7 @@ function Calendar({ selectedBranch, onDateTimeSelect }) {
                                     </button>
                                 );
                             })}
+
                         </div>
 
                     </div>
