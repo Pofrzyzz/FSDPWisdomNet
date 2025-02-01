@@ -13,6 +13,7 @@ import LoansFaq from './pages/loans'
 import LoginPage from './pages/login';
 import SignUpPage from './pages/signup';
 import OperatorDashboard from './pages/operatorDashboard';
+import HistoryPage from './pages/history';
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
         <Route path="/LoginPage" element={<LoginPage/>}/>
         <Route path="/SignUpPage" element={<SignUpPage/>}/>
         <Route path="/OperatorPage" element={<OperatorDashboard/>}/>
+        <Route path="/HistoryPage" element={<HistoryPage/>}/>
       </Routes>
     </Router>
   );

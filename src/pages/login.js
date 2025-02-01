@@ -67,7 +67,7 @@ const LoginPage = () => {
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="bg-white shadow-md rounded-lg p-8 w-full max-w-md">
         <div className="flex justify-center mb-6">
-        <img src={logo} alt="OCBC Logo" className="h-12"/>
+          <img src={logo} alt="OCBC Logo" className="h-12" />
         </div>
 
         <h2 className="text-2xl font-semibold text-gray-800 mb-4 text-center">Online Banking</h2>

@@ -2,10 +2,10 @@ import React from 'react';
 
 function Help() {
     return (
-            <div className="bg-black text-white p-8 mt-8 rounded-md border-t-2 border-b-2 border-red-500">
-            <h2 className="text-center text-2xl font-bold mb-8">Can’t Find What You Need?</h2>
+            <div className="bg-black text-white p-8 mt-4 rounded-md border-t-2 border-b-2 border-red-500">
+            <h2 className="text-center text-3xl font-geomanist font-bold mb-8">Can’t Find What You Need?</h2>
             <div className="flex">
-            <div className="w-[55%] px-16">
+            <div className="w-[55%] px-16 font-opensans">
                 <h3 className="text-2xl font-bold mb-4">AI Chatbot & Live Chat Agent</h3>
                 <p className="mt-2 text-xl mb-4">To start, click on the “Need help?” button.</p>
                 <p className="mt-2 text-xl mb-6">

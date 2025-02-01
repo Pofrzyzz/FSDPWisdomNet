@@ -6,11 +6,11 @@ function CommonFaqs() {
         <div className="mt-8">
             {/* Title */}
             <div className="text-center mb-6">
-                <h2 className="text-3xl font-bold">Common Topics</h2>
+                <h2 className="text-4xl font-geomanist font-bold">Common Topics</h2>
             </div>           
 
             {/* Container for topics */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mx-auto max-w-[1440px]">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mx-auto max-w-[1440px] font-geomanist">
 
                 {/* General */}
                 <Link to="/GeneralFaq">

@@ -78,7 +78,7 @@ function ContactUs() {
             className="w-full h-full object-cover object-[center_10%]"
           />
           <div className="absolute inset-0 flex flex-col items-center justify-center text-white bg-black bg-opacity-60">
-            <h1 className="text-3xl md:text-5xl font-bold mt-32 md:mt-40">Contact Us</h1>
+            <h1 className="text-3xl md:text-7xl font-geomanist font-bold mt-32 md:mt-40">Contact Us</h1>
             <p className="text-center mt-3 max-w-2xl text-base md:text-lg leading-tight px-4">
               Take a queue number if you wish to speak to a customer<br />
               service executive, and we will contact you once it's your turn.
@@ -95,7 +95,7 @@ function ContactUs() {
               </div>
               <div>
                 <p className="text-gray-500 mb-1">Currently In Queue</p>
-                <h3 className="text-4xl font-semibold">26</h3>
+                <h3 className="text-4xl font-semibold">4</h3> {/* Current customer in queue */}
               </div>
               <div>
                 <p className="text-gray-500 mb-1">Waiting Time</p>

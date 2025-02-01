@@ -5,6 +5,8 @@ import NavBar from '../components/navbar';
 import Footer from '../components/footer'; 
 import BackGround from '../images/booking-bg.png';
 import Chatbot from '../components/chatbot';
+import axios from 'axios';
+import moment3 from 'moment';
 import { Link } from 'react-router-dom';
 
 function BookingPage() {
@@ -13,8 +15,6 @@ function BookingPage() {
     const [showModal, setShowModal] = useState(false);
     const [isConfirmed, setIsConfirmed] = useState(false);
     const [formData, setFormData] = useState({
-        fullName: '',
-        email: '',
         reason: '',
     });
     const [showTooltip, setShowTooltip] = useState(false);
@@ -26,65 +26,96 @@ function BookingPage() {
         form: '',
     });
 
-    const handleConfirm = () => {
-        if (formData.fullName && formData.email && formData.reason && selectedBranch && slotID) {
-            setIsConfirmed(true);
-            setShowModal(true);
-        } else {
-            setErrors(prevErrors => ({
-                ...prevErrors,
-                form: 'Please fill in all the fields.',
-            }));
+    const handleBook = () => {
+        let hasErrors = false;
+        const newErrors = { branch: '', dateTime: '', form: '' };
+    
+        if (!selectedBranch) {
+            newErrors.branch = "Please select a branch.";
+            hasErrors = true;
+        }
+        if (!selectedDateTime) {
+            newErrors.dateTime = "Please select a date and time.";
+            hasErrors = true;
+        }
+    
+        setErrors(newErrors);
+    
+        if (!hasErrors) {
+            const userId = localStorage.getItem('userId'); // Check for user ID in local storage
+    
+            if (!userId) {
+                // Show login modal if user is not logged in
+                setShowModal(true);
+            } else {
+                // Proceed with booking if user is logged in
+                setIsConfirmed(false); // Ensure confirmation state is reset
+                setShowModal(true);
+            }
         }
     };
 
-    // const handleConfirm = async () => {
-    //     if (formData.fullName && formData.email && formData.reason && selectedBranch && slotID) {
-
-    //         try {
-    //             // Format the appointment time as 'HH:mm:ss.ssssss'
-    //             const timeWithMicroseconds = selectedDateTime?.time + ":00.0000000"; // Example: "10:00:00.0000000"
-            
-    //             const response = await fetch('http://localhost:5000/api/appointment/create', {
-    //                 method: 'POST',
-    //                 headers: {
-    //                     'Content-Type': 'application/json',
-    //                 },
-    //                 body: JSON.stringify({
-    //                     branchID: selectedBranch.id,
-    //                     fullName: formData.fullName,
-    //                     email: formData.email,
-    //                     reason: formData.reason,
-    //                     appointmentDate: selectedDateTime?.date,  // 'YYYY-MM-DD'
-    //                     appointmentTime: timeWithMicroseconds,  // Send time with microseconds
-    //                     slotID: slotID, // Send the slotID here
-    //                 }),
-    //             });
+    const handleConfirm = async () => {
+        const userId = localStorage.getItem('userId'); 
+        const bookingMadeTime = moment3().format('YYYY-MM-DD HH:mm:ss');
     
-    //             const data = await response.json();
+        console.log("Selected Branch:", selectedBranch);
+        console.log("Selected DateTime:", selectedDateTime);
+        console.log("Reason:", formData.reason);
     
-    //             if (response.ok) {
-    //                 setIsConfirmed(true);
-    //                 setShowModal(true);
-    //             } else {
-    //                 setErrors(prevErrors => ({
-    //                     ...prevErrors,
-    //                     form: data.error || 'An error occurred while booking your appointment.',
-    //                 }));
-    //             }
-    //         } catch (error) {
-    //             setErrors(prevErrors => ({
-    //                 ...prevErrors,
-    //                 form: 'Failed to book the appointment. Please try again later.',
-    //             }));
-    //         }
-    //     } else {
-    //         setErrors(prevErrors => ({
-    //             ...prevErrors,
-    //             form: 'Please fill in all the fields.',
-    //         }));
-    //     }
-    // };
+        if (!userId || !selectedBranch || !slotID || !bookingMadeTime || !formData.reason) {
+            setErrors((prevErrors) => ({
+                ...prevErrors,
+                form: 'Please fill in all the fields.',
+            }));
+            return;
+        }
+    
+        try {
+            const appointmentData = {
+                BranchID: selectedBranch.id,
+                UserID: parseInt(userId),
+                Reason: formData.reason,
+                BookingDateTime: bookingMadeTime,
+                SlotID: slotID,
+            };
+    
+            console.log("Sending Appointment Data:", appointmentData);
+    
+            const response = await axios.post('http://localhost:5000/api/appointment/create', appointmentData);
+            console.log("Backend Response:", response.data);
+    
+            if ((response.status === 200 || response.status === 201) && response.data.message === 'Appointment created successfully') {
+                setIsConfirmed(true);
+                setShowModal(true);
+                
+                // Store values before reset
+                setFormData((prev) => ({
+                    ...prev,
+                    reason: formData.reason,
+                }));
+    
+                setSelectedBranch((prev) => ({ ...prev }));
+                setSelectedDateTime((prev) => ({ ...prev }));
+    
+                setSlotID(null);
+            } else {
+                console.error('Unexpected response:', response);
+                setErrors((prevErrors) => ({
+                    ...prevErrors,
+                    form: response.data.error || 'An error occurred while booking your appointment.',
+                }));
+            }
+        } catch (error) {
+            console.error('Error during appointment booking:', error);
+            setErrors((prevErrors) => ({
+                ...prevErrors,
+                form: 'Failed to book the appointment. Please try again later.',
+            }));
+        }
+    };
+    
+    
 
     const handleDateTimeSelect = (dateTimeInfo) => {
         setSelectedDateTime(dateTimeInfo); 
@@ -96,8 +127,6 @@ function BookingPage() {
         setIsConfirmed(false); 
         setErrors({ branch: '', dateTime: '', form: '' }); 
         setFormData({
-            fullName: '',
-            email: '',
             reason: '',
         });
         setSelectedBranch(null);
@@ -106,26 +135,6 @@ function BookingPage() {
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.id]: e.target.value });
-    };
-
-    const handleBook = () => {
-        let hasErrors = false;
-        const newErrors = { branch: '', dateTime: '', form: '' };
-
-        if (!selectedBranch) {
-            newErrors.branch = "Please select a branch.";
-            hasErrors = true;
-        }
-        if (!selectedDateTime) {
-            newErrors.dateTime = "Please select a date and time.";
-            hasErrors = true;
-        }
-
-        setErrors(newErrors);
-
-        if (!hasErrors) {
-            setShowModal(true);
-        }
     };
 
     return (
@@ -149,7 +158,7 @@ function BookingPage() {
                     </Link>
 
                     <div className="absolute inset-0 flex flex-col items-center justify-center text-white bg-black bg-opacity-60">
-                        <h1 className="text-3xl md:text-5xl font-bold mt-32 md:mt-40">Book an Appointment</h1>
+                        <h1 className="text-3xl md:text-6xl font-geomanist font-bold mt-32 md:mt-40">Book an Appointment</h1>
                         <p className="text-center mt-3 max-w-2xl text-base md:text-lg leading-tight px-4">
                             Make a booking to consult our specialist for banking enquiries<br />
                         </p>
@@ -157,6 +166,12 @@ function BookingPage() {
                 </div>
 
                 <div className="bg-white shadow-md rounded-lg p-8 max-w-2xl mx-auto mt-8">
+                <Link to="/HistoryPage">
+                        <div className="absolute top-90 left-16 text-lg font-semibold cursor-pointer z-10 flex items-center hover:underline hover:decoration-white">
+                            {/* <img src={require('../images/arrow-left-red.svg').default} alt="Back" className="w-5 h-5 mr-2" /> */}
+                            <span className="text-black underline">View Booking History</span>
+                        </div>
+                    </Link>
                     <div className="flex flex-col space-y-8">
                         <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
                             <div className="flex-1">
@@ -192,24 +207,36 @@ function BookingPage() {
                 {showModal && (
                     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
                         <div className="bg-white rounded-lg w-[600px] p-8">
-                            {isConfirmed ? (
+                            {!localStorage.getItem('userId') ? (
+                                <>
+                                    <h2 className="text-xl font-bold mb-4">Please Log In</h2>
+                                    <p className="mb-6">You need to log in to make a booking.</p>
+                                    <div className="flex justify-end">
+                                    <button
+                                        onClick={() => {
+                                            setShowModal(false);
+                                            window.location.href = '/';
+                                        }}
+                                        className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded"
+                                    >
+                                        Log In
+                                        </button>
+                                    </div>
+                                </>
+                            ) : isConfirmed ? (
                                 <>
                                     <h2 className="text-2xl font-bold mb-4">Booking Confirmed!</h2>
                                     <div className="flex items-center justify-between mb-4">
-                                        <span>{selectedBranch?.name}</span>
-                                        <span>{selectedDateTime?.date} {selectedDateTime?.time}</span> {/* Correct rendering of selectedDateTime */}
+                                        <strong>Branch:</strong> <span>{selectedBranch?.name || "Not selected"}</span>
                                     </div>
-                                    <div className="mb-2">
-                                        <strong>Full name (NRIC):</strong> {formData.fullName}
-                                    </div>
-                                    <div className="mb-2">
-                                        <strong>Email address:</strong> {formData.email}
+                                    <div className="flex items-center justify-between mb-4">
+                                        <strong>Date & Time:</strong> <span>{selectedDateTime?.date} {selectedDateTime?.time}</span>
                                     </div>
                                     <div className="mb-4">
-                                        <strong>Reason for booking:</strong> {formData.reason}
+                                        <strong>Reason:</strong> <span>{formData.reason || "Not provided"}</span>
                                     </div>
-                                    <button 
-                                        onClick={handleClose} 
+                                    <button
+                                        onClick={handleClose}
                                         className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded"
                                     >
                                         Exit
@@ -221,30 +248,6 @@ function BookingPage() {
                                     <div className="flex items-center justify-between mb-4">
                                         <span>{selectedBranch?.name}</span>
                                         <span>{selectedDateTime?.date} {selectedDateTime?.time}</span> {/* Correct rendering of selectedDateTime */}
-                                    </div>
-                                    <div className="mb-4">
-                                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="fullName">
-                                            Full name (NRIC):
-                                        </label>
-                                        <input 
-                                            type="text" 
-                                            id="fullName" 
-                                            value={formData.fullName}
-                                            onChange={handleChange}
-                                            className="w-full px-3 py-2 border rounded focus:outline-none focus:border-blue-500" 
-                                        />
-                                    </div>
-                                    <div className="mb-4">
-                                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
-                                            Email address:
-                                        </label>
-                                        <input 
-                                            type="email" 
-                                            id="email" 
-                                            value={formData.email}
-                                            onChange={handleChange}
-                                            className="w-full px-3 py-2 border rounded focus:outline-none focus:border-blue-500" 
-                                        />
                                     </div>
                                     <div className="mb-6">
                                         <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="reason">

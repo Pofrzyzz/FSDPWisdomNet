@@ -7,6 +7,7 @@ import Help from '../components/needhelp';
 import HelpDesk from '../images/HelpDesk.jpg';
 import Chatbot from '../components/chatbot';
 import Searchbar from '../components/searchbar'
+import AIChatbot from '../components/aichatbot/aichatbot'
 
 function HomePage() {
   return (
@@ -26,7 +27,7 @@ function HomePage() {
             <div className="absolute bottom-0 left-0 w-full h-[2px] bg-red-500"></div>
           </div>
           <div className="relative z-10">
-            <h1 className="text-7xl md:text-5xl font-bold mt-32 md:mt-32 text-white">
+            <h1 className="text-7xl md:text-6xl font-geomanist font-bold mt-32 md:mt-36 text-white">
               Help & Support
             </h1>
             {/* Search Bar */}
@@ -40,12 +41,6 @@ function HomePage() {
       {/* CommonFaqs Component */}
       <CommonFaqs />
 
-      {/* View More Button */}
-      <div className="flex justify-center mt-16">
-        <button className="px-6 py-2 bg-red-600 text-white font-semibold rounded-md hover:bg-red-700 transition-colors">
-          View More
-        </button>
-      </div>
 
       {/* Other Sections */}
       <section className="flex flex-col min-h-screen">
@@ -54,6 +49,8 @@ function HomePage() {
       </section>
 
       <Footer />
+
+      <AIChatbot/>
 
       {/* Chatbot Button and Interface */}
       <Chatbot />

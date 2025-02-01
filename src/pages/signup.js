@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import ReCAPTCHA from 'react-google-recaptcha';
 import logo from '../images/logo_ocbc.svg';
 
-
 const SignUpPage = () => {
   const [formData, setFormData] = useState({
     username: '',
@@ -60,15 +59,10 @@ const SignUpPage = () => {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="bg-white shadow-md rounded-lg p-8 w-full max-w-md">
-        {/* Logo */}
         <div className="flex justify-center mb-6">
-        <img src={logo} alt="OCBC Logo" className="h-12"/>
+          <img src={logo} alt="OCBC Logo" className="h-12" />
         </div>
-
-        {/* Title */}
         <h2 className="text-2xl font-semibold text-gray-800 mb-4 text-center">Sign Up</h2>
-
-        {/* Sign-Up Form */}
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div>
             <label className="block text-sm font-medium text-gray-700">Username</label>
@@ -132,11 +126,9 @@ const SignUpPage = () => {
             Sign Up
           </button>
         </form>
-
-        {/* Redirect to Login */}
         <p className="mt-4 text-sm text-center text-gray-600">
           Already have an account?{' '}
-          <a href="LoginPage" className="text-red-600 hover:underline">Login here</a>
+          <a href="/login" className="text-red-600 hover:underline">Login here</a>
         </p>
       </div>
     </div>

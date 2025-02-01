@@ -24,7 +24,7 @@ function ContactBooking() {
               <div className="absolute inset-0 bg-black bg-opacity-40 group-hover:bg-opacity-30 transition-colors duration-300"></div>
               <div className="absolute bottom-0 left-0 w-full h-[2px] bg-red-500"></div>
               <div className="relative z-10 h-full flex items-center justify-center">
-                <p className="text-white font-bold text-lg md:text-xl">Contact Us</p>
+                <p className="text-white font-geomanist font-bold text-lg md:text-xl">Contact Us</p>
               </div>
             </a>
           </div>
@@ -42,7 +42,7 @@ function ContactBooking() {
               <div className="absolute inset-0 bg-black bg-opacity-40 group-hover:bg-opacity-30 transition-colors duration-300"></div>
               <div className="absolute bottom-0 left-0 w-full h-[2px] bg-red-500"></div>
               <div className="relative z-10 h-full flex items-center justify-center">
-                <p className="text-white font-bold text-lg md:text-xl">Book an Appointment</p>
+                <p className="text-white font-geomanist font-bold text-lg md:text-xl">Book an Appointment</p>
               </div>
             </a>
           </div>
