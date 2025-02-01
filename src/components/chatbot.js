@@ -78,6 +78,20 @@ function Chatbot() {
     });
   };
 
+  const sendMessage = async () => {
+    if (message.trim() && chatId) {
+      const newMessage = {
+        message,
+        sender: 'user',
+        timestamp: serverTimestamp(),
+      };
+
+      await addDoc(collection(db, 'chats', chatId, 'messages'), newMessage);
+      socket.emit('chatMessage', message);
+      setMessage('');
+    }
+  };
+
   return (
     <div className="fixed bottom-4 right-4 z-50">
       {isChatOpen ? (
