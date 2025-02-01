@@ -4,15 +4,16 @@ import axios from 'axios';
 import ReCAPTCHA from 'react-google-recaptcha';
 import logo from '../images/logo_ocbc.svg';
 
-const LoginPage = () => {
+const OperatorLoginPage = () => {
   const [formData, setFormData] = useState({ username: '', pin: '' });
   const [errorMessage, setErrorMessage] = useState('');
   const [captchaVerified, setCaptchaVerified] = useState(false);
   const captchaRef = useRef(null);
   const navigate = useNavigate();
 
+  // Clear session storage on component mount
   useEffect(() => {
-    sessionStorage.clear(); // Ensure old session data is removed
+    sessionStorage.clear(); // Remove any existing session data
     console.log('Session storage cleared.');
   }, []);
 
@@ -41,21 +42,24 @@ const LoginPage = () => {
     try {
       const recaptchaToken = captchaRef.current.getValue(); // Get the reCAPTCHA token
 
-      const response = await axios.post('http://localhost:5000/api/users/login', {
+      const response = await axios.post('http://localhost:5000/api/operators/login', {
         username: formData.username,
         pin: formData.pin,
         recaptchaToken,
       });
 
-      console.log('Login response:', response.data);
+      console.log('Operator login response:', response.data);
 
-      const { id, username } = response.data.user;
+      const { id, username, department } = response.data.operator;
       if (id) {
-        sessionStorage.setItem('userId', id); // 🔄 Store in sessionStorage instead of localStorage
-        console.log("User ID stored in sessionStorage:", id);
-        navigate('/HomePage'); // Redirect to homepage  
+        sessionStorage.setItem('operatorId', id); // 🔄 Store in sessionStorage
+        sessionStorage.setItem('operatorName', username);
+        sessionStorage.setItem('department', department);
+        console.log("Operator ID stored in sessionStorage:", id);
+        
+        navigate('/OperatorDashboard'); // ✅ Redirect to Operator Dashboard
       } else {
-        console.error('User ID is undefined');
+        console.error('Operator ID is undefined');
       }
     } catch (error) {
       // Handle errors
@@ -82,7 +86,7 @@ const LoginPage = () => {
         </div>
 
         {/* Title */}
-        <h2 className="text-2xl font-semibold text-gray-800 mb-4 text-center">Online Banking</h2>
+        <h2 className="text-2xl font-semibold text-gray-800 mb-4 text-center">Operator Login</h2>
 
         {/* Error Message */}
         {errorMessage && (
@@ -130,18 +134,10 @@ const LoginPage = () => {
           >
             Login
           </button>
-
-          {/* Sign-up link */}
-          <p className="text-center text-sm text-gray-600 mt-4">
-            Don't have Online Banking?{' '}
-            <a href="SignUpPage" className="text-red-600 hover:underline">
-              Sign up now.
-            </a>
-          </p>
         </form>
       </div>
     </div>
   );
 };
 
-export default LoginPage;
+export default OperatorLoginPage;

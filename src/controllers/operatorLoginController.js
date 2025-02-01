@@ -1,10 +1,9 @@
 const { verifyRecaptcha } = require('../utils/recaptcha'); // Import reCAPTCHA validation
-const { getUser } = require('../models/loginModel');
+const { getOperator } = require('../models/operatorModel'); // Import updated model
 
-const loginUser = async (req, res) => {
+const loginOperator = async (req, res) => {
   const { username, pin, recaptchaToken } = req.body;
 
-  // Validate input
   if (!username || !pin) {
     return res.status(400).json({ error: 'Username and PIN are required' });
   }
@@ -16,19 +15,19 @@ const loginUser = async (req, res) => {
   }
 
   try {
-    const user = await getUser(username, pin);
-    if (!user) {
-      return res.status(401).json({ error: 'Invalid username or PIN' });
+    const operator = await getOperator(username, pin);
+    if (!operator) {
+      return res.status(401).json({ error: 'Invalid operator credentials' });
     }
 
     res.status(200).json({ 
       message: 'Login successful', 
-      user: { id: user.UserID, username }
+      operator: { id: operator.OperatorID, username, department: operator.AssignedDepartmentID }
     });
   } catch (error) {
-    console.error("Error logging in user:", error);
+    console.error("Error logging in operator:", error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
 
-module.exports = { loginUser };
+module.exports = { loginOperator };

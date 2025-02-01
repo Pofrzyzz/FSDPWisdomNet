@@ -6,14 +6,15 @@ import HomePage from './pages/help&support';
 import BookingPage from './pages/booking';
 import ContactUsPage from './pages/contactUs';
 import InQueuePage from './pages/InQueue';
-import CardsFaq from './pages/cards'
-import AccountsFaq from './pages/accounts'
-import GeneralFaq from './pages/generalfaq'
-import LoansFaq from './pages/loans'
+import CardsFaq from './pages/cards';
+import AccountsFaq from './pages/accounts';
+import GeneralFaq from './pages/generalfaq';
+import LoansFaq from './pages/loans';
 import LoginPage from './pages/login';
 import SignUpPage from './pages/signup';
-import OperatorDashboard from './pages/operatorDashboard';
 import HistoryPage from './pages/history';
+import OperatorLoginPage from './pages/operatorLogin'; 
+import OperatorDashboard from './pages/operatorDashboard'; 
 
 function App() {
   return (
@@ -29,10 +30,11 @@ function App() {
         <Route path="/AccountsFaq" element={<AccountsFaq />} />
         <Route path="/LoansFaq" element={<LoansFaq />} />
         <Route path="/GeneralFaq" element={<GeneralFaq />} />
-        <Route path="/LoginPage" element={<LoginPage/>}/>
-        <Route path="/SignUpPage" element={<SignUpPage/>}/>
-        <Route path="/OperatorPage" element={<OperatorDashboard/>}/>
-        <Route path="/HistoryPage" element={<HistoryPage/>}/>
+        <Route path="/LoginPage" element={<LoginPage />} />
+        <Route path="/SignUpPage" element={<SignUpPage />} />
+        <Route path="/OperatorLoginPage" element={<OperatorLoginPage />} />
+        <Route path="/OperatorDashboard" element={<OperatorDashboard />} />
+        <Route path="/HistoryPage" element={<HistoryPage />} />
       </Routes>
     </Router>
   );
