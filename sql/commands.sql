@@ -254,4 +254,38 @@ END;
 CLOSE BranchSlotCursor;
 DEALLOCATE BranchSlotCursor;
 
+-- Insert past appointments (before today)
+INSERT INTO Appointment (BranchID, UserID, Reason, BookingDateTime, SlotID)
+SELECT 
+    a.BranchID, 
+    u.UserID, 
+    'Routine Check-up', 
+    DATEADD(DAY, -RAND()*30, GETDATE()),  -- Random past dates within last 30 days
+    a.SlotID
+FROM AvailableSlots a
+JOIN Users u ON u.UserID = (SELECT TOP 1 UserID FROM Users ORDER BY NEWID())  -- Assign random users
+WHERE a.AppointmentDate < GETDATE() AND a.IsBooked = 0
+ORDER BY NEWID()
+OFFSET 0 ROWS FETCH NEXT 5 ROWS ONLY; -- Insert 5 past appointments
+
+-- Insert ongoing/upcoming appointments (today and future)
+INSERT INTO Appointment (BranchID, UserID, Reason, BookingDateTime, SlotID)
+SELECT 
+    a.BranchID, 
+    u.UserID, 
+    'Financial Consultation', 
+    GETDATE(),  -- Today's date for ongoing bookings
+    a.SlotID
+FROM AvailableSlots a
+JOIN Users u ON u.UserID = (SELECT TOP 1 UserID FROM Users ORDER BY NEWID())
+WHERE a.AppointmentDate >= GETDATE() AND a.IsBooked = 0
+ORDER BY NEWID()
+OFFSET 0 ROWS FETCH NEXT 5 ROWS ONLY; -- Insert 5 upcoming appointments
+
+-- Update AvailableSlots to mark them as booked
+UPDATE AvailableSlots
+SET IsBooked = 1
+WHERE SlotID IN (
+    SELECT SlotID FROM Appointment
+);
 
