@@ -11,6 +11,7 @@ const SignUpPage = () => {
     nric: '',
   });
   const [captchaVerified, setCaptchaVerified] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const captchaRef = useRef(null);
   const navigate = useNavigate();
 
@@ -21,24 +22,27 @@ const SignUpPage = () => {
     });
   };
 
+  // Handle reCAPTCHA verification
   const handleCaptchaChange = (value) => {
     setCaptchaVerified(!!value);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrorMessage('');
+
+    // Ensure the user has verified reCAPTCHA before submitting
     if (!captchaVerified) {
-      alert('Please verify the CAPTCHA.');
+      setErrorMessage('Please verify the CAPTCHA.');
       return;
     }
 
     try {
-      const recaptchaToken = captchaRef.current.getValue();
+      const recaptchaToken = captchaRef.current.getValue(); // Get the reCAPTCHA token
+
       const response = await fetch('http://localhost:5000/api/users/signup', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...formData, recaptchaToken }),
       });
 
@@ -46,23 +50,45 @@ const SignUpPage = () => {
 
       if (response.ok) {
         alert(data.message);
-        navigate('/HomePage');
+        navigate('/HomePage'); // Redirect to homepage
       } else {
-        alert(`Sign-up failed: ${data.message}`);
+        setErrorMessage(`Sign-up failed: ${data.message}`);
+
+        // 🔴 Force reCAPTCHA reset after failure
+        if (captchaRef.current) {
+          captchaRef.current.reset(); // Reset reCAPTCHA UI
+        }
+        setCaptchaVerified(false); // Require user to tick it again
       }
     } catch (error) {
       console.error('Error during sign-up:', error);
-      alert('An error occurred while signing up.');
+      setErrorMessage('An error occurred while signing up.');
+
+      // 🔴 Reset reCAPTCHA UI after failure
+      if (captchaRef.current) {
+        captchaRef.current.reset();
+      }
+      setCaptchaVerified(false);
     }
   };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="bg-white shadow-md rounded-lg p-8 w-full max-w-md">
+        {/* Logo */}
         <div className="flex justify-center mb-6">
           <img src={logo} alt="OCBC Logo" className="h-12" />
         </div>
+
+        {/* Title */}
         <h2 className="text-2xl font-semibold text-gray-800 mb-4 text-center">Sign Up</h2>
+
+        {/* Error Message */}
+        {errorMessage && (
+          <div className="text-red-500 text-sm text-center mb-4">{errorMessage}</div>
+        )}
+
+        {/* Sign-up Form */}
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div>
             <label className="block text-sm font-medium text-gray-700">Username</label>
@@ -112,13 +138,15 @@ const SignUpPage = () => {
               required
             />
           </div>
-          
+
+          {/* reCAPTCHA */}
           <ReCAPTCHA 
             sitekey="6Led0skqAAAAAGYGip8-6I8QlJwaWfBw-P3Lz3V6" 
             onChange={handleCaptchaChange} 
             ref={captchaRef} 
           />
 
+          {/* Sign Up Button */}
           <button
             type="submit"
             className="w-full py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700"
@@ -126,6 +154,8 @@ const SignUpPage = () => {
             Sign Up
           </button>
         </form>
+
+        {/* Login link */}
         <p className="mt-4 text-sm text-center text-gray-600">
           Already have an account?{' '}
           <a href="/login" className="text-red-600 hover:underline">Login here</a>

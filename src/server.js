@@ -12,6 +12,7 @@ const validateDate = require('./middlewares/validateDate');
 const loginController = require('./controllers/loginController');
 const signupController = require('./controllers/signupController');
 const historyController = require('./controllers/historyController');
+const operatorLoginController = require('./controllers/operatorLoginController');
 const { decreaseQueueNumber } = require('./controllers/inQueueController'); // Import the function
 const axios = require('axios'); // For making API calls to Flask
 
@@ -34,6 +35,9 @@ setupSocket(io);
 // Route for login/sign up user
 app.post('/api/users/login', loginController.loginUser);
 app.post('/api/users/signup', signupController.signUpUser);
+
+// Operator login route
+app.post('/api/operators/login', operatorLoginController.loginOperator);
 
 // AI Chatbot (aichatbot) Socket.io Namespace
 const aiChatbotNamespace = io.of('/aichatbot');
