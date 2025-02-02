@@ -165,8 +165,6 @@ responses:
         link: "http://localhost:3000/cardsfaq?popupButton=cardReplacement"
   utter_default:
     - text: "I'm sorry, I didn't understand that. Can you rephrase?"
-      custom:
-        link: "http://localhost:3000/cardsfaq?popupButton=retrieveStatements"
   utter_greet:
     - text: "Hello! How can I assist you today?"
   utter_goodbye:
