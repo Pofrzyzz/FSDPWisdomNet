@@ -1,4 +1,4 @@
-// Chatbot.js
+// aichatbot.js
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { io } from "socket.io-client";
@@ -12,17 +12,51 @@ import {
   query,
 } from "firebase/firestore";
 import chatbotIcon from "../../images/chatbot.svg";
+import micIcon from "../../images/mic2.png"; // Ensure this image exists
 
+// -------------------------------
+// Google Translate API Integration (for text translation)
+// -------------------------------
+const GOOGLE_API_KEY = process.env.REACT_APP_GOOGLE_API_KEY;
+console.log("Google API Key:", GOOGLE_API_KEY);
+
+async function translateText(text, targetLanguage, sourceLanguage = "auto") {
+  const url = `https://translation.googleapis.com/language/translate/v2?key=${GOOGLE_API_KEY}`;
+  const response = await axios.post(
+    url,
+    {
+      q: text,
+      source: sourceLanguage,
+      target: targetLanguage,
+      format: "text",
+    },
+    { headers: { "Content-Type": "application/json" } }
+  );
+  return response.data.data.translations[0].translatedText;
+}
+
+function mapLanguageToCode(language) {
+  switch (language) {
+    case "English":
+      return "en";
+    case "Malay":
+      return "ms";
+    case "Chinese":
+      return "zh-CN";
+    case "Tamil":
+      return "ta";
+    default:
+      return "en";
+  }
+}
+
+// -------------------------------
 // Create a single socket instance for Live Chat
+// -------------------------------
 const socket = io("http://localhost:5000");
 
 /* =======================================================================
    Top-Level Chatbot Component
-   - When closed, displays a fixed "Need Help?" button.
-   - When open, shows a multi‑step popup:
-       1. Language Selection
-       2. Chat Type Selection (AI Chatbot or Live Chat)
-       3. The chosen chat interface
 ======================================================================= */
 const Chatbot = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -33,7 +67,7 @@ const Chatbot = () => {
     setIsOpen(true);
   };
 
-  // When closing the chat, reset the selections.
+  // When closing, reset selections.
   const closeChat = () => {
     setIsOpen(false);
     setSelectedLanguage(null);
@@ -147,17 +181,15 @@ const ChatTypeSelection = ({ onSelectChatType, onBack, onClose, selectedLanguage
 };
 
 /* =======================================================================
-   Subcomponent: AIChatInterface
-   (This uses your new aichatbot.js functionality with translation.)
+   Subcomponent: AIChatInterface 
+   (Uses DeepSeek for translation – unchanged)
 ======================================================================= */
 const AIChatInterface = ({ onClose, selectedLanguage }) => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [greeted, setGreeted] = useState(false);
-  // State to store the detected language for translation purposes
   const [detectedLanguage, setDetectedLanguage] = useState("en");
 
-  // Simple heuristic for language detection based on original & translated texts.
   function simpleDetectLanguage(original, translated) {
     if (/[\u4e00-\u9fff]/.test(original)) {
       return "zh-CN";
@@ -171,7 +203,6 @@ const AIChatInterface = ({ onClose, selectedLanguage }) => {
     return "en";
   }
 
-  // Greet the user on the first render
   useEffect(() => {
     if (!greeted) {
       const greetingMessage = {
@@ -185,13 +216,9 @@ const AIChatInterface = ({ onClose, selectedLanguage }) => {
 
   const handleSend = async () => {
     if (!input.trim()) return;
-
-    // Add the original user message to chat
     const userMessage = { role: "user", content: input };
     setMessages((prev) => [...prev, userMessage]);
-
     try {
-      // 1. Translate the user input to English using the translation API.
       const translationResponse = await axios.post(
         "http://localhost:5055/translate",
         {
@@ -203,15 +230,11 @@ const AIChatInterface = ({ onClose, selectedLanguage }) => {
       );
       const translatedInput = translationResponse.data.translatedText;
       console.log("Translated input:", translatedInput);
-
-      // 2. Detect the user's language using our heuristic.
       const userLang = simpleDetectLanguage(input, translatedInput);
       console.log("Detected language (via heuristic):", userLang);
       setDetectedLanguage(userLang);
-
-      // 3. Send the translated input (in English) to Rasa.
       const rasaResponse = await axios.post(
-        "http://localhost:5005/webhooks/rest/webhook",
+        "http://localhost:5055/webhooks/rest/webhook",
         {
           sender: "user",
           message: translatedInput,
@@ -229,15 +252,11 @@ const AIChatInterface = ({ onClose, selectedLanguage }) => {
           ],
         }
       );
-
-      // 4. Process Rasa's replies (assumed to be in English).
       const botReplies = rasaResponse.data.map((reply) => ({
         role: "bot",
         content: reply.text,
         learnMoreLink: reply.custom?.link,
       }));
-
-      // 5. Translate each bot reply back to the user's language if needed.
       const finalBotReplies = await Promise.all(
         botReplies.map(async (reply) => {
           if (userLang && userLang !== "en") {
@@ -264,8 +283,6 @@ const AIChatInterface = ({ onClose, selectedLanguage }) => {
           }
         })
       );
-
-      // Append the (translated) bot replies to the conversation.
       setMessages((prev) => [...prev, ...finalBotReplies]);
     } catch (error) {
       console.error("Error communicating with backend:", error.message);
@@ -275,8 +292,7 @@ const AIChatInterface = ({ onClose, selectedLanguage }) => {
       };
       setMessages((prev) => [...prev, errorMessage]);
     }
-
-    setInput(""); // Clear the input field
+    setInput("");
   };
 
   const handleKeyDown = (e) => {
@@ -308,7 +324,6 @@ const AIChatInterface = ({ onClose, selectedLanguage }) => {
           <span className="block w-6 h-1 bg-white rounded-full"></span>
         </button>
       </div>
-
       {/* Messages Section */}
       <div className="flex-1 overflow-y-auto p-6 space-y-4">
         {messages.map((msg, index) => (
@@ -323,7 +338,7 @@ const AIChatInterface = ({ onClose, selectedLanguage }) => {
                   : "bg-gray-200 text-gray-800"
               }`}
             >
-              <p>{msg.content}</p>
+              <p>{msg.message}</p>
               {msg.learnMoreLink && (
                 <a
                   href={msg.learnMoreLink}
@@ -338,12 +353,11 @@ const AIChatInterface = ({ onClose, selectedLanguage }) => {
           </div>
         ))}
       </div>
-
       {/* Input Section */}
       <div className="flex items-center space-x-3 border-t p-4 font-opensans">
         <input
           type="text"
-          className="flex-1 border border-gray-300 rounded-lg p-3 text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="flex-1 border border-gray-300 rounded-lg p-3 text-base focus:outline-none focus:ring-2 focus:ring-red-500"
           placeholder="Type your message here"
           value={input}
           onChange={(e) => setInput(e.target.value)}
@@ -351,7 +365,7 @@ const AIChatInterface = ({ onClose, selectedLanguage }) => {
         />
         <button
           onClick={handleSend}
-          className="bg-red-500 text-white py-3 px-6 rounded-lg hover:bg-red-600 focus:ring-2 focus:ring-blue-500 font-bold"
+          className="bg-[#DD101E] text-white py-3 px-6 rounded-lg hover:bg-red-600 focus:ring-2 focus:ring-blue-500 font-bold"
         >
           Send
         </button>
@@ -361,8 +375,7 @@ const AIChatInterface = ({ onClose, selectedLanguage }) => {
 };
 
 /* =======================================================================
-   Subcomponent: LiveChatInterface
-   (This is the original live chat code using Firebase and Socket.io.)
+   Subcomponent: LiveChatInterface (Using Google Translate & Google Speech-to-Text)
 ======================================================================= */
 const LiveChatInterface = ({ onClose, selectedLanguage }) => {
   const [step, setStep] = useState(2);
@@ -373,7 +386,12 @@ const LiveChatInterface = ({ onClose, selectedLanguage }) => {
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [chatId, setChatId] = useState(null);
+  const [isRecording, setIsRecording] = useState(false);
+  const recognitionRef = useRef(null);
   const messagesEndRef = useRef(null);
+
+  // Determine the user’s language code from their selection.
+  const userLanguage = mapLanguageToCode(selectedLanguage);
 
   useEffect(() => {
     setStep(2);
@@ -387,16 +405,30 @@ const LiveChatInterface = ({ onClose, selectedLanguage }) => {
         orderBy("timestamp", "asc")
       );
       const unsubscribe = onSnapshot(messagesRef, (snapshot) => {
-        const newMessages = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setMessages(newMessages);
+        const newMessagesPromises = snapshot.docs.map(async (doc) => {
+          let msg = { id: doc.id, ...doc.data() };
+          if (msg.sender === "user") {
+            if (msg.original) {
+              msg.message = msg.original;
+            }
+          } else {
+            if (userLanguage !== "en" && !msg.messageType) {
+              try {
+                const translated = await translateText(msg.message, userLanguage, "en");
+                msg.message = translated;
+              } catch (error) {
+                console.error("Error translating operator message:", error.message);
+              }
+            }
+          }
+          return msg;
+        });
+        Promise.all(newMessagesPromises).then(setMessages);
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
       });
       return () => unsubscribe();
     }
-  }, [chatId]);
+  }, [chatId, userLanguage]);
 
   const isValidNric = (nric) => /^[STFG]\d{7}[A-Z]$/.test(nric);
 
@@ -432,19 +464,126 @@ const LiveChatInterface = ({ onClose, selectedLanguage }) => {
     });
   };
 
-  const sendMessage = async () => {
+  // This function sends a text message (with translation if needed)
+  const sendTextMessage = async () => {
     if (message.trim() && chatId) {
-      console.log("Sending message:", message, "Chat ID:", chatId);
-      const newMessage = {
-        message,
+      let messageToSend = message;
+      if (userLanguage !== "en") {
+        try {
+          messageToSend = await translateText(message, "en", userLanguage);
+          console.log("Translated user message to English:", messageToSend);
+        } catch (error) {
+          console.error("Error translating user message:", error.message);
+        }
+      }
+      const newMessageDoc = {
+        message: messageToSend,
         sender: "user",
         timestamp: serverTimestamp(),
       };
-      await addDoc(collection(db, "chats", chatId, "messages"), newMessage);
-      socket.emit("chatMessage", { chatId, message });
+      if (userLanguage !== "en") {
+        newMessageDoc.original = message;
+      }
+      await addDoc(collection(db, "chats", chatId, "messages"), newMessageDoc);
+      socket.emit("chatMessage", { chatId, message: messageToSend });
       setMessage("");
     } else {
       console.log("Message not sent: Missing chatId or empty message.");
+    }
+  };
+
+  // -------------------------------
+  // Google Speech-to-Text Integration (Hold-to-record with Google's API)
+  // -------------------------------
+  // We use MediaRecorder to record audio and then send it (as base64) to Google's Speech-to-Text API.
+  // When the transcript is received, it is placed into the text input.
+  const recordedChunksRef = useRef([]);
+  const mediaRecorderRef = useRef(null);
+
+  const startRecording = async () => {
+    const constraints = { audio: true };
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      const options = { mimeType: "audio/webm" };
+      const mediaRecorder = new MediaRecorder(stream, options);
+      recordedChunksRef.current = [];
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          recordedChunksRef.current.push(event.data);
+        }
+      };
+      mediaRecorder.onstop = async () => {
+        const blob = new Blob(recordedChunksRef.current, { type: "audio/webm" });
+        try {
+          const base64Audio = await blobToBase64(blob);
+          const transcript = await googleSpeechToText(base64Audio, userLanguage);
+          console.log("Speech transcript:", transcript);
+          setMessage(transcript);
+        } catch (err) {
+          console.error("Speech-to-text error:", err);
+        }
+      };
+      mediaRecorder.start();
+      mediaRecorderRef.current = mediaRecorder;
+      setIsRecording(true);
+    } catch (err) {
+      console.error("Error accessing microphone:", err);
+    }
+  };
+
+  const stopRecording = () => {
+    if (mediaRecorderRef.current) {
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+    }
+  };
+
+  const blobToBase64 = (blob) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onerror = reject;
+      reader.onload = () => {
+        const base64data = reader.result.split(",")[1];
+        resolve(base64data);
+      };
+      reader.readAsDataURL(blob);
+    });
+  };
+
+  const googleSpeechToText = async (base64Audio, userLang) => {
+    // Map our language code to a Speech-to-Text language code.
+    let languageCode = "en-US";
+    if (userLang === "ms") languageCode = "ms-MY";
+    else if (userLang === "zh-CN") languageCode = "zh-CN";
+    else if (userLang === "ta") languageCode = "ta-IN";
+
+    const url = `https://speech.googleapis.com/v1/speech:recognize?key=${GOOGLE_API_KEY}`;
+    const requestBody = {
+      config: {
+        encoding: "WEBM_OPUS", // Adjust if necessary.
+        sampleRateHertz: 48000, // Adjust if needed.
+        languageCode: languageCode,
+      },
+      audio: {
+        content: base64Audio,
+      },
+    };
+
+    const response = await axios.post(url, requestBody, {
+      headers: { "Content-Type": "application/json" },
+    });
+
+    if (response.data && response.data.results && response.data.results.length > 0) {
+      return response.data.results[0].alternatives[0].transcript;
+    } else {
+      throw new Error("No speech recognition result");
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      sendTextMessage();
     }
   };
 
@@ -496,22 +635,40 @@ const LiveChatInterface = ({ onClose, selectedLanguage }) => {
               {messages.map((msg, index) => (
                 <div key={index} className={`flex flex-col mb-2 ${msg.sender === "user" ? "items-end" : "items-start"}`}>
                   <div className={`p-2 rounded-lg max-w-xs text-sm ${msg.sender === "user" ? "bg-red-500 text-white" : "bg-gray-300 text-black"}`}>
-                    {msg.message}
+                    {msg.messageType === "voice" ? (
+                      <audio controls src={msg.message} />
+                    ) : (
+                      <p>{msg.message}</p>
+                    )}
                   </div>
                 </div>
               ))}
               <div ref={messagesEndRef} />
             </div>
+            {/* Input Section */}
             <div className="flex items-center p-3 border-t bg-white">
+              {/* Mic Button with hold-to-record using Google's Speech-to-Text */}
+              <button
+                onMouseDown={startRecording}
+                onMouseUp={stopRecording}
+                onTouchStart={startRecording}
+                onTouchEnd={stopRecording}
+                className="bg-gray-200 rounded-full w-10 h-10 flex items-center justify-center mr-2"
+              >
+                <img src={micIcon} alt="Mic" className="w-6 h-6 object-contain" />
+              </button>
               <input
                 type="text"
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder="Type a message..."
                 className="flex-1 p-2 border rounded-l-lg focus:outline-none focus:ring-2 focus:ring-red-500"
-                onKeyPress={(e) => e.key === "Enter" && sendMessage()}
+                onKeyDown={handleKeyDown}
               />
-              <button onClick={sendMessage} className="bg-[#DD101E] text-white p-3 rounded-r-lg hover:bg-[#C00E1A] transition-colors">
+              <button
+                onClick={sendTextMessage}
+                className="bg-[#DD101E] text-white py-3 px-6 rounded-r-lg hover:bg-[#C00E1A] transition-colors"
+              >
                 Send
               </button>
             </div>

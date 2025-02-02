@@ -3,7 +3,7 @@ from flask_cors import CORS
 from deep_translator import GoogleTranslator
 from langdetect import detect
 
-app = Flask(name)
+app = Flask(__name__)
 CORS(app)
 
 @app.route('/translate', methods=['POST'])
@@ -31,5 +31,5 @@ def translate():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-if name == 'main':
+if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5055, debug=True)

@@ -20,6 +20,12 @@ const requestChat = (userId, name, nric) => {
 
 // Function to save messages to in-memory storage
 const handleMessage = (chatId, senderType, messageText) => {
+  if (!messagesStore[chatId]) {
+    console.warn(`messagesStore for chatId ${chatId} is undefined. Initializing a new array.`);
+    messagesStore[chatId] = []; // This prevents the crash.
+    // Alternatively, you might choose to return an error instead:
+    // return { error: "Chat session not found." };
+  }
   const message = {
     senderType,
     messageText,
