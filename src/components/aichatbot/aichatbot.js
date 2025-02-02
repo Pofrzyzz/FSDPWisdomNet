@@ -241,7 +241,7 @@ const AIChatInterface = ({ onClose, selectedLanguage }) => {
 
       // Second: Send the translated input to the chatbot backend
       const rasaResponse = await axios.post(
-        CORS_PROXY + "http://localhost:5055/webhooks/rest/webhook",
+        CORS_PROXY + "http://localhost:5005/webhooks/rest/webhook",
         {
           sender: "user",
           message: translatedInput,
