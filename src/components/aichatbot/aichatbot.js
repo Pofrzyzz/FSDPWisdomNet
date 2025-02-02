@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { io } from "socket.io-client";
-import { db } from "../../firebaseConfig"; // Adjust the path as needed
+import { db } from "../../firebaseConfig"; // Adjust path as needed
 import {
   collection,
   addDoc,
@@ -11,13 +11,20 @@ import {
   orderBy,
   query,
 } from "firebase/firestore";
-import chatbotIcon from "../../images/chatbot.svg"; // Adjust the path as needed
+import chatbotIcon from "../../images/chatbot.svg";
 
-// Create a single socket instance for live chat
+// Create a single socket instance for Live Chat
 const socket = io("http://localhost:5000");
 
+/* =======================================================================
+   Top-Level Chatbot Component
+   - When closed, displays a fixed "Need Help?" button.
+   - When open, shows a multi‑step popup:
+       1. Language Selection
+       2. Chat Type Selection (AI Chatbot or Live Chat)
+       3. The chosen chat interface
+======================================================================= */
 const Chatbot = () => {
-  // Overall chat popup and selection states
   const [isOpen, setIsOpen] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState(null);
   const [selectedChatType, setSelectedChatType] = useState(null);
@@ -26,7 +33,7 @@ const Chatbot = () => {
     setIsOpen(true);
   };
 
-  // When closing, reset selections
+  // When closing the chat, reset the selections.
   const closeChat = () => {
     setIsOpen(false);
     setSelectedLanguage(null);
@@ -52,7 +59,10 @@ const Chatbot = () => {
           <div className="bg-white shadow-lg rounded-lg w-96 h-[550px] flex flex-col">
             {/* Step 1: Language Selection */}
             {!selectedLanguage ? (
-              <LanguageSelection onSelectLanguage={setSelectedLanguage} onClose={closeChat} />
+              <LanguageSelection
+                onSelectLanguage={setSelectedLanguage}
+                onClose={closeChat}
+              />
             ) : 
             /* Step 2: Chat Type Selection */
             !selectedChatType ? (
@@ -63,7 +73,7 @@ const Chatbot = () => {
                 selectedLanguage={selectedLanguage}
               />
             ) : 
-            /* Step 3: Chat Interface (AI Chatbot or Live Chat) */
+            /* Step 3: Render the chosen chat interface */
             selectedChatType === "ai" ? (
               <AIChatInterface onClose={closeChat} selectedLanguage={selectedLanguage} />
             ) : (
@@ -76,37 +86,29 @@ const Chatbot = () => {
   );
 };
 
-/* ===================== Subcomponent: LanguageSelection ===================== */
+/* =======================================================================
+   Subcomponent: LanguageSelection
+======================================================================= */
 const LanguageSelection = ({ onSelectLanguage, onClose }) => {
   return (
     <div className="flex flex-col flex-1 p-6">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">Select Language</h2>
-        <button onClick={onClose} className="text-xl font-bold">&times;</button>
+        <button onClick={onClose} className="text-xl font-bold">
+          &times;
+        </button>
       </div>
       <div className="flex flex-col space-y-4 mt-4">
-        <button
-          onClick={() => onSelectLanguage("English")}
-          className="bg-red-500 text-white py-2 px-4 rounded"
-        >
+        <button onClick={() => onSelectLanguage("English")} className="bg-red-500 text-white py-2 px-4 rounded">
           English
         </button>
-        <button
-          onClick={() => onSelectLanguage("Malay")}
-          className="bg-red-500 text-white py-2 px-4 rounded"
-        >
+        <button onClick={() => onSelectLanguage("Malay")} className="bg-red-500 text-white py-2 px-4 rounded">
           Malay
         </button>
-        <button
-          onClick={() => onSelectLanguage("Chinese")}
-          className="bg-red-500 text-white py-2 px-4 rounded"
-        >
+        <button onClick={() => onSelectLanguage("Chinese")} className="bg-red-500 text-white py-2 px-4 rounded">
           Chinese
         </button>
-        <button
-          onClick={() => onSelectLanguage("Tamil")}
-          className="bg-red-500 text-white py-2 px-4 rounded"
-        >
+        <button onClick={() => onSelectLanguage("Tamil")} className="bg-red-500 text-white py-2 px-4 rounded">
           Tamil
         </button>
       </div>
@@ -114,33 +116,26 @@ const LanguageSelection = ({ onSelectLanguage, onClose }) => {
   );
 };
 
-/* ===================== Subcomponent: ChatTypeSelection ===================== */
-const ChatTypeSelection = ({
-  onSelectChatType,
-  onBack,
-  onClose,
-  selectedLanguage,
-}) => {
+/* =======================================================================
+   Subcomponent: ChatTypeSelection
+======================================================================= */
+const ChatTypeSelection = ({ onSelectChatType, onBack, onClose, selectedLanguage }) => {
   return (
     <div className="flex flex-col flex-1 p-6">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">Choose Chat Option</h2>
-        <button onClick={onClose} className="text-xl font-bold">&times;</button>
+        <button onClick={onClose} className="text-xl font-bold">
+          &times;
+        </button>
       </div>
       <p className="mt-2 text-gray-600">
         Selected language: {selectedLanguage}
       </p>
       <div className="flex flex-col space-y-4 mt-4">
-        <button
-          onClick={() => onSelectChatType("ai")}
-          className="bg-red-500 text-white py-2 px-4 rounded"
-        >
+        <button onClick={() => onSelectChatType("ai")} className="bg-red-500 text-white py-2 px-4 rounded">
           AI Chatbot
         </button>
-        <button
-          onClick={() => onSelectChatType("live")}
-          className="bg-red-500 text-white py-2 px-4 rounded"
-        >
+        <button onClick={() => onSelectChatType("live")} className="bg-red-500 text-white py-2 px-4 rounded">
           Live Chat
         </button>
       </div>
@@ -151,12 +146,32 @@ const ChatTypeSelection = ({
   );
 };
 
-/* ===================== Subcomponent: AIChatInterface ===================== */
+/* =======================================================================
+   Subcomponent: AIChatInterface
+   (This uses your new aichatbot.js functionality with translation.)
+======================================================================= */
 const AIChatInterface = ({ onClose, selectedLanguage }) => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [greeted, setGreeted] = useState(false);
+  // State to store the detected language for translation purposes
+  const [detectedLanguage, setDetectedLanguage] = useState("en");
 
+  // Simple heuristic for language detection based on original & translated texts.
+  function simpleDetectLanguage(original, translated) {
+    if (/[\u4e00-\u9fff]/.test(original)) {
+      return "zh-CN";
+    }
+    if (/[\u0B80-\u0BFF]/.test(original)) {
+      return "ta";
+    }
+    if (original.trim().toLowerCase() !== translated.trim().toLowerCase()) {
+      return "ms";
+    }
+    return "en";
+  }
+
+  // Greet the user on the first render
   useEffect(() => {
     if (!greeted) {
       const greetingMessage = {
@@ -170,14 +185,36 @@ const AIChatInterface = ({ onClose, selectedLanguage }) => {
 
   const handleSend = async () => {
     if (!input.trim()) return;
+
+    // Add the original user message to chat
     const userMessage = { role: "user", content: input };
     setMessages((prev) => [...prev, userMessage]);
+
     try {
-      const response = await axios.post(
+      // 1. Translate the user input to English using the translation API.
+      const translationResponse = await axios.post(
+        "http://localhost:5055/translate",
+        {
+          text: input,
+          source: "auto",
+          target: "en",
+        },
+        { headers: { "Content-Type": "application/json" } }
+      );
+      const translatedInput = translationResponse.data.translatedText;
+      console.log("Translated input:", translatedInput);
+
+      // 2. Detect the user's language using our heuristic.
+      const userLang = simpleDetectLanguage(input, translatedInput);
+      console.log("Detected language (via heuristic):", userLang);
+      setDetectedLanguage(userLang);
+
+      // 3. Send the translated input (in English) to Rasa.
+      const rasaResponse = await axios.post(
         "http://localhost:5005/webhooks/rest/webhook",
         {
           sender: "user",
-          message: input,
+          message: translatedInput,
         },
         {
           headers: {
@@ -193,22 +230,53 @@ const AIChatInterface = ({ onClose, selectedLanguage }) => {
         }
       );
 
-      const botReplies = response.data.map((reply) => ({
+      // 4. Process Rasa's replies (assumed to be in English).
+      const botReplies = rasaResponse.data.map((reply) => ({
         role: "bot",
         content: reply.text,
         learnMoreLink: reply.custom?.link,
       }));
 
-      setMessages((prev) => [...prev, ...botReplies]);
+      // 5. Translate each bot reply back to the user's language if needed.
+      const finalBotReplies = await Promise.all(
+        botReplies.map(async (reply) => {
+          if (userLang && userLang !== "en") {
+            console.log("Translating bot response to:", userLang);
+            try {
+              const responseBack = await axios.post(
+                "http://localhost:5055/translate",
+                {
+                  text: reply.content,
+                  source: "en",
+                  target: userLang,
+                },
+                { headers: { "Content-Type": "application/json" } }
+              );
+              console.log("Translated bot response:", responseBack.data.translatedText);
+              return { ...reply, content: responseBack.data.translatedText };
+            } catch (error) {
+              console.error("Error translating bot response:", error.message);
+              return reply;
+            }
+          } else {
+            console.log("No translation needed for bot response (userLang:", userLang, ")");
+            return reply;
+          }
+        })
+      );
+
+      // Append the (translated) bot replies to the conversation.
+      setMessages((prev) => [...prev, ...finalBotReplies]);
     } catch (error) {
-      console.error("Error communicating with Rasa:", error.message);
+      console.error("Error communicating with backend:", error.message);
       const errorMessage = {
         role: "bot",
         content: "Sorry, something went wrong. Please try again.",
       };
       setMessages((prev) => [...prev, errorMessage]);
     }
-    setInput("");
+
+    setInput(""); // Clear the input field
   };
 
   const handleKeyDown = (e) => {
@@ -220,24 +288,27 @@ const AIChatInterface = ({ onClose, selectedLanguage }) => {
 
   return (
     <div className="flex flex-col h-full">
-      {/* Header */}
-      <div className="flex items-center bg-red-500 text-white px-6 py-4 rounded-t-lg">
+      {/* Header Section */}
+      <div className="flex items-center bg-red-500 text-white px-6 py-4 rounded-t-2xl">
         <img
-          src={chatbotIcon}
+          src={require("../../images/chatbot.svg").default}
           alt="Chatbot Icon"
-          className="w-8 h-8 mr-2"
+          className="w-8 h-10 mr-3"
         />
         <div>
-          <h2 className="text-3xl font-bold">AI Chatbot</h2>
-          <p className="text-sm mt-1">Our chatbot is here to assist you.</p>
+          <h2 className="text-3xl font-bold mt-4">Need help?</h2>
+          <p className="text-ms mt-2">
+            Our chatbot is here to assist with your Personal Banking enquiries.
+          </p>
         </div>
         <button
           onClick={onClose}
-          className="ml-auto text-white text-xl font-bold"
+          className="ml-auto text-white text-xl font-bold hover:text-gray-200 focus:outline-none"
         >
-          &times;
+          <span className="block w-6 h-1 bg-white rounded-full"></span>
         </button>
       </div>
+
       {/* Messages Section */}
       <div className="flex-1 overflow-y-auto p-6 space-y-4">
         {messages.map((msg, index) => (
@@ -267,8 +338,9 @@ const AIChatInterface = ({ onClose, selectedLanguage }) => {
           </div>
         ))}
       </div>
+
       {/* Input Section */}
-      <div className="flex items-center space-x-3 border-t p-4">
+      <div className="flex items-center space-x-3 border-t p-4 font-opensans">
         <input
           type="text"
           className="flex-1 border border-gray-300 rounded-lg p-3 text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -288,7 +360,10 @@ const AIChatInterface = ({ onClose, selectedLanguage }) => {
   );
 };
 
-/* ===================== Subcomponent: LiveChatInterface ===================== */
+/* =======================================================================
+   Subcomponent: LiveChatInterface
+   (This is the original live chat code using Firebase and Socket.io.)
+======================================================================= */
 const LiveChatInterface = ({ onClose, selectedLanguage }) => {
   const [step, setStep] = useState(2);
   const [name, setName] = useState("");
@@ -378,20 +453,13 @@ const LiveChatInterface = ({ onClose, selectedLanguage }) => {
       {/* Header */}
       <div className="flex justify-between items-center bg-[#DD101E] text-white p-4 rounded-t-lg">
         <div className="flex items-center">
-          <img
-            src={chatbotIcon}
-            alt="Chatbot Icon"
-            className="w-8 h-8 mr-2"
-          />
+          <img src={chatbotIcon} alt="Chatbot Icon" className="w-8 h-8 mr-2" />
           <div>
             <h2 className="text-lg font-bold">Live Chat</h2>
             <p className="text-sm">An operator will assist you shortly</p>
           </div>
         </div>
-        <button
-          onClick={onClose}
-          className="text-white hover:text-gray-200 text-2xl font-bold"
-        >
+        <button className="text-white hover:text-gray-200 text-2xl font-bold" onClick={onClose}>
           &times;
         </button>
       </div>
@@ -417,13 +485,8 @@ const LiveChatInterface = ({ onClose, selectedLanguage }) => {
               onChange={(e) => setNric(e.target.value)}
               className="w-full p-2 mb-2 border rounded-lg"
             />
-            {nricError && (
-              <p className="text-red-500 text-sm mt-1">{nricError}</p>
-            )}
-            <button
-              className="bg-[#DD101E] text-white p-2 rounded-lg w-full mt-2"
-              onClick={submitUserInfo}
-            >
+            {nricError && <p className="text-red-500 text-sm mt-1">{nricError}</p>}
+            <button className="bg-[#DD101E] text-white p-2 rounded-lg w-full mt-2" onClick={submitUserInfo}>
               Start Chat
             </button>
           </div>
@@ -431,17 +494,8 @@ const LiveChatInterface = ({ onClose, selectedLanguage }) => {
           <>
             <div className="overflow-y-scroll h-80 mb-4 hide-scrollbar">
               {messages.map((msg, index) => (
-                <div
-                  key={index}
-                  className={`flex flex-col mb-2 ${msg.sender === "user" ? "items-end" : "items-start"}`}
-                >
-                  <div
-                    className={`p-2 rounded-lg max-w-xs text-sm ${
-                      msg.sender === "user"
-                        ? "bg-red-500 text-white"
-                        : "bg-gray-300 text-black"
-                    }`}
-                  >
+                <div key={index} className={`flex flex-col mb-2 ${msg.sender === "user" ? "items-end" : "items-start"}`}>
+                  <div className={`p-2 rounded-lg max-w-xs text-sm ${msg.sender === "user" ? "bg-red-500 text-white" : "bg-gray-300 text-black"}`}>
                     {msg.message}
                   </div>
                 </div>
@@ -457,10 +511,7 @@ const LiveChatInterface = ({ onClose, selectedLanguage }) => {
                 className="flex-1 p-2 border rounded-l-lg focus:outline-none focus:ring-2 focus:ring-red-500"
                 onKeyPress={(e) => e.key === "Enter" && sendMessage()}
               />
-              <button
-                onClick={sendMessage}
-                className="bg-[#DD101E] text-white p-3 rounded-r-lg hover:bg-[#C00E1A] transition-colors"
-              >
+              <button onClick={sendMessage} className="bg-[#DD101E] text-white p-3 rounded-r-lg hover:bg-[#C00E1A] transition-colors">
                 Send
               </button>
             </div>
