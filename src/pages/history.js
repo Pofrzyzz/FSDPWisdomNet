@@ -16,10 +16,9 @@ function HistoryPage() {
     useEffect(() => {
         const userId = localStorage.getItem('userId'); // Get userId from localStorage
         console.log("Retrieved userId from localStorage:", userId);
+
         if (!userId) {
             setError("User ID not found. Please log in.");
-            setLoading(false);
-            return;
         }
 
         axios.get(`http://localhost:5000/api/history/${userId}`)
@@ -40,10 +39,31 @@ function HistoryPage() {
         return <div className="text-center text-xl mt-10">Loading...</div>;
     }
 
-    if (error) {
-        return <div className="text-center text-red-500 mt-10">{error}</div>;
+    if (!localStorage.getItem('userId')) {
+        return (
+            <div className="flex flex-col min-h-screen bg-gray-100">
+                <Navbar />
+                <Link to="/BookingPage">
+                        <div className="absolute top-40 left-16 text-lg font-semibold cursor-pointer z-10 flex items-center hover:underline hover:decoration-white">
+                            <img src={require("../images/arrow-left-red.svg").default} alt="Back" className="w-5 h-5 mr-2" />
+                            <span className="text-black">Back to Book Appointment</span>
+                        </div>
+                    </Link>
+                <section className="flex flex-col items-center justify-center min-h-screen">
+                    <h2 className="text-2xl font-bold text-gray-800 mb-4">Booking History</h2>
+                    <p className="text-gray-500 mb-4">You must be logged in to view your bookings.</p>
+                    <Link to="/LoginPage">
+                        <button className="px-6 py-2 bg-red-500 text-white rounded-lg shadow-md hover:bg-red-00">
+                            Login to View Booking
+                        </button>
+                    </Link>
+                </section>
+                <Footer />
+                <Chatbot />
+            </div>
+        );
     }
-
+    
     return (
         <div className="flex flex-col min-h-screen bg-gray-100">
             <Navbar />
@@ -78,12 +98,15 @@ function HistoryPage() {
                                         <p className="text-gray-500">Reason: {booking.Reason}</p>
                                         {/* Combine DateOfAppointment and TimeOfAppointment */}
                                         <p className="text-gray-500">
-                                            Date and Time: {moment(booking.DateOfAppointment).set({
-                                                'hour': moment(booking.TimeOfAppointment).hour(),
-                                                'minute': moment(booking.TimeOfAppointment).minute(),
-                                                'second': moment(booking.TimeOfAppointment).second(),
-                                            }).tz('Asia/Singapore').format('MMMM Do YYYY, h:mm A')}
-                                            </p></div>
+                                            Date and Time: {moment(booking.DateOfAppointment)
+                                                .set({
+                                                    hour: moment.utc(booking.TimeOfAppointment).hour(),
+                                                    minute: moment.utc(booking.TimeOfAppointment).minute()
+                                                })
+                                                .format('MMMM Do YYYY, h:mm A')}
+                                        </p>
+
+                                        </div>
                                     <span className="text-sm text-blue-500">Ongoing</span>
                                 </div>
                             ))
@@ -105,13 +128,13 @@ function HistoryPage() {
                                         <p className="text-gray-500">Location: {booking.Location}</p>
                                         <p className="text-gray-500">Reason: {booking.Reason}</p>
                                         {/* Combine DateOfAppointment and TimeOfAppointment */}
-                                        
                                         <p className="text-gray-500">
-                                        Date and Time: {moment(booking.DateOfAppointment).set({
-                                            'hour': moment(booking.TimeOfAppointment).hour(),
-                                            'minute': moment(booking.TimeOfAppointment).minute(),
-                                            'second': moment(booking.TimeOfAppointment).second(),
-                                        }).tz('Asia/Singapore').format('MMMM Do YYYY, h:mm A')}
+                                            Date and Time: {moment(booking.DateOfAppointment)
+                                                .set({
+                                                    hour: moment.utc(booking.TimeOfAppointment).hour(),
+                                                    minute: moment.utc(booking.TimeOfAppointment).minute()
+                                                })
+                                                .format('MMMM Do YYYY, h:mm A')}
                                         </p>
                                     </div>
                                     <span className="text-sm text-green-500">Completed</span>
