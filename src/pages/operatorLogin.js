@@ -1,19 +1,19 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import ReCAPTCHA from 'react-google-recaptcha';
 import logo from '../images/logo_ocbc.svg';
 
-const SignUpPage = () => {
-  const [formData, setFormData] = useState({
-    username: '',
-    email: '',
-    pin: '',
-    nric: '',
-  });
-  const [captchaVerified, setCaptchaVerified] = useState(false);
+const OperatorLoginPage = () => {
+  const [formData, setFormData] = useState({ username: '', pin: '' });
   const [errorMessage, setErrorMessage] = useState('');
+  const [captchaVerified, setCaptchaVerified] = useState(false);
   const captchaRef = useRef(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    console.log('Operator login: localStorage cleared on page load.');
+  }, []);
 
   const handleChange = (e) => {
     setFormData({
@@ -22,7 +22,6 @@ const SignUpPage = () => {
     });
   };
 
-  // Handle reCAPTCHA verification
   const handleCaptchaChange = (value) => {
     setCaptchaVerified(!!value);
   };
@@ -31,40 +30,41 @@ const SignUpPage = () => {
     e.preventDefault();
     setErrorMessage('');
 
-    // Ensure the user has verified reCAPTCHA before submitting
     if (!captchaVerified) {
       setErrorMessage('Please verify the CAPTCHA.');
       return;
     }
 
     try {
-      const recaptchaToken = captchaRef.current.getValue(); // Get the reCAPTCHA token
-
-      const response = await fetch('http://localhost:5000/api/users/signup', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...formData, recaptchaToken }),
+      const recaptchaToken = captchaRef.current.getValue();
+      const response = await axios.post('http://localhost:5000/api/operators/login', {
+        username: formData.username,
+        pin: formData.pin,
+        recaptchaToken,
       });
 
-      const data = await response.json();
+      console.log('Operator login response:', response.data);
 
-      if (response.ok) {
-        alert(data.message);
-        navigate('/HomePage'); // Redirect to homepage
+      const { id, username, department } = response.data.operator;
+      if (id) {
+        // ✅ Store operator details in localStorage so they persist after browser close
+        localStorage.setItem('operatorId', id);
+        localStorage.setItem('operatorName', username);
+        localStorage.setItem('department', department);
+        console.log("Operator data stored in localStorage:", { id, username, department });
+
+        navigate('/OperatorDashboard'); // Redirect to Operator Dashboard  
       } else {
-        setErrorMessage(`Sign-up failed: ${data.message}`);
-
-        // 🔴 Force reCAPTCHA reset after failure
-        if (captchaRef.current) {
-          captchaRef.current.reset(); // Reset reCAPTCHA UI
-        }
-        setCaptchaVerified(false); // Require user to tick it again
+        console.error('Operator ID is undefined');
       }
     } catch (error) {
-      console.error('Error during sign-up:', error);
-      setErrorMessage('An error occurred while signing up.');
+      if (error.response && error.response.data.error) {
+        setErrorMessage(error.response.data.error);
+      } else {
+        setErrorMessage('An error occurred. Please try again later.');
+      }
 
-      // 🔴 Reset reCAPTCHA UI after failure
+      // 🔄 Reset reCAPTCHA on failure
       if (captchaRef.current) {
         captchaRef.current.reset();
       }
@@ -81,14 +81,14 @@ const SignUpPage = () => {
         </div>
 
         {/* Title */}
-        <h2 className="text-2xl font-semibold text-gray-800 mb-4 text-center">Sign Up</h2>
+        <h2 className="text-2xl font-semibold text-gray-800 mb-4 text-center">Operator Login</h2>
 
         {/* Error Message */}
         {errorMessage && (
           <div className="text-red-500 text-sm text-center mb-4">{errorMessage}</div>
         )}
 
-        {/* Sign-up Form */}
+        {/* Login Form */}
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div>
             <label className="block text-sm font-medium text-gray-700">Username</label>
@@ -97,18 +97,6 @@ const SignUpPage = () => {
               name="username"
               placeholder="Username"
               value={formData.username}
-              onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:border-red-500"
-              required
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Email</label>
-            <input
-              type="email"
-              name="email"
-              placeholder="Email"
-              value={formData.email}
               onChange={handleChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:border-red-500"
               required
@@ -126,18 +114,6 @@ const SignUpPage = () => {
               required
             />
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">NRIC</label>
-            <input
-              type="text"
-              name="nric"
-              placeholder="NRIC (e.g., S1234567A)"
-              value={formData.nric}
-              onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:border-red-500"
-              required
-            />
-          </div>
 
           {/* reCAPTCHA */}
           <ReCAPTCHA 
@@ -146,23 +122,18 @@ const SignUpPage = () => {
             ref={captchaRef} 
           />
 
-          {/* Sign Up Button */}
+          {/* Login Button */}
           <button
             type="submit"
             className="w-full py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700"
           >
-            Sign Up
+            Login
           </button>
-        </form>
 
-        {/* Login link */}
-        <p className="mt-4 text-sm text-center text-gray-600">
-          Already have an account?{' '}
-          <a href="/login" className="text-red-600 hover:underline">Login here</a>
-        </p>
+        </form>
       </div>
     </div>
   );
 };
 
-export default SignUpPage;
+export default OperatorLoginPage;
