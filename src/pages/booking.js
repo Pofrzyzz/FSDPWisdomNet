@@ -4,7 +4,7 @@ import Calendar from '../components/calendar';
 import NavBar from '../components/navbar';
 import Footer from '../components/footer'; 
 import BackGround from '../images/booking-bg.png';
-import Chatbot from '../components/chatbot';
+import Chatbot from '../components/aichatbot/aichatbot';
 import axios from 'axios';
 import moment3 from 'moment';
 import { Link } from 'react-router-dom';

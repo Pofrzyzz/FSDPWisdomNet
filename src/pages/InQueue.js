@@ -3,7 +3,7 @@ import NavBar from '../components/navbar';
 import { useLocation, useNavigate } from 'react-router-dom';
 import QueueIcon from '../images/QueueIcon.svg';
 import InfoIcon from '../images/InfoIcon.svg';
-import Chatbot from '../components/chatbot';
+import Chatbot from '../components/aichatbot/aichatbot';
 
 function InQueue() {
   const navigate = useNavigate();

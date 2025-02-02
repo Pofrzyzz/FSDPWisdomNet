@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "../components/navbar";
 import Footer from "../components/footer";
-import Chatbot from "../components/chatbot";
+import Chatbot from "../components/aichatbot/aichatbot";
 import BackGround from "../images/booking-bg.png";
 import axios from 'axios';
 import { Link } from "react-router-dom";
