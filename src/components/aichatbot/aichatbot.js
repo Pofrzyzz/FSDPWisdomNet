@@ -182,13 +182,16 @@ const ChatTypeSelection = ({ onSelectChatType, onBack, onClose, selectedLanguage
 
 /* =======================================================================
    Subcomponent: AIChatInterface 
-   (Uses DeepSeek for translation – unchanged)
+   (Uses DeepSeek for translation – with CORS proxy adjustments)
 ======================================================================= */
 const AIChatInterface = ({ onClose, selectedLanguage }) => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
-  const [greeted, setGreeted] = useState(false);
+  const greetedRef = useRef(false); // Use ref to track if greeting has been sent
   const [detectedLanguage, setDetectedLanguage] = useState("en");
+
+  // Use a proxy to bypass CORS issues (for development only)
+  const CORS_PROXY = "https://cors-anywhere.herokuapp.com/";
 
   function simpleDetectLanguage(original, translated) {
     if (/[\u4e00-\u9fff]/.test(original)) {
@@ -203,24 +206,26 @@ const AIChatInterface = ({ onClose, selectedLanguage }) => {
     return "en";
   }
 
+  // Add the greeting only once on mount using a ref
   useEffect(() => {
-    if (!greeted) {
+    if (!greetedRef.current) {
       const greetingMessage = {
         role: "bot",
         content: "Hello! How can I assist you today?",
       };
       setMessages((prev) => [...prev, greetingMessage]);
-      setGreeted(true);
+      greetedRef.current = true;
     }
-  }, [greeted]);
+  }, []);
 
   const handleSend = async () => {
     if (!input.trim()) return;
     const userMessage = { role: "user", content: input };
     setMessages((prev) => [...prev, userMessage]);
     try {
+      // First: Translate the user's input
       const translationResponse = await axios.post(
-        "http://localhost:5055/translate",
+        CORS_PROXY + "http://localhost:5055/translate",
         {
           text: input,
           source: "auto",
@@ -233,8 +238,10 @@ const AIChatInterface = ({ onClose, selectedLanguage }) => {
       const userLang = simpleDetectLanguage(input, translatedInput);
       console.log("Detected language (via heuristic):", userLang);
       setDetectedLanguage(userLang);
+
+      // Second: Send the translated input to the chatbot backend
       const rasaResponse = await axios.post(
-        "http://localhost:5055/webhooks/rest/webhook",
+        CORS_PROXY + "http://localhost:5055/webhooks/rest/webhook",
         {
           sender: "user",
           message: translatedInput,
@@ -252,6 +259,8 @@ const AIChatInterface = ({ onClose, selectedLanguage }) => {
           ],
         }
       );
+
+      // Map and translate (if needed) the bot replies
       const botReplies = rasaResponse.data.map((reply) => ({
         role: "bot",
         content: reply.text,
@@ -263,7 +272,7 @@ const AIChatInterface = ({ onClose, selectedLanguage }) => {
             console.log("Translating bot response to:", userLang);
             try {
               const responseBack = await axios.post(
-                "http://localhost:5055/translate",
+                CORS_PROXY + "http://localhost:5055/translate",
                 {
                   text: reply.content,
                   source: "en",
@@ -292,7 +301,7 @@ const AIChatInterface = ({ onClose, selectedLanguage }) => {
       };
       setMessages((prev) => [...prev, errorMessage]);
     }
-    setInput("");
+    setInput(""); // Clear the input after sending
   };
 
   const handleKeyDown = (e) => {
@@ -338,7 +347,7 @@ const AIChatInterface = ({ onClose, selectedLanguage }) => {
                   : "bg-gray-200 text-gray-800"
               }`}
             >
-              <p>{msg.message}</p>
+              <p>{msg.content}</p>
               {msg.learnMoreLink && (
                 <a
                   href={msg.learnMoreLink}
