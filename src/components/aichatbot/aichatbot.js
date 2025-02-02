@@ -1,16 +1,39 @@
 import React, { useState } from "react";
 import axios from "axios";
 
+// Allowed language codes (only these will be supported for reply translation)
+const allowedLanguages = ["en", "ms", "zh-CN", "ta"];
+
+// Simple heuristic for language detection based on the original and translated texts.
+function simpleDetectLanguage(original, translated) {
+  // If the original contains Chinese characters, assume Chinese.
+  if (/[\u4e00-\u9fff]/.test(original)) {
+    return "zh-CN";
+  }
+  // If the original contains Tamil characters (Unicode range for Tamil: \u0B80-\u0BFF)
+  if (/[\u0B80-\u0BFF]/.test(original)) {
+    return "ta";
+  }
+  // For Latin-based text: if the original and the translated input differ (ignoring case),
+  // then assume it is Malay. Otherwise, assume it is English.
+  if (original.trim().toLowerCase() !== translated.trim().toLowerCase()) {
+    return "ms";
+  }
+  return "en";
+}
+
 const AIChatbot = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [greeted, setGreeted] = useState(false);
+  // Store the detected language for later use (if applicable)
+  const [detectedLanguage, setDetectedLanguage] = useState("en");
 
   const toggleChat = () => {
     setIsOpen(!isOpen);
 
-    // Greet user
+    // Greet user on first open
     if (!greeted) {
       const greetingMessage = {
         role: "bot",
@@ -24,41 +47,93 @@ const AIChatbot = () => {
   const handleSend = async () => {
     if (!input.trim()) return;
 
-    // Add user message to chat
+    // Add the original user message to chat
     const userMessage = { role: "user", content: input };
     setMessages((prev) => [...prev, userMessage]);
 
     try {
-      // Send message to Rasa API
-      const response = await axios.post(
+      // 1. Translate user input to English using your translation API.
+      const translationResponse = await axios.post(
+        "http://localhost:5055/translate",
+        {
+          text: input,
+          source: "auto", // auto-detect user language
+          target: "en",   // translate to English
+        },
+        { headers: { "Content-Type": "application/json" } }
+      );
+
+      const translatedInput = translationResponse.data.translatedText;
+      console.log("Translated input:", translatedInput);
+
+      // 2. Determine the user's language using our heuristic.
+      const userLang = simpleDetectLanguage(input, translatedInput);
+      
+      console.log("Detected language (via heuristic):", userLang);
+      // Update state (for display or later use)
+      setDetectedLanguage(userLang);
+
+      // 3. Send the translated English input to Rasa
+      const rasaResponse = await axios.post(
         "http://localhost:5005/webhooks/rest/webhook",
         {
           sender: "user",
-          message: input,
+          message: translatedInput,
         },
         {
           headers: {
             "Content-Type": "application/json",
             "Access-Control-Allow-Origin": "*",
           },
-          transformRequest: [(data, headers) => {
-            delete headers["X-Requested-With"];
-            return JSON.stringify(data);
-          }],
+          transformRequest: [
+            (data, headers) => {
+              delete headers["X-Requested-With"];
+              return JSON.stringify(data);
+            },
+          ],
         }
       );
 
-
-      // Handle Rasa's responses (it can return multiple messages)
-      const botReplies = response.data.map((reply) => ({
+      // 4. Process Rasa's bot replies (assume they are in English)
+      const botReplies = rasaResponse.data.map((reply) => ({
         role: "bot",
         content: reply.text,
-        learnMoreLink: reply.custom?.link, // Assume Rasa sends a custom payload with a "link" property
+        learnMoreLink: reply.custom?.link,
       }));
 
-      setMessages((prev) => [...prev, ...botReplies]);
+      // 5. Translate each bot reply back to the user's language, if applicable.
+      const finalBotReplies = await Promise.all(
+        botReplies.map(async (reply) => {
+          // Only translate if detected language is set and not English.
+          if (userLang && userLang !== "en") {
+            console.log("Translating bot response to:", userLang);
+            try {
+              const responseBack = await axios.post(
+                "http://localhost:5055/translate",
+                {
+                  text: reply.content,
+                  source: "en",
+                  target: userLang,
+                },
+                { headers: { "Content-Type": "application/json" } }
+              );
+              console.log("Translated bot response:", responseBack.data.translatedText);
+              return { ...reply, content: responseBack.data.translatedText };
+            } catch (error) {
+              console.error("Error translating bot response:", error.message);
+              return reply; // Fallback: keep original bot response if translation fails.
+            }
+          } else {
+            console.log("No translation needed for bot response (userLang:", userLang, ")");
+            return reply;
+          }
+        })
+      );
+
+      // Append the final bot replies to the messages
+      setMessages((prev) => [...prev, ...finalBotReplies]);
     } catch (error) {
-      console.error("Error communicating with Rasa:", error.message);
+      console.error("Error communicating with backend:", error.message);
       const errorMessage = { role: "bot", content: "Sorry, something went wrong. Please try again." };
       setMessages((prev) => [...prev, errorMessage]);
     }
@@ -166,6 +241,5 @@ const AIChatbot = () => {
     </div>
   );
 };
-
 
 export default AIChatbot;

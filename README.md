@@ -17,6 +17,12 @@
 
 # For Rasa Chatbot (req python 3.10 or older)
 - `cd src/components/aichatbot`
+- `pip install flask-cors`
 - `pip install rasa`
-- `rasa run --cors "*" --enable-api`
+- `pip install deep-translator`
+- `pip install langdetect`
+### Run chatbot
+- `rasa run --cors "*" --enable-api` 
+### Run Translator
+- `python translation-api.py`
 
