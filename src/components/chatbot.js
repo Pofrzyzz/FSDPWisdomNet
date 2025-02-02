@@ -12,27 +12,27 @@ function Chatbot() {
   const [step, setStep] = useState(1);
   const [name, setName] = useState('');
   const [nric, setNric] = useState('');
-  const [nricError, setNricError] = useState(''); 
+  const [nricError, setNricError] = useState('');
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [chatId, setChatId] = useState(null);
   const messagesEndRef = React.useRef(null);
 
+  // 🔹 Retrieve stored user details from localStorage on mount
   useEffect(() => {
-    // Check sessionStorage for user details
-    const storedUserId = sessionStorage.getItem('userId');
-    const storedName = sessionStorage.getItem('username');
-    const storedNric = sessionStorage.getItem('nric');
+    const storedUserId = localStorage.getItem('userId');
+    const storedName = localStorage.getItem('username');
+    const storedNric = localStorage.getItem('nric');
 
     if (storedUserId && storedName && storedNric) {
       setName(storedName);
       setNric(storedNric);
-      setStep(5); // Skip user input step
+      setStep(5); // Skip input form and go directly to chat
     } else {
       setStep(2); // Show input form if user is not logged in
     }
-    
+
     setIsLoading(false);
   }, []);
 

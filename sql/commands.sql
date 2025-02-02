@@ -35,6 +35,7 @@ CREATE TABLE Operators (
     OperatorName NVARCHAR(100),
     BranchID INT,
     AssignedDepartmentID INT,
+    Pin INT,
     FOREIGN KEY (BranchID) REFERENCES Branch(BranchID),
     FOREIGN KEY (AssignedDepartmentID) REFERENCES Departments(DepartmentID)
 );
@@ -163,28 +164,30 @@ BEGIN
     WHILE @@FETCH_STATUS = 0
     BEGIN
         -- Insert 5 operators per department per branch with unique, realistic names
-        INSERT INTO Operators (OperatorName, BranchID, AssignedDepartmentID)
+        INSERT INTO Operators (OperatorName, BranchID, AssignedDepartmentID, Pin)
         VALUES 
-            ('James Tan', @BranchID, @DepartmentID),
-            ('Rachel Lim', @BranchID, @DepartmentID),
-            ('David Ng', @BranchID, @DepartmentID),
-            ('Siti Rahman', @BranchID, @DepartmentID),
-            ('Liam Wong', @BranchID, @DepartmentID),
-            ('Amanda Lee', @BranchID, @DepartmentID),
-            ('John Koh', @BranchID, @DepartmentID),
-            ('Sarah Teo', @BranchID, @DepartmentID),
-            ('Benjamin Tan', @BranchID, @DepartmentID),
-            ('Nina Lim', @BranchID, @DepartmentID),
-            ('Arif Bin Salim', @BranchID, @DepartmentID),
-            ('Maya Chia', @BranchID, @DepartmentID),
-            ('Matthew Goh', @BranchID, @DepartmentID),
-            ('Karen Chan', @BranchID, @DepartmentID),
-            ('Wei Ming Chen', @BranchID, @DepartmentID),
-            ('Priya Menon', @BranchID, @DepartmentID),
-            ('Alex Ho', @BranchID, @DepartmentID),
-            ('Nurul Hassan', @BranchID, @DepartmentID),
-            ('Josephine Choo', @BranchID, @DepartmentID),
-            ('Marcus Lee', @BranchID, @DepartmentID);
+            ('James Tan', @BranchID, @DepartmentID, NULL),
+            ('Rachel Lim', @BranchID, @DepartmentID, NULL),
+            ('David Ng', @BranchID, @DepartmentID, NULL),
+            ('Siti Rahman', @BranchID, @DepartmentID, NULL),
+            ('Liam Wong', @BranchID, @DepartmentID, NULL),
+            ('Amanda Lee', @BranchID, @DepartmentID, NULL),
+            ('John Koh', @BranchID, @DepartmentID, NULL),
+            ('Sarah Teo', @BranchID, @DepartmentID, NULL),
+            ('Benjamin Tan', @BranchID, @DepartmentID, NULL),
+            ('Nina Lim', @BranchID, @DepartmentID, NULL),
+            ('Arif Bin Salim', @BranchID, @DepartmentID, NULL),
+            ('Maya Chia', @BranchID, @DepartmentID, NULL),
+            ('Matthew Goh', @BranchID, @DepartmentID, NULL),
+            ('Karen Chan', @BranchID, @DepartmentID, NULL),
+            ('Wei Ming Chen', @BranchID, @DepartmentID, NULL),
+            ('Jasmine Lim', @BranchID, @DepartmentID, NULL),
+            ('Rajesh Kumar', @BranchID, @DepartmentID, NULL),
+            ('Priya Menon', @BranchID, @DepartmentID, NULL),
+            ('Alex Ho', @BranchID, @DepartmentID, NULL),
+            ('Nurul Hassan', @BranchID, @DepartmentID, NULL),
+            ('Josephine Choo', @BranchID, @DepartmentID, NULL),
+            ('Marcus Lee', @BranchID, @DepartmentID, NULL);
 
         FETCH NEXT FROM DepartmentCursor INTO @DepartmentID;
     END;
