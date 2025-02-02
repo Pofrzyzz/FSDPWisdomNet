@@ -181,18 +181,17 @@ const ChatTypeSelection = ({ onSelectChatType, onBack, onClose, selectedLanguage
 };
 
 /* =======================================================================
-   Subcomponent: AIChatInterface 
-   (Uses DeepSeek for translation – with CORS proxy adjustments)
+   Subcomponent: AIChatInterface
+   (This uses your new aichatbot.js functionality with translation.)
 ======================================================================= */
 const AIChatInterface = ({ onClose, selectedLanguage }) => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
-  const greetedRef = useRef(false); // Use ref to track if greeting has been sent
+  const greetedRef = useRef(false); // Use a ref to ensure greeting is added only once
+  // State to store the detected language for translation purposes
   const [detectedLanguage, setDetectedLanguage] = useState("en");
 
-  // Use a proxy to bypass CORS issues (for development only)
-  const CORS_PROXY = "https://cors-anywhere.herokuapp.com/";
-
+  // Simple heuristic for language detection based on original & translated texts.
   function simpleDetectLanguage(original, translated) {
     if (/[\u4e00-\u9fff]/.test(original)) {
       return "zh-CN";
@@ -206,7 +205,7 @@ const AIChatInterface = ({ onClose, selectedLanguage }) => {
     return "en";
   }
 
-  // Add the greeting only once on mount using a ref
+  // Greet the user on the first render using a ref to prevent duplicate greetings.
   useEffect(() => {
     if (!greetedRef.current) {
       const greetingMessage = {
@@ -220,12 +219,15 @@ const AIChatInterface = ({ onClose, selectedLanguage }) => {
 
   const handleSend = async () => {
     if (!input.trim()) return;
+
+    // Add the original user message to chat
     const userMessage = { role: "user", content: input };
     setMessages((prev) => [...prev, userMessage]);
+
     try {
-      // First: Translate the user's input
+      // 1. Translate the user input to English using the translation API.
       const translationResponse = await axios.post(
-        CORS_PROXY + "http://localhost:5055/translate",
+        "http://localhost:5055/translate",
         {
           text: input,
           source: "auto",
@@ -235,13 +237,15 @@ const AIChatInterface = ({ onClose, selectedLanguage }) => {
       );
       const translatedInput = translationResponse.data.translatedText;
       console.log("Translated input:", translatedInput);
+
+      // 2. Detect the user's language using our heuristic.
       const userLang = simpleDetectLanguage(input, translatedInput);
       console.log("Detected language (via heuristic):", userLang);
       setDetectedLanguage(userLang);
 
-      // Second: Send the translated input to the chatbot backend
+      // 3. Send the translated input (in English) to Rasa.
       const rasaResponse = await axios.post(
-        CORS_PROXY + "http://localhost:5005/webhooks/rest/webhook",
+        "http://localhost:5005/webhooks/rest/webhook",
         {
           sender: "user",
           message: translatedInput,
@@ -260,19 +264,21 @@ const AIChatInterface = ({ onClose, selectedLanguage }) => {
         }
       );
 
-      // Map and translate (if needed) the bot replies
+      // 4. Process Rasa's replies (assumed to be in English).
       const botReplies = rasaResponse.data.map((reply) => ({
         role: "bot",
         content: reply.text,
         learnMoreLink: reply.custom?.link,
       }));
+
+      // 5. Translate each bot reply back to the user's language if needed.
       const finalBotReplies = await Promise.all(
         botReplies.map(async (reply) => {
           if (userLang && userLang !== "en") {
             console.log("Translating bot response to:", userLang);
             try {
               const responseBack = await axios.post(
-                CORS_PROXY + "http://localhost:5055/translate",
+                "http://localhost:5055/translate",
                 {
                   text: reply.content,
                   source: "en",
@@ -292,6 +298,8 @@ const AIChatInterface = ({ onClose, selectedLanguage }) => {
           }
         })
       );
+
+      // Append the (translated) bot replies to the conversation.
       setMessages((prev) => [...prev, ...finalBotReplies]);
     } catch (error) {
       console.error("Error communicating with backend:", error.message);
@@ -301,7 +309,8 @@ const AIChatInterface = ({ onClose, selectedLanguage }) => {
       };
       setMessages((prev) => [...prev, errorMessage]);
     }
-    setInput(""); // Clear the input after sending
+
+    setInput(""); // Clear the input field
   };
 
   const handleKeyDown = (e) => {
@@ -333,6 +342,7 @@ const AIChatInterface = ({ onClose, selectedLanguage }) => {
           <span className="block w-6 h-1 bg-white rounded-full"></span>
         </button>
       </div>
+
       {/* Messages Section */}
       <div className="flex-1 overflow-y-auto p-6 space-y-4">
         {messages.map((msg, index) => (
@@ -362,11 +372,12 @@ const AIChatInterface = ({ onClose, selectedLanguage }) => {
           </div>
         ))}
       </div>
+
       {/* Input Section */}
       <div className="flex items-center space-x-3 border-t p-4 font-opensans">
         <input
           type="text"
-          className="flex-1 border border-gray-300 rounded-lg p-3 text-base focus:outline-none focus:ring-2 focus:ring-red-500"
+          className="flex-1 border border-gray-300 rounded-lg p-3 text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
           placeholder="Type your message here"
           value={input}
           onChange={(e) => setInput(e.target.value)}
@@ -374,7 +385,7 @@ const AIChatInterface = ({ onClose, selectedLanguage }) => {
         />
         <button
           onClick={handleSend}
-          className="bg-[#DD101E] text-white py-3 px-6 rounded-lg hover:bg-red-600 focus:ring-2 focus:ring-blue-500 font-bold"
+          className="bg-red-500 text-white py-3 px-6 rounded-lg hover:bg-red-600 focus:ring-2 focus:ring-blue-500 font-bold"
         >
           Send
         </button>
@@ -382,6 +393,7 @@ const AIChatInterface = ({ onClose, selectedLanguage }) => {
     </div>
   );
 };
+
 
 /* =======================================================================
    Subcomponent: LiveChatInterface (Using Google Translate & Google Speech-to-Text)
