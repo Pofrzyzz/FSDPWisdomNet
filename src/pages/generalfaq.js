@@ -10,7 +10,7 @@ import ChevronRight from '../images/chevron-right.svg';
 import Help from "../components/needhelp";
 import Footer from "../components/footer"
 import Modal from "../components/popup";
-import Chatbot from '../components/chatbot';
+import Chatbot from '../components/aichatbot/aichatbot';
 
 function GeneralFaq() {
 

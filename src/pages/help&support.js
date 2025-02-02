@@ -5,7 +5,7 @@ import ContactBooking from '../components/contactbooking';
 import Footer from '../components/footer';
 import Help from '../components/needhelp';
 import HelpDesk from '../images/HelpDesk.jpg';
-import Chatbot from '../components/chatbot';
+import Chatbot from '../components/aichatbot/aichatbot';
 import Searchbar from '../components/searchbar'
 import AIChatbot from '../components/aichatbot/aichatbot'
 

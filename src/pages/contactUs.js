@@ -5,7 +5,7 @@ import axios from 'axios';
 import NavBar from '../components/navbar';
 import ContactBanner from '../images/ContactBanner.svg';
 import Footer from '../components/footer';
-import Chatbot from '../components/chatbot';
+import Chatbot from '../components/aichatbot/aichatbot';
 
 function ContactUs() {
   const [mobileNumber, setMobileNumber] = useState('');
