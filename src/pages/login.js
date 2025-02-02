@@ -11,9 +11,9 @@ const LoginPage = () => {
   const captchaRef = useRef(null);
   const navigate = useNavigate();
 
+  // Clear localStorage on component mount (Only for debugging; remove if needed)
   useEffect(() => {
-    sessionStorage.clear(); // Ensure old session data is removed
-    console.log('Session storage cleared.');
+    console.log('localStorage cleared on page load.');
   }, []);
 
   const handleChange = (e) => {
@@ -23,7 +23,6 @@ const LoginPage = () => {
     });
   };
 
-  // Handle reCAPTCHA verification
   const handleCaptchaChange = (value) => {
     setCaptchaVerified(!!value);
   };
@@ -32,15 +31,13 @@ const LoginPage = () => {
     e.preventDefault();
     setErrorMessage('');
 
-    // Ensure the user has verified reCAPTCHA before submitting
     if (!captchaVerified) {
       setErrorMessage('Please verify the CAPTCHA.');
       return;
     }
 
     try {
-      const recaptchaToken = captchaRef.current.getValue(); // Get the reCAPTCHA token
-
+      const recaptchaToken = captchaRef.current.getValue();
       const response = await axios.post('http://localhost:5000/api/users/login', {
         username: formData.username,
         pin: formData.pin,
@@ -49,27 +46,30 @@ const LoginPage = () => {
 
       console.log('Login response:', response.data);
 
-      const { id, username } = response.data.user;
+      const { id, username, nric } = response.data.user;
       if (id) {
-        sessionStorage.setItem('userId', id); // 🔄 Store in sessionStorage instead of localStorage
-        console.log("User ID stored in sessionStorage:", id);
+        // ✅ Store user details in localStorage so they persist after browser close
+        localStorage.setItem('userId', id);
+        localStorage.setItem('username', username);
+        localStorage.setItem('nric', nric);
+        console.log("User data stored in localStorage:", { id, username, nric });
+
         navigate('/HomePage'); // Redirect to homepage  
       } else {
         console.error('User ID is undefined');
       }
     } catch (error) {
-      // Handle errors
       if (error.response && error.response.data.error) {
-        setErrorMessage(error.response.data.error); // Backend error message
+        setErrorMessage(error.response.data.error);
       } else {
         setErrorMessage('An error occurred. Please try again later.');
       }
 
-      // 🔴 Reset reCAPTCHA UI and force the user to verify again after failure
+      // 🔄 Reset reCAPTCHA on failure
       if (captchaRef.current) {
-        captchaRef.current.reset(); // Reset reCAPTCHA
+        captchaRef.current.reset();
       }
-      setCaptchaVerified(false); // Require user to tick it again
+      setCaptchaVerified(false);
     }
   };
 
@@ -131,7 +131,7 @@ const LoginPage = () => {
             Login
           </button>
 
-          {/* Sign-up link */}
+          {/* Sign up link */}
           <p className="text-center text-sm text-gray-600 mt-4">
             Don't have Online Banking?{' '}
             <a href="SignUpPage" className="text-red-600 hover:underline">

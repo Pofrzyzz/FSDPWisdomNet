@@ -3,23 +3,22 @@ import { useNavigate } from 'react-router-dom';
 import { db } from '../firebaseConfig';
 import { collection, onSnapshot, addDoc, updateDoc, doc, serverTimestamp, query, where, orderBy } from 'firebase/firestore';
 
-const OperatorDashboard = () => {
-  const [activeChats, setActiveChats] = useState([]); // Store active chat sessions
-  const [selectedChat, setSelectedChat] = useState(null); // Currently selected chat
+function OperatorDashboard() {
+  const [activeChats, setActiveChats] = useState([]);
+  const [selectedChat, setSelectedChat] = useState(null);
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
   const messagesEndRef = useRef(null);
   const navigate = useNavigate();
 
-  // 🔹 Check session and redirect if not logged in
+  // 🔹 Ensure operator is logged in (Redirect if not)
   useEffect(() => {
-    const operatorId = sessionStorage.getItem('operatorId');
+    const operatorId = localStorage.getItem('operatorId');
     if (!operatorId) {
-      navigate('/OperatorLoginPage'); // Redirect to login if no operator session exists
+      navigate('/OperatorPage'); // Redirect if not logged in
     }
   }, [navigate]);
 
-  // 🔹 Fetch Active Chats for the Operator
   useEffect(() => {
     const q = query(collection(db, 'chats'), where('status', '==', 'active'));
     const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -30,7 +29,6 @@ const OperatorDashboard = () => {
     return unsubscribe;
   }, []);
 
-  // 🔹 Fetch Messages for Selected Chat
   useEffect(() => {
     if (selectedChat) {
       const messagesRef = query(collection(db, 'chats', selectedChat.chatId, 'messages'), orderBy('timestamp', 'asc'));
@@ -44,13 +42,11 @@ const OperatorDashboard = () => {
     }
   }, [selectedChat]);
 
-  // 🔹 Select a Chat
   const selectChat = (chat) => {
     setSelectedChat(chat);
     setMessages([]);
   };
 
-  // 🔹 Send Message as Operator
   const sendMessage = async () => {
     if (message.trim() && selectedChat) {
       const newMessage = {
@@ -64,24 +60,27 @@ const OperatorDashboard = () => {
     }
   };
 
-  // 🔹 End Chat (Set status to closed)
   const endChat = async (chatId) => {
     await updateDoc(doc(db, 'chats', chatId), { status: 'closed' });
     setActiveChats((prevChats) => prevChats.filter((chat) => chat.chatId !== chatId));
     setSelectedChat(null);
   };
 
-  // 🔹 Logout and clear session
+  // 🔹 Logout function: Clears `localStorage` and redirects to login
   const handleLogout = () => {
-    sessionStorage.clear();
-    navigate('/OperatorLoginPage');
+    localStorage.clear();
+    navigate('/OperatorPage'); // Redirect to operator login page
   };
 
   return (
     <div className="flex h-screen bg-gray-50">
-      {/* 🔹 Sidebar for Active Chats */}
       <div className="w-1/3 bg-gray-100 p-4 border-r">
-        <h2 className="text-lg font-bold mb-4 text-[#DD101E]">Active Chats</h2>
+        <div className="flex justify-between">
+          <h2 className="text-lg font-bold mb-4 text-[#DD101E]">Active Chats</h2>
+          <button onClick={handleLogout} className="text-sm text-white bg-[#DD101E] px-3 py-1 rounded-md">
+            Logout
+          </button>
+        </div>
         <ul className="space-y-2">
           {activeChats.map((chat) => (
             <li key={chat.chatId} className="flex justify-between items-center p-3 bg-white rounded shadow-md hover:bg-gray-50">
@@ -92,16 +91,8 @@ const OperatorDashboard = () => {
             </li>
           ))}
         </ul>
-        {/* 🔹 Logout Button */}
-        <button
-          onClick={handleLogout}
-          className="mt-6 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 w-full"
-        >
-          Logout
-        </button>
       </div>
 
-      {/* 🔹 Main Chat Section */}
       <div className="w-2/3 flex flex-col">
         {selectedChat ? (
           <>
@@ -121,8 +112,6 @@ const OperatorDashboard = () => {
               ))}
               <div ref={messagesEndRef} />
             </div>
-
-            {/* 🔹 Input Section */}
             <div className="flex p-4 border-t bg-white">
               <input
                 type="text"
@@ -148,6 +137,6 @@ const OperatorDashboard = () => {
       </div>
     </div>
   );
-};
+}
 
 export default OperatorDashboard;

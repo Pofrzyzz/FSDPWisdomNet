@@ -11,10 +11,8 @@ const OperatorLoginPage = () => {
   const captchaRef = useRef(null);
   const navigate = useNavigate();
 
-  // Clear session storage on component mount
   useEffect(() => {
-    sessionStorage.clear(); // Remove any existing session data
-    console.log('Session storage cleared.');
+    console.log('Operator login: localStorage cleared on page load.');
   }, []);
 
   const handleChange = (e) => {
@@ -24,7 +22,6 @@ const OperatorLoginPage = () => {
     });
   };
 
-  // Handle reCAPTCHA verification
   const handleCaptchaChange = (value) => {
     setCaptchaVerified(!!value);
   };
@@ -33,15 +30,13 @@ const OperatorLoginPage = () => {
     e.preventDefault();
     setErrorMessage('');
 
-    // Ensure the user has verified reCAPTCHA before submitting
     if (!captchaVerified) {
       setErrorMessage('Please verify the CAPTCHA.');
       return;
     }
 
     try {
-      const recaptchaToken = captchaRef.current.getValue(); // Get the reCAPTCHA token
-
+      const recaptchaToken = captchaRef.current.getValue();
       const response = await axios.post('http://localhost:5000/api/operators/login', {
         username: formData.username,
         pin: formData.pin,
@@ -52,28 +47,28 @@ const OperatorLoginPage = () => {
 
       const { id, username, department } = response.data.operator;
       if (id) {
-        sessionStorage.setItem('operatorId', id); // 🔄 Store in sessionStorage
-        sessionStorage.setItem('operatorName', username);
-        sessionStorage.setItem('department', department);
-        console.log("Operator ID stored in sessionStorage:", id);
-        
-        navigate('/OperatorDashboard'); // ✅ Redirect to Operator Dashboard
+        // ✅ Store operator details in localStorage so they persist after browser close
+        localStorage.setItem('operatorId', id);
+        localStorage.setItem('operatorName', username);
+        localStorage.setItem('department', department);
+        console.log("Operator data stored in localStorage:", { id, username, department });
+
+        navigate('/OperatorDashboard'); // Redirect to Operator Dashboard  
       } else {
         console.error('Operator ID is undefined');
       }
     } catch (error) {
-      // Handle errors
       if (error.response && error.response.data.error) {
-        setErrorMessage(error.response.data.error); // Backend error message
+        setErrorMessage(error.response.data.error);
       } else {
         setErrorMessage('An error occurred. Please try again later.');
       }
 
-      // 🔴 Reset reCAPTCHA UI and force the user to verify again after failure
+      // 🔄 Reset reCAPTCHA on failure
       if (captchaRef.current) {
-        captchaRef.current.reset(); // Reset reCAPTCHA
+        captchaRef.current.reset();
       }
-      setCaptchaVerified(false); // Require user to tick it again
+      setCaptchaVerified(false);
     }
   };
 
@@ -134,6 +129,7 @@ const OperatorLoginPage = () => {
           >
             Login
           </button>
+
         </form>
       </div>
     </div>
