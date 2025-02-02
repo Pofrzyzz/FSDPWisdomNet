@@ -49,10 +49,11 @@ function Calendar({ selectedBranch, onDateTimeSelect }) {
             return; // Ignore selection if the date is in the past
         }
     
+        console.log("Selected Date:", newSelectedDate.toLocaleString()); 
         setSelectedDate(newSelectedDate);
         if (selectedBranch) {
             // Use toLocaleDateString with 'en-CA' format to prevent timezone shift issues
-            fetchAvailableSlots(selectedBranch.id, newSelectedDate.toLocaleDateString('en-CA'));
+            fetchAvailableSlots(selectedBranch.id, newSelectedDate);
         }
     };
     
@@ -68,6 +69,7 @@ function Calendar({ selectedBranch, onDateTimeSelect }) {
                 slotID: slotID
             });
         }
+        console.log("Selected time: ", time);
     };
 
     const fetchAvailableSlots = async (branchID, date) => {
@@ -89,9 +91,9 @@ function Calendar({ selectedBranch, onDateTimeSelect }) {
         <div className="relative mb-4">
             <label className="block text-gray-700 mb-2 text-left text-xl font-bold">Date & Time:</label>
             <div className="flex items-center space-x-2 mb-4">
-                <input
+                    <input
                     type="text"
-                    value={selectedDate ? `${selectedDate.toISOString().split('T')[0]} ${selectedTime || ''}` : ''}
+                    value={selectedDate ? `${selectedDate.toLocaleDateString('en-CA')} ${selectedTime || ''}` : ''}
                     readOnly
                     placeholder="Select a date and time"
                     className={`w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 ${!selectedBranch && 'bg-gray-200'}`}
@@ -112,7 +114,9 @@ function Calendar({ selectedBranch, onDateTimeSelect }) {
                                 &lt;
                             </button>
                             <h4 className="font-medium">
-                                {selectedDate ? selectedDate.toLocaleString('default', { month: 'long' }) : new Date().toLocaleString('default', { month: 'long' })} {selectedDate ? selectedDate.getFullYear() : new Date().getFullYear()}
+                            {selectedDate 
+                            ? selectedDate.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' }) 
+                            : new Date().toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}
                             </h4>
                             <button onClick={handleNextMonth} className="text-gray-600 hover:text-red-500">
                                 &gt;

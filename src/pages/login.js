@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import ReCAPTCHA from 'react-google-recaptcha';
 import logo from '../images/logo_ocbc.svg';
+import { Link } from "react-router-dom";
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({ username: '', pin: '' });
@@ -75,6 +76,14 @@ const LoginPage = () => {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
+            {/* Back Button */}
+            <div 
+                onClick={() => navigate(-1)} // Go back to the previous page
+                className="absolute top-20 left-16 text-lg font-semibold cursor-pointer z-10 flex items-center hover:underline hover:decoration-white"
+            >
+                <img src={require("../images/arrow-left-red.svg").default} alt="Back" className="w-5 h-5 mr-2" />
+                <span className="text-black">Back</span>
+            </div>
       <div className="bg-white shadow-md rounded-lg p-8 w-full max-w-md">
         {/* Logo */}
         <div className="flex justify-center mb-6">
